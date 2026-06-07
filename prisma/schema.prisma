@@ -107,6 +107,9 @@ model Milestone {
   description   String?
   status        Milestonestatus
   badge         String?
+  deadline      DateTime
+  delay         Boolean?
+  delayreason   String?
 
   project   Project? @relation(fields: [projectId], references: [id])
   projectId String?

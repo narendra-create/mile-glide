@@ -72,43 +72,26 @@ const Navbar = () => {
 
         {/* Hamburger */}
         <button
-          onClick={() => setopen(!open)}
-          className="
-            md:hidden
-            flex flex-col gap-[5px]
-            p-2
-          "
-          aria-label="menu"
+          onClick={() => setopen((prev) => !prev)}
+          className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-[6px] cursor-pointer"
+          aria-label="Toggle menu"
+          type="button"
         >
           <span
-            className={`
-              w-5 h-px bg-[#e8e3d8]
-              transition-all
-              ${open ? "translate-y-[6px] rotate-45" : ""}
-            `}
+            className={`block w-6 h-[2px] bg-[#e8e3d8] transition-all duration-300 origin-center ${open ? "translate-y-[8px] rotate-45" : ""}`}
           />
-
           <span
-            className={`
-              w-5 h-px bg-[#e8e3d8]
-              transition-all
-              ${open ? "opacity-0" : ""}
-            `}
+            className={`block w-6 h-[2px] bg-[#e8e3d8] transition-all duration-300 ${open ? "opacity-0 scale-x-0" : ""}`}
           />
-
           <span
-            className={`
-              w-5 h-px bg-[#e8e3d8]
-              transition-all
-              ${open ? "-translate-y-[6px] -rotate-45" : ""}
-            `}
+            className={`block w-6 h-[2px] bg-[#e8e3d8] transition-all duration-300 origin-center ${open ? "-translate-y-[8px] -rotate-45" : ""}`}
           />
         </button>
       </nav>
 
       {/* Mobile Menu */}
       <div
-        className={` fixed left-0 right-0 top-[52px]  z-40 bg-[#0f0f0f]/95 backdrop-blur-xl border-b border-[#2a2a2a] px-5 py-4 flex flex-col transition-all duration-200
+        className={` fixed left-0 right-0 top-[66px] z-40 bg-[#0f0f0f]/95 backdrop-blur-xl border-b border-[#2a2a2a] px-5 py-4 flex flex-col transition-all duration-200
 
           ${
             open

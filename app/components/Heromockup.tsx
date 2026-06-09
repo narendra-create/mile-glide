@@ -20,7 +20,7 @@ export function HeroMockup() {
         <span className="w-[7px] h-[7px] rounded-full bg-border block" />
         <span className="w-[7px] h-[7px] rounded-full bg-border block" />
         <span className="w-[7px] h-[7px] rounded-full bg-border block" />
-        <span className="font-mono text-[8px] text-ink-dim tracking-wide ml-1.5">
+        <span className="font-mono py-2 text-[8px] text-white/80 tracking-wide ml-1.5">
           freelanceos.app / project / ADH7F29K
         </span>
       </div>
@@ -28,8 +28,8 @@ export function HeroMockup() {
       {/* ── App body ── */}
       <div className="p-4">
         {/* Project title */}
-        <p className="font-serif text-[14px] text-ink mb-2.5">
-          Adhyatma Coaching Platform
+        <p className="font-serif text-[14px] lg:text-lg text-ink mb-2.5">
+          Your project Platform
         </p>
 
         {/* Stats row */}
@@ -39,11 +39,11 @@ export function HeroMockup() {
               key={s.label}
               className="bg-brand-bg border border-border px-2 py-1.5"
             >
-              <p className="font-mono text-[7px] tracking-[1px] uppercase text-ink-dim mb-0.5">
+              <p className="font-mono text-[7px] lg:text-[10px] tracking-[1px] uppercase text-ink-dim mb-0.5">
                 {s.label}
               </p>
               <p
-                className={`font-mono text-[13px] ${s.accent ? "text-accent" : "text-ink"}`}
+                className={`font-mono text-[13px] lg:text-md ${s.accent ? "text-accent" : "text-ink"}`}
               >
                 {s.value}
               </p>
@@ -52,7 +52,7 @@ export function HeroMockup() {
         </div>
 
         {/* Thread label */}
-        <p className="font-mono text-[7px] tracking-[1.5px] uppercase text-ink-dim mb-2">
+        <p className="font-mono text-[7px] lg:text-sm tracking-[1.5px] uppercase text-ink-dim mb-2">
           Milestone Thread
         </p>
 
@@ -66,7 +66,7 @@ export function HeroMockup() {
               {/* Status dot */}
               <span
                 className={[
-                  "absolute -left-[15px] top-[3px] w-[10px] h-[10px] rounded-full border-[1.5px]",
+                  "absolute -left-[15px] top-[12px] w-[10px] h-[10px] rounded-full border-[1.5px]",
                   ms.status === "paid"
                     ? "bg-[#2e7d52] border-[#2e7d52]"
                     : ms.status === "pending"
@@ -76,12 +76,12 @@ export function HeroMockup() {
               />
 
               {/* Card */}
-              <div className="bg-brand-bg border border-border px-2.5 py-1.5">
+              <div className="bg-brand-bg border border-border px-2.5 py-4">
                 <div className="flex items-center justify-between mb-0.5">
-                  <span className="font-sans text-[11px] text-ink">
+                  <span className="font-sans text-[11px] lg:text-[14px] text-ink">
                     {ms.title}
                   </span>
-                  <span className="font-mono text-[11px] text-accent">
+                  <span className="font-mono text-[11px] lg:text-[14px] text-accent">
                     {ms.amount}
                   </span>
                 </div>
@@ -89,7 +89,7 @@ export function HeroMockup() {
                 {/* Badge */}
                 <span
                   className={[
-                    "font-mono text-[6.5px] tracking-[1px] uppercase px-1.5 py-0.5 border inline-block",
+                    "font-mono text-[6.5px] lg:text-[9px] tracking-[1px] uppercase px-1.5 py-0.5 border inline-block",
                     ms.status === "paid"
                       ? "text-[#5a9e75] border-[#2e5040]"
                       : ms.status === "pending"

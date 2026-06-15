@@ -1,144 +1,439 @@
 "use client";
 import { useState } from "react";
+import { OtpInput } from "./OtpInput";
 
-// ─── Field definitions ──────────────────────────────────────────────────────────
-const fields = [
-  { id: "name",     label: "Full name",        type: "text",     placeholder: "Narendra Kumar",          autoComplete: "name" },
-  { id: "email",    label: "Email address",    type: "email",    placeholder: "you@example.com",         autoComplete: "email" },
-  { id: "password", label: "Password",         type: "password", placeholder: "Min. 8 characters",       autoComplete: "new-password" },
-  { id: "confirm",  label: "Confirm password", type: "password", placeholder: "Repeat your password",    autoComplete: "new-password" },
+// ─── freelancer specialty map ─────────────────────────────────────────────────
+const CATEGORY_OPTIONS = [
+  { value: "WEB_DEV",          label: "Web Developer" },
+  { value: "VIDEO_EDITOR",     label: "Video Editor" },
+  { value: "GRAPHIC_DESIGNER", label: "Graphic Designer" },
+  { value: "WEB_DESIGNER",     label: "Web Designer" },
+  { value: "SEO",              label: "SEO Specialist" },
 ] as const;
 
-type FieldId = (typeof fields)[number]["id"];
-type FormState = Record<FieldId, string>;
+type Category = (typeof CATEGORY_OPTIONS)[number]["value"];
 
-// ─── Component ──────────────────────────────────────────────────────────────────
+// ─── password strength ────────────────────────────────────────────────────────
+const STRENGTH_LABELS = ["Very Weak", "Weak", "Fair", "Good", "Strong"];
+const STRENGTH_COLORS = ["#c06060", "#c87840", "#c8a96e", "#9acd87", "#4a9e75"];
+
+function getStrength(pw: string): number {
+  let score = 0;
+  if (pw.length >= 8)             score++;
+  if (/[A-Z]/.test(pw))           score++;
+  if (/[a-z]/.test(pw))           score++;
+  if (/[0-9]/.test(pw))           score++;
+  if (/[^A-Za-z0-9]/.test(pw))    score++;
+  return score;
+}
+
+// ─── email regex ──────────────────────────────────────────────────────────────
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// ─── component ────────────────────────────────────────────────────────────────
 export function RegisterForm() {
-  const [form, setForm] = useState<FormState>({
-    name:     "",
-    email:    "",
-    password: "",
-    confirm:  "",
-  });
-  const [errors, setErrors]   = useState<Partial<FormState>>({});
-  const [loading, setLoading] = useState(false);
+  const [name, setName]         = useState("");
+  const [email, setEmail]       = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm]   = useState("");
+  const [role, setRole]         = useState<"freelancer" | "client" | "">("");
+  const [category, setCategory] = useState<Category | "">("");
+  const [agreed, setAgreed]     = useState(false);
 
-  // ── Validation ────────────────────────────────────────────────────────────────
+  const [errors, setErrors]       = useState<Record<string, string>>({});
+  const [termsError, setTermsError] = useState(false);
+  const [loading, setLoading]     = useState(false);
+  const [step, setStep]           = useState<"form" | "otp">("form");
+
+  // derived
+  const strength     = password.length > 0 ? getStrength(password) : 0;
+  const emailTouched = email.length > 0;
+  const emailValid   = EMAIL_RE.test(email);
+
+  // ─── validation ───────────────────────────────────────────────────────────
   function validate(): boolean {
-    const next: Partial<FormState> = {};
-    if (!form.name.trim())                                   next.name     = "Name is required.";
-    if (!form.email.includes("@"))                           next.email    = "Enter a valid email address.";
-    if (form.password.length < 8)                            next.password = "Password must be at least 8 characters.";
-    if (form.confirm !== form.password)                      next.confirm  = "Passwords do not match.";
+    const next: Record<string, string> = {};
+    if (!name.trim())                               next.name     = "Name is required.";
+    if (!emailValid)                                next.email    = "Enter a valid email address.";
+    if (password.length < 8)                        next.password = "Password must be at least 8 characters.";
+    if (confirm !== password)                       next.confirm  = "Passwords do not match.";
+    if (!role)                                      next.role     = "Please select a role.";
+    if (role === "freelancer" && !category)         next.category = "Please select your specialty.";
     setErrors(next);
+
+    if (!agreed) {
+      setTermsError(true);
+      return false;
+    }
     return Object.keys(next).length === 0;
   }
 
-  function handleChange(id: FieldId, value: string) {
-    setForm((prev) => ({ ...prev, [id]: value }));
-    if (errors[id]) setErrors((prev) => ({ ...prev, [id]: undefined }));
-  }
-
-  // ── Submit (wire your API route here) ─────────────────────────────────────────
+  // ─── submit ───────────────────────────────────────────────────────────────
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
     setLoading(true);
-    // TODO: call POST /api/auth/register
+    // await fetch("/api/auth/register", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ name, email, password, role, category }),
+    // });
     setLoading(false);
+    setStep("otp");
   }
 
+  async function handleOtpVerify(otp: string) {
+    // await fetch("/api/auth/verify-otp", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ email, otp }),
+    // });
+    console.log("otp:", otp);
+  }
+
+  // ─── otp screen ───────────────────────────────────────────────────────────
+  if (step === "otp") {
+    return (
+      <div className="w-full max-w-md mx-auto">
+
+        <div className="mb-8">
+          <p className="font-mono text-[8px] tracking-[2.5px] uppercase text-accent mb-3">
+            — Verify your email
+          </p>
+          <h1 className="font-serif text-2xl lg:text-3xl text-ink">Check your inbox.</h1>
+          <p className="font-sans text-sm text-ink-muted mt-1.5">
+            We sent a 6-digit code to{" "}
+            <span className="text-ink">{email}</span>.
+          </p>
+        </div>
+
+        <OtpInput
+          onVerify={handleOtpVerify}
+          onResend={() => { /* TODO: resend OTP call */ }}
+        />
+
+        <p className="font-sans text-[11px] text-ink-muted text-center mt-6">
+          Wrong email?{" "}
+          <button
+            onClick={() => setStep("form")}
+            className="text-accent hover:text-accent-dim duration-150 font-medium"
+          >
+            Go back
+          </button>
+        </p>
+
+      </div>
+    );
+  }
+
+  // ─── form screen ──────────────────────────────────────────────────────────
   return (
     <div className="w-full max-w-md mx-auto">
 
-      {/* Header */}
       <div className="mb-8">
         <p className="font-mono text-[8px] tracking-[2.5px] uppercase text-accent mb-3">
           — Create account
         </p>
-        <h1 className="font-serif text-2xl lg:text-3xl text-ink">
-          Start tracking.
-        </h1>
-        <p className="font-sans text-sm text-ink-muted mt-1.5">
-          Free forever. No credit card.
-        </p>
+        <h1 className="font-serif text-2xl lg:text-3xl text-ink">Start tracking.</h1>
+        <p className="font-sans text-sm text-ink-muted mt-1.5">Free forever. No credit card.</p>
       </div>
 
-      {/* Form */}
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
-        {fields.map(({ id, label, type, placeholder, autoComplete }) => (
-          <div key={id} className="flex flex-col gap-1.5">
-            <label
-              htmlFor={id}
-              className="font-mono text-[9px] tracking-[1.8px] uppercase text-[#7a7570]"
-            >
-              {label}
-            </label>
+
+        {/* name */}
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="name"
+            className="font-mono text-[9px] tracking-[1.8px] uppercase text-[#7a7570]"
+          >
+            Full name
+          </label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            placeholder="Your name"
+            autoComplete="name"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              setErrors((p) => ({ ...p, name: "" }));
+            }}
+            className={`
+              w-full bg-[#161616] border px-4 py-2.5
+              font-sans text-[13px] text-ink placeholder:text-[#3a3733]
+              focus:outline-none duration-150
+              ${errors.name
+                ? "border-[#c06060] focus:border-[#c06060]"
+                : "border-[#2a2a2a] focus:border-[#c8a96e]"
+              }
+            `}
+          />
+          {errors.name && (
+            <p className="font-sans text-[10px] text-[#c06060]">{errors.name}</p>
+          )}
+        </div>
+
+        {/* email */}
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="email"
+            className="font-mono text-[9px] tracking-[1.8px] uppercase text-[#7a7570]"
+          >
+            Email address
+          </label>
+          <div className="relative">
             <input
-              id={id}
-              name={id}
-              type={type}
-              placeholder={placeholder}
-              autoComplete={autoComplete}
-              value={form[id]}
-              onChange={(e) => handleChange(id, e.target.value)}
+              id="email"
+              name="email"
+              type="email"
+              placeholder="you@example.com"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setErrors((p) => ({ ...p, email: "" }));
+              }}
               className={`
-                w-full bg-[#161616] border px-4 py-2.5
+                w-full bg-[#161616] border px-4 py-2.5 pr-8
                 font-sans text-[13px] text-ink placeholder:text-[#3a3733]
                 focus:outline-none duration-150
-                ${errors[id]
+                ${emailTouched && !emailValid
                   ? "border-[#c06060] focus:border-[#c06060]"
+                  : emailTouched && emailValid
+                  ? "border-[#4a9e75] focus:border-[#4a9e75]"
                   : "border-[#2a2a2a] focus:border-[#c8a96e]"
                 }
               `}
             />
-            {errors[id] && (
-              <p className="font-sans text-[10px] text-[#c06060]">{errors[id]}</p>
+            {emailTouched && (
+              <span
+                className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[11px] select-none"
+                style={{ color: emailValid ? "#4a9e75" : "#c06060" }}
+              >
+                {emailValid ? "✓" : "✗"}
+              </span>
             )}
           </div>
-        ))}
+          {emailTouched && !emailValid && (
+            <p className="font-sans text-[10px] text-[#c06060]">
+              Enter a valid email address.
+            </p>
+          )}
+        </div>
 
-        {/* Role selector */}
+        {/* password */}
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="password"
+            className="font-mono text-[9px] tracking-[1.8px] uppercase text-[#7a7570]"
+          >
+            Password
+          </label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Min. 8 characters"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setErrors((p) => ({ ...p, password: "" }));
+            }}
+            className={`
+              w-full bg-[#161616] border px-4 py-2.5
+              font-sans text-[13px] text-ink placeholder:text-[#3a3733]
+              focus:outline-none duration-150
+              ${errors.password
+                ? "border-[#c06060] focus:border-[#c06060]"
+                : "border-[#2a2a2a] focus:border-[#c8a96e]"
+              }
+            `}
+          />
+
+          {/* strength meter */}
+          {password.length > 0 && (
+            <div className="flex flex-col gap-1 mt-0.5">
+              <div className="flex gap-1">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 h-[2px] duration-300"
+                    style={{
+                      background: i < strength
+                        ? STRENGTH_COLORS[strength - 1]
+                        : "#2a2a2a",
+                    }}
+                  />
+                ))}
+              </div>
+              <p
+                className="font-mono text-[9px] tracking-wide"
+                style={{ color: STRENGTH_COLORS[strength - 1] }}
+              >
+                {STRENGTH_LABELS[strength - 1]}
+              </p>
+            </div>
+          )}
+
+          {errors.password && (
+            <p className="font-sans text-[10px] text-[#c06060]">{errors.password}</p>
+          )}
+        </div>
+
+        {/* confirm password */}
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="confirm"
+            className="font-mono text-[9px] tracking-[1.8px] uppercase text-[#7a7570]"
+          >
+            Confirm password
+          </label>
+          <input
+            id="confirm"
+            name="confirm"
+            type="password"
+            placeholder="Repeat your password"
+            autoComplete="new-password"
+            value={confirm}
+            onChange={(e) => {
+              setConfirm(e.target.value);
+              setErrors((p) => ({ ...p, confirm: "" }));
+            }}
+            className={`
+              w-full bg-[#161616] border px-4 py-2.5
+              font-sans text-[13px] text-ink placeholder:text-[#3a3733]
+              focus:outline-none duration-150
+              ${errors.confirm
+                ? "border-[#c06060] focus:border-[#c06060]"
+                : "border-[#2a2a2a] focus:border-[#c8a96e]"
+              }
+            `}
+          />
+          {errors.confirm && (
+            <p className="font-sans text-[10px] text-[#c06060]">{errors.confirm}</p>
+          )}
+        </div>
+
+        {/* role */}
         <div className="flex flex-col gap-1.5">
           <p className="font-mono text-[9px] tracking-[1.8px] uppercase text-[#7a7570]">
             I am a
           </p>
           <div className="flex gap-3">
-            {(["Freelancer", "Client"] as const).map((role) => (
+            {(["Freelancer", "Client"] as const).map((r) => (
               <label
-                key={role}
-                className="flex-1 flex items-center justify-center gap-2 border border-[#2a2a2a] py-2.5 cursor-pointer duration-150 has-[:checked]:border-[#c8a96e] has-[:checked]:text-accent font-mono text-[10px] uppercase tracking-wider text-[#7a7570]"
+                key={r}
+                className={`
+                  flex-1 flex items-center justify-center gap-2 border py-2.5
+                  cursor-pointer duration-150 font-mono text-[10px] uppercase tracking-wider
+                  ${role === r.toLowerCase()
+                    ? "border-[#c8a96e] text-accent"
+                    : "border-[#2a2a2a] text-[#7a7570]"
+                  }
+                `}
               >
                 <input
                   type="radio"
                   name="role"
-                  value={role.toLowerCase()}
+                  value={r.toLowerCase()}
+                  checked={role === r.toLowerCase()}
+                  onChange={() => {
+                    setRole(r.toLowerCase() as "freelancer" | "client");
+                    setErrors((p) => ({ ...p, role: "" }));
+                  }}
                   className="sr-only"
                 />
-                {role}
+                {r}
               </label>
             ))}
           </div>
+          {errors.role && (
+            <p className="font-sans text-[10px] text-[#c06060]">{errors.role}</p>
+          )}
         </div>
 
-        {/* Terms agreement */}
-        <label className="flex items-start gap-3 cursor-pointer group">
-          <input
-            id="agree"
-            type="checkbox"
-            required
-            className="mt-0.5 accent-[#c8a96e] shrink-0 cursor-pointer"
-          />
-          <span className="font-sans text-[11px] text-ink-muted leading-snug">
-            I agree to the{" "}
-            <a href="/terms" className="text-accent hover:text-accent-dim duration-150">
-              Terms of Use
-            </a>{" "}
-            and acknowledge the Privacy Policy.
-          </span>
-        </label>
+        {/* specialty — only when freelancer */}
+        {role === "freelancer" && (
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="category"
+              className="font-mono text-[9px] tracking-[1.8px] uppercase text-[#7a7570]"
+            >
+              Your Specialty
+            </label>
+            <div className="relative">
+              <select
+                id="category"
+                name="category"
+                value={category}
+                onChange={(e) => {
+                  setCategory(e.target.value as Category);
+                  setErrors((p) => ({ ...p, category: "" }));
+                }}
+                className={`
+                  w-full bg-[#161616] border px-4 py-2.5 appearance-none
+                  font-sans text-[13px] focus:outline-none duration-150 cursor-pointer
+                  ${category ? "text-ink" : "text-[#3a3733]"}
+                  ${errors.category
+                    ? "border-[#c06060] focus:border-[#c06060]"
+                    : "border-[#2a2a2a] focus:border-[#c8a96e]"
+                  }
+                `}
+              >
+                <option value="" disabled>Select a specialty…</option>
+                {CATEGORY_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value} className="text-ink bg-[#161616]">
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+              {/* custom chevron */}
+              <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 font-mono text-[9px] text-[#7a7570]">
+                ▾
+              </span>
+            </div>
+            {errors.category && (
+              <p className="font-sans text-[10px] text-[#c06060]">{errors.category}</p>
+            )}
+          </div>
+        )}
 
-        {/* Submit */}
+        {/* terms */}
+        <div className="flex flex-col gap-1">
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              id="agree"
+              type="checkbox"
+              checked={agreed}
+              onChange={(e) => {
+                setAgreed(e.target.checked);
+                if (e.target.checked) setTermsError(false);
+              }}
+              className="mt-0.5 shrink-0 cursor-pointer"
+              style={{ accentColor: termsError ? "#c06060" : "#c8a96e" }}
+            />
+            <span
+              className={`font-sans text-[11px] leading-snug duration-150 ${
+                termsError ? "text-[#c06060]" : "text-ink-muted"
+              }`}
+            >
+              I agree to the{" "}
+              <a href="/terms" className="text-accent hover:text-accent-dim duration-150">
+                Terms of Use
+              </a>{" "}
+              and acknowledge the Privacy Policy.
+            </span>
+          </label>
+          {termsError && (
+            <p className="font-sans text-[10px] text-[#c06060] pl-6">
+              You must agree to continue.
+            </p>
+          )}
+        </div>
+
+        {/* submit */}
         <button
           type="submit"
           disabled={loading}
@@ -146,16 +441,15 @@ export function RegisterForm() {
         >
           {loading ? "Creating account…" : "Create account →"}
         </button>
+
       </form>
 
-      {/* Divider */}
       <div className="flex items-center gap-3 my-6">
         <div className="flex-1 h-px bg-[#2a2a2a]" />
         <span className="font-mono text-[8px] tracking-wider uppercase text-[#3a3733]">or</span>
         <div className="flex-1 h-px bg-[#2a2a2a]" />
       </div>
 
-      {/* Switch to login */}
       <p className="font-sans text-[11px] text-ink-muted text-center">
         Already have an account?{" "}
         <a href="/login" className="text-accent hover:text-accent-dim duration-150 font-medium">

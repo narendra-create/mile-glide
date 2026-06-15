@@ -3,7 +3,7 @@ import Image from "next/image";
 import { HeroMockup } from "./components/Heromockup";
 import { YellowButton } from "./components/Buttons/Yellowbutton";
 import { Secondbutton } from "./components/Buttons/Secondbutton";
-import { motion, stagger } from "motion/react";
+import { motion, scale, stagger } from "motion/react";
 import { Ticker } from "./components/tickeranimation";
 import { Featurecard } from "./components/Featurecard";
 import type { cardprop } from "./components/Featurecard";
@@ -138,6 +138,7 @@ export default function Home() {
         variants={staggerContainer}
         initial="hidden"
         animate="show"
+        id="home"
         className="flex flex-col lg:flex-row mt-10 lg:mt-12 justify-between lg:pr-4"
       >
         <div className="px-4 mb-8 lg:pl-26 lg:mt-14">
@@ -190,6 +191,7 @@ export default function Home() {
         initial="hidden"
       >
         <motion.div
+          id="how"
           variants={fadeUp}
           whileInView="show"
           viewport={viewPort}
@@ -215,6 +217,7 @@ export default function Home() {
             initial="hidden"
             viewport={viewPort}
             className="px-4 lg:px-16 flex flex-col lg:flex-row"
+
           >
             {features1.map((item, i) => {
               return (
@@ -237,6 +240,7 @@ export default function Home() {
           viewport={viewPort}
           initial="hidden"
           className="mt-6 border-b border-ink-muted/70 pb-12"
+          id="features"
         >
           <div className="px-4 lg:px-16 py-5 lg:py-9">
             <h3 className="font-serif italic text-sm lg:text-md font-medium text-accent/94 text-shadow-accent">
@@ -298,7 +302,8 @@ export default function Home() {
         whileInView="show"
         viewport={viewPort}
         initial="hidden"
-        className="flex flex-col lg:flex-row gap-2 w-full border-b border-ink-muted/70 "
+        className="flex flex-col lg:flex-row lg:gap-2 w-full border-b border-ink-muted/70 "
+         id="about"
       >
         <motion.div
           variants={fadeUp}
@@ -346,6 +351,147 @@ export default function Home() {
           {sidefeaturesstat.map((stat, i) => {
             return <SideFeaturecard feature={stat} key={i} />;
           })}
+        </motion.div>
+      </motion.section>
+      <motion.section
+        variants={staggerContainer}
+        whileInView="show"
+        viewport={viewPort}
+        initial="hidden"
+        id="contact"
+      >
+        <motion.div
+          variants={fadeUp}
+          whileInView="show"
+          viewport={viewPort}
+          initial="hidden"
+          className="mt-6 border-b border-ink-muted/70 mb-12 pb-8 lg:pb-12"
+        >
+          <div className="px-4 lg:px-16 py-5 lg:py-9 flex flex-col lg:gap-68 lg:flex-row">
+            <div>
+              <h3 className="font-serif italic text-sm lg:text-md font-medium text-accent/94 text-shadow-accent">
+                04 — Contact
+              </h3>
+              <div className="font-serif text-xl lg:text-2xl lg:flex lg:flex-col lg:gap-2 my-2">
+                <h2>Get in touch.</h2>
+              </div>
+              <p className="text-ink-muted text-[12px] lg:text-[18px] font-sans max-w-82 lg:max-w-176">
+                Have a question, a bug, or want to suggest a feature? Reach out
+                directly this is a tool with a real person behind it.
+              </p>
+            </div>
+            <div>
+              <div className="lg:my-6 my-3 text-center">
+                <h4 className="text-ink-muted font-mono text-sm lg:text-md">
+                  RESPONSE TIME
+                </h4>
+                <h4 className="text-ink font-serif text-md lg:text-lg">
+                  Within 24 - 48 hours
+                </h4>
+              </div>
+              <div className="w-full justify-center flex">
+                <a
+                  href="mailto:namanworkplace@gmail.com"
+                  className="decoration-0 px-6 rounded-md transition-all ease-in-out duration-150 w-44 lg:w-42 text-center text-[11px] lg:text-[16px] text-black bg-accent lg:px-4 py-2.5 border hover:bg-accent-dim focus:bg-accent-dim font-bold border-accent"
+                >
+                  Click to Email ↪
+                </a>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </motion.section>
+      <motion.section
+        variants={staggerContainer}
+        initial="hidden"
+        viewport={viewPort}
+        whileInView="show"
+      >
+        <motion.div
+          variants={staggerContainer}
+          whileInView="show"
+          viewport={viewPort}
+          initial="hidden"
+          className="mt-6 pb-10"
+          id="privacy-policy"
+        >
+          <div className="px-4 lg:px-16 py-5 lg:py-9">
+            <motion.h3
+              variants={scaleIn}
+              className="font-serif italic text-sm lg:text-md font-medium text-accent/94 text-shadow-accent"
+            >
+              05 — Privacy policy
+            </motion.h3>
+            <div className="flex flex-col lg:grid lg:grid-cols-2">
+              <div>
+                <div className="font-serif text-xl lg:text-2xl lg:flex lg:flex-col lg:gap-2 my-2">
+                  <motion.h2 variants={fadeRight}>Data we collect</motion.h2>
+                </div>
+                <motion.p
+                  variants={scaleIn}
+                  className="text-ink-muted text-[12px] lg:text-[18px] font-sans max-w-82 lg:max-w-176"
+                >
+                  We collect only what's necessary to run the service - your
+                  name, email adress, and the project/milestone data you create.
+                  No tracking pixels, no analytics that follow you across
+                  websites.
+                </motion.p>
+              </div>
+              <div>
+                <div className="font-serif text-xl lg:text-2xl lg:flex lg:flex-col lg:gap-2 my-2">
+                  <motion.h2 variants={fadeRight}>How we use it</motion.h2>
+                </div>
+                <motion.p
+                  variants={scaleIn}
+                  className="text-ink-muted text-[12px] lg:text-[18px] font-sans max-w-82 lg:max-w-176"
+                >
+                  Your data is used solely to operate your account and projects,
+                  We do not sell, rent, or share your information with any third
+                  party for marketing purpose.
+                </motion.p>
+              </div>
+              <div>
+                <div className="font-serif text-xl lg:text-2xl lg:flex lg:flex-col lg:gap-2 my-2">
+                  <motion.h2 variants={fadeRight}>Storage</motion.h2>
+                </div>
+                <motion.p
+                  variants={scaleIn}
+                  className="text-ink-muted text-[12px] lg:text-[18px] font-sans max-w-82 lg:max-w-176"
+                >
+                  All data is stored in PostgreSQL database hosted on Neon.
+                  Passwords are hashed using bcrypt. UPI transaction IDs are
+                  stored as plain text for payment verification purposes only.
+                </motion.p>
+              </div>
+              <div>
+                <div className="font-serif text-xl lg:text-2xl lg:flex lg:flex-col lg:gap-2 my-2">
+                  <motion.h2 variants={fadeRight}>Third parties</motion.h2>
+                </div>
+                <motion.p
+                  variants={scaleIn}
+                  className="text-ink-muted text-[12px] lg:text-[18px] font-sans max-w-82 lg:max-w-176"
+                >
+                  We use Resend for transactional email (OTPs, notifications).
+                  No advertising networks, no social media trackers, no
+                  third-party analytics are present on this platform, only
+                  vercel analytics for improving out service.
+                </motion.p>
+              </div>
+              <div>
+                <div className="font-serif text-xl lg:text-2xl lg:flex lg:flex-col lg:gap-2 my-2">
+                  <motion.h2 variants={fadeRight}>Your rights</motion.h2>
+                </div>
+                <motion.p
+                  variants={scaleIn}
+                  className="text-ink-muted text-[12px] lg:text-[18px] font-sans max-w-82 lg:max-w-176"
+                >
+                  You can request deletion of your account and all associated
+                  data at any time by emailing (click email us button above).
+                  Data deletion is processed within 7 business days.
+                </motion.p>
+              </div>
+            </div>
+          </div>
         </motion.div>
       </motion.section>
     </main>

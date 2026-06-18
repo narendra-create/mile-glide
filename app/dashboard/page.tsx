@@ -7,7 +7,7 @@ export default async function DashboardPage() {
     headers: await headers(),
   });
 
-  console.log("Dashboard session user:", session?.user);
+  // console.log("Dashboard session user:", session?.user);
 
   if (session?.user.role === "FREELANCER") {
     redirect("/freelancer/dashboard");

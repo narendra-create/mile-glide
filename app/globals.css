@@ -12,6 +12,10 @@
   --color-brand-bg: #0f0f0f;
   --color-brand-surface: #161616;
   --color-brand-surface2: #1d1d1d;
+  --gold: #c8a96e;
+  --gold-dim: #9c7d45;
+  --gold-glow: rgba(200, 169, 110, 0.08);
+  --gold-glow2: rgba(200, 169, 110, 0.15);
 
   /* BORDER */
   --color-border: #2a2a2a;
@@ -50,6 +54,33 @@
   --color-status-danger-bg: rgba(192, 96, 96, 0.08);
   --color-status-danger-border: #5a2020;
   --color-status-danger-text: #c06060;
+
+  /* DASHBOARD COLORS (Prefixed with dash- to avoid collisions) */
+  --color-dash-bg: #0d0d0d;
+  --color-dash-surface1: #141414;
+  --color-dash-surface2: #1a1a1a;
+  --color-dash-surface3: #222222;
+  --color-dash-border: #2c2c2c;
+  --color-dash-border-hover: #383838;
+  
+  --color-dash-gold: #c8a96e;
+  --color-dash-gold-dim: #9c7d45;
+  --color-dash-gold-glow: rgba(200, 169, 110, 0.08);
+  --color-dash-gold-glow2: rgba(200, 169, 110, 0.15);
+  
+  --color-dash-ink: #e8e3d8;
+  --color-dash-ink2: #c4bcb1;
+  --color-dash-ink3: #7a7570;
+  --color-dash-ink4: #4a4540;
+  
+  --color-dash-green: #4a9e75;
+  --color-dash-green-bg: rgba(74, 158, 117, 0.1);
+  --color-dash-amber: #c87840;
+  --color-dash-amber-bg: rgba(200, 120, 64, 0.1);
+  --color-dash-red: #c06060;
+  --color-dash-red-bg: rgba(192, 96, 96, 0.09);
+
+  --ease-dash-custom: cubic-bezier(.4, 0, .2, 1);
 
   /* FONTS */
   --font-serif: var(--font-serif), Georgia, serif;

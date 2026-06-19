@@ -3,7 +3,7 @@ import type { LucideIcon } from "lucide-react";
 
 export type statcardprop = {
   icon: LucideIcon;
-  trendtype: "SUCCESS" | "NEUTRAL" | "WARNING"| "MONEY";
+  trendtype: "SUCCESS" | "NEUTRAL" | "WARNING" | "MONEY";
   trendtext: string;
   statnumber: string;
   supporttext1: string;
@@ -40,7 +40,7 @@ const StatCardFreelancer = ({ prop }: cardprop) => {
   const Icon = prop.icon;
 
   return (
-    <section className="border border-dash-border rounded-lg w-full h-full flex flex-col gap-2 p-5">
+    <section className="hover:bg-dash-surface2 hover:border-t-dash-gold hover:border-t-2 transition-all ease-in-out duration-200 border bg-dash-surface1 hover: border-dash-border rounded-lg w-full h-full flex flex-col gap-2 p-5">
       <div className="flex flex-row w-full justify-between items-center">
         <div
           className={`${trendcolors[prop.trendtype].iconbg} text-md flex items-center justify-center w-10 h-10 rounded-xl`}

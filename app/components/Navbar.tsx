@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { authClient } from "../lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -16,6 +16,7 @@ const links = [
 ];
 
 const Navbar = () => {
+  const [mounted, setmounted] = useState(false);
   const [open, setopen] = useState(false);
   const router = useRouter();
   const { data: session } = authClient.useSession();
@@ -31,6 +32,10 @@ const Navbar = () => {
       router.push("/register");
     }
   };
+
+  useEffect(() => {
+    setmounted(true);
+  }, []);
 
   return (
     <>
@@ -99,7 +104,7 @@ const Navbar = () => {
           no-underline
         "
           >
-            {session?.user ? "Logout" : "Get Started →"}
+            {mounted && session?.user ? "Logout" : "Get Started →"}
           </button>
           <button
             onClick={() => {
@@ -174,7 +179,7 @@ ${!session?.user && "md:hidden"}
             no-underline
           "
         >
-          {session?.user ? "Logout" : "Get Started →"}
+          {mounted && session?.user ? "Logout" : "Get Started →"}
         </button>
         <button
           onClick={() => {

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Home, LayoutDashboard, Briefcase, CreditCard, MessageSquare, Settings } from 'lucide-react';
 
 interface SidebarProps {
   activePath?: string;
@@ -38,12 +39,12 @@ export function ClientSidebar({ activePath = '/overview' }: SidebarProps) {
             Menu
           </div>
           
-          <NavLink href="/" icon="🛖" label="Home" isActive={activePath === '/'} />
-          <NavLink href="/overview" icon="⊞" label="Overview" isActive={activePath === '/overview'} />
-          <NavLink href="/my-projects" icon="📁" label="My Projects" badge={4} isActive={activePath === '/my-projects'} />
-          <NavLink href="/payments" icon="💳" label="Payments" badge={2} isActive={activePath === '/payments'} />
-          <NavLink href="/messages" icon="✉️" label="Messages" badge={3} isActive={activePath === '/messages'} />
-          <NavLink href="/settings" icon="⚙️" label="Settings" isActive={activePath === '/settings'} />
+          <NavLink href="/" icon={Home} label="Home" isActive={activePath === '/'} />
+          <NavLink href="/overview" icon={LayoutDashboard} label="Overview" isActive={activePath === '/overview'} />
+          <NavLink href="/my-projects" icon={Briefcase} label="My Projects" badge={4} isActive={activePath === '/my-projects'} />
+          <NavLink href="/payments" icon={CreditCard} label="Payments" badge={2} isActive={activePath === '/payments'} />
+          <NavLink href="/messages" icon={MessageSquare} label="Messages" badge={3} isActive={activePath === '/messages'} />
+          <NavLink href="/settings" icon={Settings} label="Settings" isActive={activePath === '/settings'} />
         </nav>
 
         <div className="hidden md:flex mt-auto items-center gap-2.5 border-t border-dash-border p-[14px_20px]">
@@ -63,7 +64,7 @@ export function ClientSidebar({ activePath = '/overview' }: SidebarProps) {
   );
 }
 
-function NavLink({ href, icon, label, badge, isActive }: { href: string, icon: string, label: string, badge?: number, isActive: boolean }) {
+function NavLink({ href, icon: Icon, label, badge, isActive }: { href: string, icon: React.ElementType, label: string, badge?: number, isActive: boolean }) {
   return (
     <Link 
       href={href} 
@@ -84,7 +85,9 @@ function NavLink({ href, icon, label, badge, isActive }: { href: string, icon: s
       )}
       
       <div className="relative flex items-center justify-center md:block md:w-auto">
-        <span className="shrink-0 text-center text-[1.7rem] md:w-4 md:text-[0.9rem] block">{icon}</span>
+        <span className="shrink-0 flex justify-center items-center h-[2rem] md:w-4 md:h-auto">
+          <Icon className="w-[24px] h-[24px] md:w-[16px] md:h-[16px] stroke-[1.5]" />
+        </span>
         {/* Mobile Badge */}
         {badge !== undefined && (
           <span className="absolute -right-3 -top-1 flex h-[14px] min-w-[14px] items-center justify-center rounded-full bg-dash-gold-glow2 px-1 font-mono text-[8px] text-dash-gold md:hidden">

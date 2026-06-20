@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Home } from "lucide-react";
+import { Home, LayoutDashboard, History, MessageSquare, Settings } from "lucide-react";
 
 interface SidebarProps {
   activePath?: string;
@@ -48,32 +48,32 @@ export function FreelancerSidebar({ activePath = "/dashboard" }: SidebarProps) {
 
           <NavLink
             href="/"
-            icon="🛖"
+            icon={Home}
             label="Home"
             isActive={activePath === "/freelancer/"}
           />
           <NavLink
             href="/overview"
-            icon="⊞"
+            icon={LayoutDashboard}
             label="Overview"
             isActive={activePath === "/freelancer/dashboard"}
           />
           <NavLink
             href="/past-projects"
-            icon="🕛"
+            icon={History}
             label="Past Projects"
             isActive={activePath === "/freelancer/past-projects"}
           />
           <NavLink
             href="/messages"
-            icon="✉️"
+            icon={MessageSquare}
             label="Messages"
             badge={2}
             isActive={activePath === "/freelancer/messages"}
           />
           <NavLink
             href="/settings"
-            icon="⚙️"
+            icon={Settings}
             label="Settings"
             isActive={activePath === "/freelancer/settings"}
           />
@@ -91,13 +91,13 @@ export function FreelancerSidebar({ activePath = "/dashboard" }: SidebarProps) {
 
 function NavLink({
   href,
-  icon,
+  icon: Icon,
   label,
   badge,
   isActive,
 }: {
   href: string;
-  icon: string;
+  icon: React.ElementType;
   label: string;
   badge?: number;
   isActive: boolean;
@@ -122,8 +122,8 @@ function NavLink({
       )}
 
       <div className="relative flex items-center justify-center md:block md:w-auto">
-        <span className="shrink-0 text-center text-[1.9rem] md:w-4 md:text-[0.9rem] block">
-          {icon}
+        <span className="shrink-0 flex justify-center items-center h-[2rem] md:w-4 md:h-auto">
+          <Icon className="w-[24px] h-[24px] md:w-[16px] md:h-[16px] stroke-[1.5]" />
         </span>
         {/* Mobile Badge */}
         {badge !== undefined && (

@@ -4,7 +4,7 @@ import { AvatarInitials } from "../Initials";
 
 export const CurrentClientcard = () => {
   return (
-    <section className="flex flex-col bg-dash-surface1 rounded-lg border border-dash-border hover:border-dash-border-hover hover:bg-dash-surface1/20 transition-all ease-in-out duration-200 p-5">
+    <section className="flex flex-col bg-dash-surface1 rounded-md border border-dash-border hover:border-brand-surface hover:bg-dash-surface1/20 transition-all ease-in-out duration-200 p-5 lg:p-4">
       <div className="flex justify-between">
         <div className="flex gap-3 items-top">
           <div className="mt-1">
@@ -38,7 +38,7 @@ export const CurrentClientcard = () => {
           <p className="text-sm text-ink-muted font-sans">REMAINING</p>
         </div>
       </div>
-      <div className="mt-4 mb-1 lg:mt-2">
+      <div className="mt-1.5 lg:mt-1.5">
         <ClientProgressBar
           dueDate="22 June"
           milestonesCompleted={5}
@@ -53,7 +53,7 @@ export const CurrentClientcard = () => {
 
 export const Dummycard = () => {
   return (
-    <section className="bg-dash-surface1 flex flex-col border border-dashed border-dash-border text-ink-muted h-full w-full items-center justify-center rounded-md p-5">
+    <section className="bg-dash-surface1 hover:bg-dash-surface1/30 transition-all ease-in-out duration-200 hover:text-dash-ink4 flex flex-col border border-dashed border-dash-border text-ink-muted/60 h-full w-full items-center justify-center rounded-md p-5">
       <h3>+</h3>
       <h3>New Project</h3>
     </section>

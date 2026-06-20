@@ -4,34 +4,41 @@ import { AvatarInitials } from "../Initials";
 
 export const CurrentClientcard = () => {
   return (
-    <section className="flex flex-col bg-dash-surface1 rounded-md p-5">
+    <section className="flex flex-col bg-dash-surface1 rounded-lg border border-dash-border hover:border-dash-border-hover hover:bg-dash-surface1/20 transition-all ease-in-out duration-200 p-5">
       <div className="flex justify-between">
         <div className="flex gap-3 items-top">
           <div className="mt-1">
             <AvatarInitials initials="TN" variant="gold" />
           </div>
           <div className="flex flex-col">
-            <h3>TechMart Inc.</h3>
-            <p>E-COMMERCE PLATFORM</p>
+            <h3 className="font-serif text-lg lg:text-md text-gray-300 text-shadow-2xs text-shadow-accent">
+              TechMart Inc.
+            </h3>
+            <p className="text-[11px] lg:text-[9px] font-sans text-ink-muted">
+              E-COMMERCE PLATFORM
+            </p>
           </div>
         </div>
-        <div>• Active</div>
-      </div>
-      <div className="flex">
-        <div className="flex items-center justify-center">
-          <h3>₹85K</h3>
-          <p>VALUE</p>
-        </div>
-        <div className="flex items-center justify-center">
-          <h3>₹55K</h3>
-          <p>RECEIVED</p>
-        </div>
-        <div className="flex items-center justify-center">
-          <h3>₹30K</h3>
-          <p>REMAINING</p>
+        <div className="bg-dash-green-bg gap-1.5 text-dash-green/70 font-sans font-semibold text-[12px] rounded-full flex items-center justify-center px-3 h-6">
+          <span className="font-bold text-lg">•</span>
+          <span>Active</span>
         </div>
       </div>
-      <div>
+      <div className="flex justify-evenly my-3">
+        <div className="flex flex-col items-center justify-center">
+          <h3 className="text-lg text-accent font-serif">₹85K</h3>
+          <p className="text-sm text-ink-muted font-sans">VALUE</p>
+        </div>
+        <div className="flex flex-col items-center justify-center">
+          <h3 className="text-lg text-dash-green font-serif">₹55K</h3>
+          <p className="text-sm text-ink-muted font-sans">RECEIVED</p>
+        </div>
+        <div className="flex flex-col items-center justify-center">
+          <h3 className="text-lg text-dash-amber font-serif">₹30K</h3>
+          <p className="text-sm text-ink-muted font-sans">REMAINING</p>
+        </div>
+      </div>
+      <div className="mt-4 mb-1 lg:mt-2">
         <ClientProgressBar
           dueDate="22 June"
           milestonesCompleted={5}

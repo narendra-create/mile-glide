@@ -30,8 +30,8 @@ export function ClientProgressBar({
   return (
     <div className="w-full">
       {/* Top Label */}
-      <div className="flex items-center justify-between mb-[5px] font-mono text-[7px] tracking-[1px] uppercase text-dash-ink4">
-        Progress <span className="text-dash-ink3">{progress}%</span>
+      <div className="flex items-center justify-between mb-[5px] font-mono text-[10px] tracking-[1px] uppercase text-ink/60">
+        Progress <span className="text-ink">{progress}%</span>
       </div>
 
       {/* Progress Track */}
@@ -44,10 +44,10 @@ export function ClientProgressBar({
 
       {/* Bottom Information */}
       <div className="flex justify-between mt-[10px]">
-        <span className="font-mono text-[7px] text-dash-ink4">
+        <span className="font-mono text-[9px] text-ink-dim">
           {milestonesCompleted} of {totalMilestones} milestones
         </span>
-        <span className="font-mono text-[7px] text-dash-amber">
+        <span className="font-mono text-[9px] font-semibold text-dash-amber">
           Due {dueDate}
         </span>
       </div>

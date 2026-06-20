@@ -147,23 +147,27 @@ const Dashboard = () => {
         viewport={viewPort}
         initial="hidden"
         variants={staggerContainer}
+        className="flex flex-col lg:flex-row justify-center gap-3"
       >
-        <div>
-          <h3>Active clients</h3>
-          <h4>View all →</h4>
-        </div>
-        <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2">
-          {[1, 2, 3, 4].map((item) => {
-            return (
-              <motion.div key={item}>
-                <CurrentClientcard />
-              </motion.div>
-            );
-          })}
-          <div className="w-full h-full">
-            <Dummycard />
+        <div className="lg:w-[75%]">
+          <div>
+            <h3>Active clients</h3>
+            <h4>View all →</h4>
+          </div>
+          <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2">
+            {[1, 2, 3, 4].map((item) => {
+              return (
+                <motion.div key={item}>
+                  <CurrentClientcard />
+                </motion.div>
+              );
+            })}
+            <div className="w-full h-full">
+              <Dummycard />
+            </div>
           </div>
         </div>
+        <div className="lg:w-[25%]">djf</div>
       </motion.section>
     </motion.main>
   );

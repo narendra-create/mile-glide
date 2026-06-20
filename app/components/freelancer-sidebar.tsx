@@ -12,7 +12,7 @@ export function FreelancerSidebar({ activePath = "/dashboard" }: SidebarProps) {
       <aside
         className={`fixed z-50 flex bg-dash-surface1 transition-transform duration-200 ease-dash-custom
         bottom-0 left-0 w-full flex-row border-t border-dash-border
-        md:top-0 md:h-screen md:w-[20%] md:flex-col md:border-r md:border-t-0 md:translate-x-0`}
+        md:top-0 md:h-screen md:w-[15%] md:flex-col md:border-r md:border-t-0 md:translate-x-0`}
       >
         <div className="hidden md:flex relative items-center gap-2.5 border-b border-dash-border p-[22px_20px_18px]">
           <div className="grid h-8 w-8 shrink-0 place-items-center rounded bg-dash-gold-glow2 border border-[rgba(200,169,110,0.25)] font-serif text-[1rem] text-dash-gold">
@@ -42,7 +42,7 @@ export function FreelancerSidebar({ activePath = "/dashboard" }: SidebarProps) {
         </div>
 
         <nav className="flex w-full flex-row items-center justify-between px-1 py-0 md:flex-1 md:flex-col md:items-stretch md:justify-start md:p-[12px_10px] overflow-y-auto">
-          <div className="hidden md:block p-[8px_10px_5px] font-mono text-[7px] uppercase tracking-[2px] text-dash-ink4">
+          <div className="hidden md:block p-[8px_10px_5px] font-mono text-[10px] uppercase tracking-[2px] text-ink-dim">
             Menu
           </div>
 
@@ -78,12 +78,6 @@ export function FreelancerSidebar({ activePath = "/dashboard" }: SidebarProps) {
             isActive={activePath === "/freelancer/settings"}
           />
         </nav>
-
-        <div className="hidden md:block border-t border-dash-border p-[14px_20px]">
-          <div className="font-mono text-[8px] tracking-[1px] text-dash-ink3">
-            <span className="text-dash-gold">★★★★★</span> 4.9 · 128 reviews
-          </div>
-        </div>
       </aside>
     </>
   );

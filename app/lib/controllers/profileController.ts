@@ -31,3 +31,13 @@ export const addprofile = async (
 
   return { success: false };
 };
+
+export const getProfile = async (role: string, email: string) => {
+  if (role === "client") {
+    const foundclient = 
+  }
+  if (role === "freelancer") {
+
+  }
+  return { success: false };
+}

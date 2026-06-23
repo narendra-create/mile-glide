@@ -12,6 +12,9 @@ export const getClientStat = async (freelancerid: string) => {
 }
 
 export const getCurrentProjects = async (freelancerid: string, cursor?: string) => {
+    if (!freelancerid) {
+        return { success: false, error: "Invalid freelancer id", status: 400 }
+    }
     const result = await prisma.project.findMany({
         take: 4,
         ...(cursor && { cursor: { id: cursor }, skip: 1 }),
@@ -97,6 +100,6 @@ export const getCurrentProjects = async (freelancerid: string, cursor?: string) 
 
     });
     const nextCursor = projects.length === 4 ? projects[projects.length - 1].id : null;
-    
+
     return { success: true, projects: projects, nextCursor }
 }

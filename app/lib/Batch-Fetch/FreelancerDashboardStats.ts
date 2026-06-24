@@ -1,9 +1,10 @@
 import { getFreelancerProfile } from "../controllers/profileController";
-import { getCurrentProjects, getClientStat } from "../controllers/clientController";
+import { getCurrentProjects, getClientStat, getMoneyStats, getRavnuechartStats } from "../controllers/clientController";
 //getclientstat for getting number of clients serving or served, getprofile for getting freelancer id
 import { requireRole } from "../require-role";
+import type { DashboardStatsResponse } from "@/types/dashboard";
 
-export const getDashboardStats = async () => {
+export const getDashboardStats = async (): Promise<DashboardStatsResponse> => {
     const { session, error, status } = await requireRole("freelancer");
     if (!session && error) {
         return {
@@ -20,9 +21,11 @@ export const getDashboardStats = async () => {
     };
 
     try {
-        const [clientCount, projectsResult] = await Promise.all([
+        const [clientCount, projectsResult, moneyresult, ravenuedata] = await Promise.all([
             getClientStat(freelancerId),
-            getCurrentProjects(freelancerId)
+            getCurrentProjects(freelancerId),
+            getMoneyStats(freelancerId),
+            getRavnuechartStats(freelancerId)
         ]);
 
         return {
@@ -32,6 +35,18 @@ export const getDashboardStats = async () => {
                 image: profile.image,
                 skill: profile.Freelancer?.category,
                 clientCount,
+                moneyStats: {
+                    activeprojects: moneyresult.stats?.activeprojects!,
+                    currentmonthearning: moneyresult.stats?.currentmonthearning!,
+                    due: moneyresult?.stats?.due!,
+                    lifetimeearning: moneyresult?.stats?.lifetimeearning!,
+                    trendpercentage: moneyresult?.stats?.trendpercentage!,
+                    pendingcount: moneyresult?.stats?.pendingcount!
+                },
+                ravenuechartdata: {
+                    monthly: ravenuedata.monthly!,
+                    weekly: ravenuedata.weekly!
+                },
                 projects: projectsResult.success ? projectsResult.projects : [],
                 nextCursor: projectsResult.success ? projectsResult.nextCursor : null,
             }

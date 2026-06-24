@@ -103,3 +103,61 @@ export const getCurrentProjects = async (freelancerid: string, cursor?: string) 
 
     return { success: true, projects: projects, nextCursor }
 }
+
+export const getMoneyStats = async (freelancerId: string) => {
+    if (!freelancerId) {
+        return { success: false, error: "Invalid freelancer id", status: 400 }
+    };
+    const freelancerFound = await prisma.freelancer.findUnique({
+        where: { id: freelancerId },
+        select: {
+            id: true
+        }
+    });
+
+    if (!freelancerFound) return { success: false, error: "Freelancer Not found", status: 404 };
+
+    const paymentsfound = await prisma.payment.aggregate({
+        where: { project: { freelancerId: freelancerFound.id } },
+        _sum: {
+            total_cost: true,
+            paid_amount: true
+        }
+    });
+
+    const lifetimeDue = Math.max(0,
+        (paymentsfound._sum.total_cost ?? 0) - (paymentsfound._sum.paid_amount ?? 0)
+    );
+
+    const payments = await prisma.payment.findMany({
+        where: {
+            project: { freelancerId: freelancerFound.id },
+            payment_status: "PAID"
+        },
+        select: {
+            paid_amount: true,
+            createdAt: true
+        }
+    });
+
+    const lifetimeEarned = payments.reduce((sum, p) => sum + p.paid_amount, 0);
+    const now = new Date();
+    const thisMonthEarned = payments.filter(p =>
+        p.createdAt.getMonth() === now.getMonth() &&
+        p.createdAt.getFullYear() === now.getFullYear()
+    ).reduce((sum, p) => sum + p.paid_amount, 0);
+
+    const projectscount = await prisma.project.count({
+        where: { freelancerId: freelancerFound.id, status: { not: "COMPLETED" } }
+    });
+
+    return {
+        success: true,
+        stats: {
+            due: lifetimeDue,
+            activeprojects: projectscount,
+            currentmonthearning: thisMonthEarned,
+            lifetimeearning: lifetimeEarned
+        }
+    }
+}

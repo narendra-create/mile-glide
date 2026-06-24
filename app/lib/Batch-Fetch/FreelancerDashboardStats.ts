@@ -1,7 +1,6 @@
 import { getFreelancerProfile } from "../controllers/profileController";
 import { getCurrentProjects, getClientStat } from "../controllers/clientController";
 //getclientstat for getting number of clients serving or served, getprofile for getting freelancer id
-import { auth } from "@/auth";
 import { requireRole } from "../require-role";
 
 export const getDashboardStats = async () => {

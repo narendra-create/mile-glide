@@ -53,7 +53,7 @@ export function FreelancerSidebar({ activePath = "/dashboard" }: SidebarProps) {
             isActive={activePath === "/freelancer/"}
           />
           <NavLink
-            href="/overview"
+            href="/dashboard"
             icon={LayoutDashboard}
             label="Overview"
             isActive={activePath === "/freelancer/dashboard"}

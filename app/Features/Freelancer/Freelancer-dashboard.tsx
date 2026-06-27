@@ -21,11 +21,35 @@ import {
 } from "@/app/lib/animations";
 import RavenueChart from "@/app/components/FreelancerChart";
 import { FreelancerDashboardData } from "@/types/dashboard";
+import type { LoadMoreResult } from "@/types/dashboard";
+import { useState } from "react";
 
-const FreelancerDashboard = ({ data }: { data: FreelancerDashboardData }) => {
+const FreelancerDashboard = ({
+  data,
+  loadmore,
+}: {
+  data: FreelancerDashboardData;
+  loadmore: (nextcursor: string) => Promise<LoadMoreResult>;
+}) => {
+  const [Projects, setProjects] = useState<LoadMoreResult>([]);
+  const [loading, setloading] = useState(false);
+
   const viewPort = {
     once: true,
     amount: 0.2,
+  };
+
+  const loadmoreclientfunction = async (nextcursor: string) => {
+    setloading(true);
+    try {
+      const result = await loadmore(nextcursor);
+      setProjects((prev) => [...prev, ...result]);
+    } catch (err) {
+      console.log(err);
+      return;
+    } finally {
+      setloading(false);
+    }
   };
 
   const stats: statcardprop[] = [
@@ -166,6 +190,24 @@ const FreelancerDashboard = ({ data }: { data: FreelancerDashboardData }) => {
             <div className="w-full h-43">
               <Dummycard />
             </div>
+          </motion.div>
+          {/* Load More button */}
+          <motion.div
+            variants={fadeUp}
+            whileInView="show"
+            initial="hidden"
+            viewport={viewPort}
+            className="col-span-2 flex justify-center mt-2 mb-1"
+          >
+            <button
+              type="button"
+              className="group flex items-center gap-2 px-6 py-2.5 rounded-full border border-dash-border bg-dash-surface1 text-ink-muted text-[13px] font-sans transition-all duration-200 hover:border-brand-surface hover:text-ink hover:bg-dash-surface1/60 active:scale-95"
+            >
+              <span className="transition-transform duration-200 group-hover:translate-y-0.5">
+                ↓
+              </span>
+              Load more projects
+            </button>
           </motion.div>
         </div>
         <motion.div variants={fadeLeft} className="lg:w-[25%] mt-1">

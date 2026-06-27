@@ -1,3 +1,4 @@
+"use server";
 import { getFreelancerProfile } from "../controllers/profileController";
 import { getCurrentProjects, getClientStat, getMoneyStats, getRavnuechartStats } from "../controllers/clientController";
 //getclientstat for getting number of clients serving or served, getprofile for getting freelancer id

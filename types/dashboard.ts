@@ -50,6 +50,36 @@ export type DashboardProject = {
   stats: ProjectStats;
 };
 
+export type LoadMoreProjectsResponse =
+  | { success: true; projects: DashboardProject[]; nextcursor: string | null }
+  | { success: false; error: string; status: number };
+
+// Shape returned by the loadmore wrapper in page.tsx (always an array, errors handled internally)
+export type LoadMoreResultItem = {
+  id: string;
+  title: string;
+  client: {
+    user: {
+      name: string;
+      image: string | null;
+    };
+  };
+  money: {
+    totalAmount: number;
+    received: number;
+    remaining: number;
+  };
+  status: Projectstatus;
+  stats: {
+    totalMilestones: number;
+    completedMilestones: number;
+    progress: number;
+    projectDeadline: Date | undefined;
+  };
+};
+
+export type LoadMoreResult = LoadMoreResultItem[];
+
 // Full dashboard data (success response)
 export type FreelancerDashboardData = {
   name: string;

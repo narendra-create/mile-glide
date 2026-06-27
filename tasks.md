@@ -26,3 +26,8 @@
 - [ ] ADDITIONAL: Set up email notifications or in-app alerts for milestone status changes
 - [ ] ADDITIONAL: Implement automated reminders for pending payments
 - [ ] ADDITIONAL: Add role-based access control (RBAC) checks on all sensitive API routes
+- [x] UI: Create Past Projects component with reusable cards for completed projects
+- [ ] API/REALDATA: Fetch completed projects and map data to PastProjects component
+- [ ] WIREUP: Integrate PastProjects component into Freelancer and Client dashboard views
+- [ ] UI: Add pagination or "Load More" functionality to Past Projects list
+- [ ] UI: Implement filtering or sorting options for Past Projects (e.g., by date or cost)

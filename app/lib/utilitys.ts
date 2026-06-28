@@ -37,3 +37,24 @@ export function formatMoney(amount: number) {
 
     return amount.toString();
 }
+type DateInput = Date | string | number | null | undefined;
+
+export function formatDate(
+    date: DateInput,
+    options: Intl.DateTimeFormatOptions = {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    },
+    locale = "en-GB"
+): string {
+    if (!date) return "";
+
+    const parsedDate = new Date(date);
+
+    if (isNaN(parsedDate.getTime())) {
+        return "";
+    }
+
+    return new Intl.DateTimeFormat(locale, options).format(parsedDate);
+}

@@ -25,7 +25,7 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL("/unauthorized", req.url));
   }
   //if already logged in and trying to login again
-  if (pathname.startsWith("/login") || pathname.startsWith("/register") && user) {
+  if ((pathname.startsWith("/login") || pathname.startsWith("/register")) && user) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 

@@ -202,7 +202,7 @@ enum userrole {
 
 enum Projectstatus {
   COMPLETED
-  ACITVE
+  ACTIVE
   PENDING
   STOPPED
   CANCELLED

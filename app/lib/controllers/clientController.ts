@@ -20,7 +20,7 @@ export const getCurrentProjects = async (freelancerid: string, cursor?: string) 
         ...(cursor && { cursor: { id: cursor }, skip: 1 }),
         where: {
             freelancerId: freelancerid, status: {
-                not: "COMPLETED"
+                in: ["ACTIVE", "STOPPED"]
             }
         },
         select: {

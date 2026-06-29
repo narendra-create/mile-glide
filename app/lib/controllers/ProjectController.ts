@@ -59,7 +59,7 @@ export const getPastProjects = async (role: userrole, profileid: string, cursor?
             const result = await prisma.project.findMany({
                 take: 10,
                 ...(cursor && { cursor: { id: cursor }, skip: 1 }),
-                where: { clientId: profileid, status: "COMPLETED" },
+                where: { clientId: profileid, status: { in: ["COMPLETED", "CANCELLED"] } },
                 select: {
                     id: true,
                     freelancer: { select: { user: { select: { name: true, email: true } } } },
@@ -160,7 +160,8 @@ export const acceptProject = async (clientEmail: string, projectCode: string) =>
             data: {
                 clientEmail: clientProfile.user.email,
                 clientId: clientProfile.id,
-                projectcode: null
+                projectcode: null,
+                status: "ACTIVE"
             }
         });
 

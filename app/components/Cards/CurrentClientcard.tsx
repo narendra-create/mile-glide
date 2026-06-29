@@ -33,7 +33,15 @@ export const CurrentClientcard = ({
             </p>
           </div>
         </div>
-        <div className="bg-dash-green-bg gap-1.5 text-dash-green/70 font-sans font-semibold text-[12px] rounded-full flex items-center justify-center px-3 h-6">
+        <div className={`gap-1.5 font-sans font-semibold text-[12px] rounded-full flex items-center justify-center px-3 h-6 ${
+          project.status === "ACTIVE"
+            ? "bg-dash-green-bg text-dash-green/70"
+            : project.status === "STOPPED"
+            ? "bg-dash-amber-bg text-dash-amber/70"
+            : project.status === "CANCELLED"
+            ? "bg-dash-red-bg text-dash-red/70"
+            : "bg-[var(--color-dash-surface3)] text-dash-ink3"
+        }`}>
           <span className="font-bold text-lg">•</span>
           <span>{project.status.toUpperCase()}</span>
         </div>

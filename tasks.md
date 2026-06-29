@@ -3,8 +3,8 @@
 - [x] CONTROLLER: Create authentication middleware and protected routes for Freelancer and Client roles
 - [x] CONTROLLER: Implement logic for Freelancer onboarding and profile creation
 - [x] CONTROLLER: Implement logic for Client onboarding and profile creation
-- [ ] CONTROLLER: Add controller for creating new Projects and assigning them to Clients/Freelancers
-- [ ] CONTROLLER: Add logic for Freelancers to propose Projects
+- [x] CONTROLLER: Add controller for creating new Projects and assigning them to Clients/Freelancers
+- [x] CONTROLLER: Add logic for Freelancers to propose Projects
 - [ ] CONTROLLER: Implement Milestone creation, updates workflows
 - [ ] CONTROLLER: Handle Budget Raise Requests (creation, approval, rejection)
 - [x] API/REALDATA: Fetch paginated list of projects for Freelancer dashboard
@@ -31,6 +31,5 @@
 - [x] WIREUP: Integrate PastProjects component into Freelancer
 - [ ] and Client dashboard views
 - [x] UI: Add pagination or "Load More" functionality to Past Projects list
-- [ ] UI: Implement filtering or sorting options for Past Projects (e.g., by date or cost)
+- [x] UI: Implement filtering or sorting options for Past Projects (e.g., by date or cost)
 - [x] VALIDATION: Make validation file for creating projects
-- [ ] VALIDATION: Make validation for accepting projects

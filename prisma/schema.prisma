@@ -202,8 +202,10 @@ enum userrole {
 
 enum Projectstatus {
   COMPLETED
+  ACITVE
   PENDING
   STOPPED
+  CANCELLED
 }
 
 enum BudgetRequestStatus {

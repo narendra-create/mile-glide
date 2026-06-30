@@ -3,6 +3,7 @@ import { dmSans, dmSerif, ibmMono } from "./fonts";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { ToastProvider } from "./components/ToastProvider";
 
 export const metadata: Metadata = {
   title: "TrackLancer — Milestone & Payment Tracker for Freelancers",
@@ -22,9 +23,11 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col">
-        <Navbar />
-        {children}
-        <Footer />
+        <ToastProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </ToastProvider>
       </body>
     </html>
   );

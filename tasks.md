@@ -33,7 +33,8 @@
 - [x] UI: Add pagination or "Load More" functionality to Past Projects list
 - [x] UI: Implement filtering or sorting options for Past Projects (e.g., by date or cost)
 - [x] VALIDATION: Make validation file for creating projects
-- [ ] make controller for deleting projects, only unverified projects
+- [x] make controller for deleting projects, only unverified projects
+- [ ] make a function to archive projects from freelancer or from client side
 - [ ] make a controller for stopping the project
-- [ ] make a page to see unverified projects for freelancer
-- [ ] connect create project feature with controller
+- [x] make a page to see unverified projects for freelancer
+- [x] connect create project feature with controller

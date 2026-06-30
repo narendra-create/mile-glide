@@ -251,3 +251,42 @@ export const deleteProject = async (freelancerid: string, projectId: string) => 
         return { success: false, error: "Server Error", status: 500 }
     }
 }
+
+export const regenerateCode = async (freelancerId: string, projectId: string) => {
+    try {
+        const freelancerfound = await prisma.freelancer.findFirst({
+            where: { id: freelancerId },
+            select: { id: true }
+        });
+        const projectfound = await prisma.project.findUnique({
+            where: { id: projectId, freelancerId: freelancerfound?.id, status: "PENDING" }
+        });
+
+        if (!projectfound) {
+            return {
+                success: false,
+                error: "Project id/Freelancer id not valid or project not found",
+                status: 404
+            };
+        };
+        if (projectfound.clientId) {
+            return { success: false, error: "Client already accepted the project", status: 409 }
+        }
+        const regeneratedCode = generateCode(8);
+        await prisma.project.update({
+            where: { id: projectId },
+            data: {
+                projectcode: regeneratedCode
+            }
+        })
+
+        return { success: true, status: 201, projectcode: regeneratedCode };
+    }
+    catch (err: any) {
+        if (err.error) {
+            return { success: false, error: err.error, status: err.status }
+        }
+        console.log(err, "From Regen. code")
+        return { success: false, error: "Server Error", status: 500 }
+    }
+}

@@ -7,6 +7,7 @@ import {
   History,
   MessageSquare,
   Settings,
+  ClipboardClock,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -89,6 +90,12 @@ export function FreelancerSidebar({
             icon={History}
             label="Past Projects"
             isActive={activePath === "/freelancer/past-projects"}
+          />
+          <NavLink
+            href="/freelancer/unverified-projects"
+            icon={ClipboardClock}
+            label="Unverified Projects"
+            isActive={activePath === "/freelancer/unverified-projects"}
           />
           <NavLink
             href="/freelancer/activity"

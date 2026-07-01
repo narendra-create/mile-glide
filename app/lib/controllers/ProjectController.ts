@@ -241,7 +241,7 @@ export const deleteProject = async (freelancerid: string, projectId: string) => 
             where: { id: projectfound.id }
         });
 
-        return { success: true, status: 204 };
+        return { success: true, status: 200 };
     }
     catch (err: any) {
         if (err.error) {
@@ -344,7 +344,7 @@ export const getAllProjects = async (profileid: string, role: userrole, cursor?:
             const totalMilestones = project.milestones.length;
             const completedMilestones =
                 project.milestones.filter(
-                    milestone => milestone.status === "approved"
+                    milestone => milestone.status === "COMPLETED"
                 ).length;
 
             const progress =
@@ -446,7 +446,7 @@ export const getAllProjects = async (profileid: string, role: userrole, cursor?:
             const totalMilestones = project.milestones.length;
             const completedMilestones =
                 project.milestones.filter(
-                    milestone => milestone.status === "approved"
+                    milestone => milestone.status === "COMPLETED"
                 ).length;
 
             const progress =

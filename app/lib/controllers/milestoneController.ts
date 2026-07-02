@@ -58,78 +58,53 @@ export const getAllMilestones = async (projectId: string, profileId: string, rol
     if (!projectId) {
         return { success: false, error: "Provide projectId", status: 400 };
     };
-
-    if (role === "FREELANCER") {
-        const findproject = await prisma.project.findUnique({
-            where: { id: projectId, freelancerId: profileId }
+    if (role !== "CLIENT" && role !== "FREELANCER") {
+        return { success: false, error: "Invalid role", status: 400 }
+    }
+    try {
+        const findproject = await prisma.project.findFirst({
+            where: role === "FREELANCER"
+                ? { id: projectId, freelancerId: profileId }
+                : { id: projectId, clientId: profileId },
+            select: {
+                id: true,
+                agreedCost: true,
+                createdAt: true,
+                deadline: true,
+                status: true,
+                milestones: {
+                    select: {
+                        createdAt: true,
+                        deadline: true,
+                        delay: true,
+                        delayreason: true,
+                        description: true,
+                        id: true,
+                        milestonecost: true,
+                        status: true,
+                        subtitle: true,
+                        title: true,
+                        updatedAt: true
+                    },
+                    orderBy: {
+                        deadline: "asc"
+                    }
+                }
+            }
         });
         if (!findproject) {
             return { success: false, error: "This project is not associated with your account" };
         };
 
-        try {
-            const result = await prisma.milestone.findMany({
-                where: { projectId: findproject.id },
-                select: {
-                    id: true,
-                    title: true,
-                    deadline: true,
-                    subtitle: true,
-                    description: true,
-                    delay: true,
-                    delayreason: true,
-                    createdAt: true,
-                    milestonecost: true,
-                    status: true
-                }
-            });
-
-            return { success: true, milestones: result, status: 200 };
-        }
-        catch (err: any) {
-            if (err.error) {
-                return { success: false, error: err.error, status: 500 }
-            }
-            console.log(err, "From creatMilestone");
-            return { success: false, error: "Server Error", status: 500 };
-        }
+        return { success: true, project: findproject, status: 200 };
     }
-    else if (role === "CLIENT") {
-        const findproject = await prisma.project.findUnique({
-            where: { id: projectId, clientId: profileId }
-        });
-        if (!findproject) {
-            return { success: false, error: "This project is not associated with your account" };
-        };
-
-        try {
-            const result = await prisma.milestone.findMany({
-                where: { projectId: findproject.id },
-                select: {
-                    id: true,
-                    title: true,
-                    deadline: true,
-                    subtitle: true,
-                    description: true,
-                    delay: true,
-                    delayreason: true,
-                    createdAt: true,
-                    milestonecost: true,
-                    status: true
-                }
-            });
-
-            return { success: true, milestones: result, status: 200 };
+    catch (err: any) {
+        if (err.error) {
+            return { success: false, error: err.error, status: 500 }
         }
-        catch (err: any) {
-            if (err.error) {
-                return { success: false, error: err.error, status: 500 }
-            }
-            console.log(err, "From creatMilestone");
-            return { success: false, error: "Server Error", status: 500 };
-        }
+        console.log(err, "From getAllmilestones ");
+        return { success: false, error: "Server Error", status: 500 };
     }
-    return { success: false, error: "Invalid role", status: 400 };
 }
 
 export const stopProject = async (projectId: string) => {

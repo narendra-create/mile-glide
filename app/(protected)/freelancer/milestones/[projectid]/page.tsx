@@ -3,6 +3,7 @@ import { requireRole } from "@/app/lib/require-role";
 import { getFreelancerProfile } from "@/app/lib/controllers/profileController";
 import { redirect } from "next/navigation";
 import { FreelancerMilestones } from "@/app/components/FreelancerMilestones";
+import { getAllMilestones } from "@/app/lib/controllers/milestoneController";
 
 type Props = {
   params: Promise<{
@@ -13,23 +14,39 @@ type Props = {
 const Milestones = async ({ params }: Props) => {
   const { projectid } = await params;
   if (!projectid) {
-    alert("Please Provide projectid");
     return redirect("/dashboard");
   }
-  const { session, error, status } = await requireRole("freelancer");
+  const { session, error } = await requireRole("freelancer");
   if (error) {
-    return { error: `Error creating project - ${error} - ${status}` };
+    return redirect("/unauthorized");
   }
   if (!session?.user) {
-    return { error: "User is logged out" };
+    return redirect("/login");
   }
   const freelancer = await getFreelancerProfile(session.user.email);
 
-  const getMilestones = async (freelancerid: string, projectId: string) => {};
+  const result = await getAllMilestones(
+    projectid,
+    freelancer.profile?.Freelancer?.id!,
+    "FREELANCER",
+  );
+
+  if (!result.success) {
+    return redirect("/freelancer/dashboard");
+  }
+
+  if (!result.project) {
+    return redirect("/freelancer/dashboard");
+  }
 
   return (
     <main>
-      <FreelancerMilestones />
+      <FreelancerMilestones
+        project={result.project}
+        projectTitle={result.project.title}
+        projectCode={result.project.projectcode ?? projectid.slice(0, 8).toUpperCase()}
+        role="FREELANCER"
+      />
     </main>
   );
 };

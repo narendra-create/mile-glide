@@ -10,3 +10,11 @@ export const createMilestoneSchema = z.object({
 });
 
 export type createMilestoneInput = z.infer<typeof createMilestoneSchema>;
+
+export const delayMilestoneSchema = z.object({
+    milestoneId: z.string(),
+    delayReason: z.string().max(360, "Max length is 360").optional(),
+    newDeadline: z.coerce.date() //converts incoming string to date automatically
+});
+
+export type delayMilestoneInput = z.infer<typeof delayMilestoneSchema>;

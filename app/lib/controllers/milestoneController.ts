@@ -1,7 +1,7 @@
 import { prisma } from "@/app/lib/prisma";
 import { requireRole } from "../require-role";
 import { getClientProfile, getFreelancerProfile } from "./profileController";
-import type { createMilestoneInput } from "../validations/MilestoneValidation";
+import type { createMilestoneInput, delayMilestoneInput } from "../validations/MilestoneValidation";
 import { userrole } from "@/app/generated/prisma/enums";
 
 export const createMilestone = async (input: createMilestoneInput) => {
@@ -163,4 +163,4 @@ export const stopProject = async (projectId: string) => {
         console.error("From stopProject", error);
         return { success: false, error: "Server Error", status: 500 }
     }
-}
+};

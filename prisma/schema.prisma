@@ -118,13 +118,24 @@ model Milestone {
   delay         Boolean?
   delayreason   String?
 
-  project   Project? @relation(fields: [projectId], references: [id])
-  projectId String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  project         Project?         @relation(fields: [projectId], references: [id])
+  projectId       String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  milestonedelays Milestonedelay[]
 
   @@index([projectId])
   @@index([status])
+}
+
+model Milestonedelay {
+  id          String      @id @default(cuid())
+  milestoneId String
+  newDeadline DateTime
+  oldDeadline DateTime
+
+  milestone Milestone? @relation(fields: [milestoneId], references: [id])
+  createdAt DateTime   @default(now())
 }
 
 model Project {

@@ -46,7 +46,7 @@
 - [x] make controllers for projectid based milestones
 - [x] make one controller to return all projects
 # for 02/07/2026
-- [ ] wire up: make a function to add milestones
+- [x] wire up: make a function to add milestones
 - [x] make a function to delay the milestone
 - [ ] work on budget raise request
 - [x] payment history ui

@@ -22,7 +22,7 @@ const STATUS_CONFIG: Record<
     badgeBorder: "border-[var(--color-status-paid-border)]",
     badgeText: "text-dash-green",
   },
-  PENDING_PAYEMENT: {
+  PENDING_PAYMENT: {
     label: "PENDING PAYMENT",
     dotColor: "bg-[var(--color-dash-gold)]",
     badgeBg: "bg-[var(--color-status-pending-bg)]",
@@ -54,7 +54,7 @@ const STATUS_CONFIG: Record<
 
 const STATUS_ICON: Record<Milestonestatus, React.ReactNode> = {
   COMPLETED: <Check size={9} strokeWidth={2.5} />,
-  PENDING_PAYEMENT: <Clock size={9} strokeWidth={2.5} />,
+  PENDING_PAYMENT: <Clock size={9} strokeWidth={2.5} />,
   IN_PROGRESS: <Zap size={9} strokeWidth={2.5} />,
   NOT_STARTED: <CircleDot size={9} strokeWidth={2.5} />,
   STOPPED: <Ban size={9} strokeWidth={2.5} />,
@@ -79,7 +79,7 @@ export function MilestoneCard({
   const isLocked =
     milestone.status === "NOT_STARTED" || milestone.status === "STOPPED";
   const isInProgress = milestone.status === "IN_PROGRESS";
-  const isPendingPayment = milestone.status === "PENDING_PAYEMENT";
+  const isPendingPayment = milestone.status === "PENDING_PAYMENT";
   const isDone = milestone.status === "COMPLETED";
   const isLineComplete = isDone || isPendingPayment;
 

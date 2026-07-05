@@ -44,7 +44,7 @@ const STATUS_CONFIG: Record<
     badgeBorder: "border-[var(--color-status-paid-border)]",
     badgeText: "text-dash-green",
   },
-  PENDING_PAYEMENT: {
+  PENDING_PAYMENT: {
     label: "PENDING PAYMENT",
     dotColor: "bg-[var(--color-dash-gold)]",
     badgeBg: "bg-[var(--color-status-pending-bg)]",
@@ -76,7 +76,7 @@ const STATUS_CONFIG: Record<
 
 const STATUS_ICON: Record<Milestonestatus, React.ReactNode> = {
   COMPLETED: <Check size={9} strokeWidth={2.5} />,
-  PENDING_PAYEMENT: <Clock size={9} strokeWidth={2.5} />,
+  PENDING_PAYMENT: <Clock size={9} strokeWidth={2.5} />,
   IN_PROGRESS: <Zap size={9} strokeWidth={2.5} />,
   NOT_STARTED: <CircleDot size={9} strokeWidth={2.5} />,
   STOPPED: <Ban size={9} strokeWidth={2.5} />,
@@ -277,7 +277,7 @@ export function FreelancerMilestones({
     (m) => m.status === "IN_PROGRESS",
   ).length;
   const pendingPayCount = project.milestones.filter(
-    (m) => m.status === "PENDING_PAYEMENT",
+    (m) => m.status === "PENDING_PAYMENT",
   ).length;
   const notStartedCount = project.milestones.filter(
     (m) => m.status === "NOT_STARTED",
@@ -467,7 +467,7 @@ export function FreelancerMilestones({
                   count: inProgressCount,
                 },
                 {
-                  status: "PENDING_PAYEMENT" as Milestonestatus,
+                  status: "PENDING_PAYMENT" as Milestonestatus,
                   count: pendingPayCount,
                 },
                 {

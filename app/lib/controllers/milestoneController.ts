@@ -319,7 +319,7 @@ export const deleteMilestone = async (milestoneId: string, projectId: string) =>
             if (!milestone) {
                 throw new Error("Milestone Not Found")
             };
-            if (milestone.status === "COMPLETED" || milestone.status === "PENDING_PAYEMENT") {
+            if (milestone.status === "COMPLETED" || milestone.status === "PENDING_PAYMENT") {
                 throw new Error("You can't Delete Completed/Pending Payment milestones")
             };
             let nextMilestone: Awaited<

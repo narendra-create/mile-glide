@@ -53,6 +53,10 @@
 # for 05/07/2006
 - [x] add checks on milestone creation like user cant create milestone if budget reached, and only not started status milestones after one in progress  milestone
 - [ ] payement history controllers
-- [ ] budget raise request ui
+- [x] budget raise request ui
+- [x] see budget requests page
+- [ ] approve budget controller
+- [ ] delete request controller
+- [x] create budget request controller
 - [ ] verify payments page ui
 - [ ] verify payments controller

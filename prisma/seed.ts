@@ -5,6 +5,7 @@ import { PrismaClient } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import type { Milestonestatus } from "../app/generated/prisma/client";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
@@ -63,7 +64,7 @@ type MilestoneSeed = {
   subtitle?: string;
   description?: string;
   milestonecost: number;
-  status: "COMPLETED" | "PENDING_PAYMENT" | "IN_PROGRESS" | "STOPPED";
+  status: Milestonestatus;
   deadline: Date;
   delay?: boolean;
   delayreason?: string;
@@ -118,11 +119,11 @@ async function main() {
   // ── Clients ─────────────────────────────────────────────────────────────────
   console.log("👥  Creating clients...");
   const clientSeeds = [
-    { email: "arjun.mehta.client@gmail.com",  name: "Arjun Mehta",  password: "Client123!" },
+    { email: "arjun.mehta.client@gmail.com", name: "Arjun Mehta", password: "Client123!" },
     { email: "priya.sharma.client@gmail.com", name: "Priya Sharma", password: "Client123!" },
-    { email: "rohan.das.client@gmail.com",    name: "Rohan Das",    password: "Client123!" },
-    { email: "sneha.nair.client@gmail.com",   name: "Sneha Nair",   password: "Client123!" },
-    { email: "vikram.iyer.client@gmail.com",  name: "Vikram Iyer",  password: "Client123!" },
+    { email: "rohan.das.client@gmail.com", name: "Rohan Das", password: "Client123!" },
+    { email: "sneha.nair.client@gmail.com", name: "Sneha Nair", password: "Client123!" },
+    { email: "vikram.iyer.client@gmail.com", name: "Vikram Iyer", password: "Client123!" },
   ];
 
   const clientProfiles: { name: string; profileId: string }[] = [];

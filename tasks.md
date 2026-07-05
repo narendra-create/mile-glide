@@ -6,17 +6,17 @@
 - [x] CONTROLLER: Add controller for creating new Projects and assigning them to Clients/Freelancers
 - [x] CONTROLLER: Add logic for Freelancers to propose Projects
 - [x] CONTROLLER: Implement Milestone creation, updates workflows
-- [ ] CONTROLLER: Handle Budget Raise Requests (creation, approval, rejection)
+- [x] CONTROLLER: Handle Budget Raise Requests (creation, approval, rejection)
 - [x] API/REALDATA: Fetch paginated list of projects for Freelancer dashboard
 - [ ] API/REALDATA: Fetch paginated list of projects for Client dashboard
 - [x] API/REALDATA: Fetch detailed view of a single project including milestones and payments
 - [ ] API/REALDATA: Fetch and calculate payment due dates and amounts
-- [ ] API/REALDATA: Create endpoints for budget raise request actions
+- [x] API/REALDATA: Create endpoints for budget raise request actions
 - [x] UI: Design and implement the Freelancer dashboard overview page
 - [ ] UI: Design and implement the Client dashboard overview page
 - [x] UI: Create the Project Details view (showing timeline, budget, and milestones)
-- [ ] UI: Build the component for adding/editing milestones within a project
-- [ ] UI: Create the Budget Raise Request form modal or page
+- [x] UI: Build the component for adding milestones within a project
+- [x] UI: Create the Budget Raise Request form modal or page
 - [ ] UI: Design the Payment history and status tracking table
 - [x] WIREUP: Connect the Freelancer dashboard UI to the project fetching API
 - [ ] WIREUP: Connect the Client dashboard UI to the project fetching API
@@ -39,7 +39,7 @@
 - [x] make a page to see unverified projects for freelancer
 - [x] connect create project feature with controller
 - [x] Make milestones ui
-- [ ] make budget raise request ui
+- [x] make budget raise request ui
 - [ ] add extra buttons in settings page
 - [ ] Payment history page ui
 - [ ] Approve payments feature with txn beside it
@@ -48,15 +48,22 @@
 # for 02/07/2026
 - [x] wire up: make a function to add milestones
 - [x] make a function to delay the milestone
-- [ ] work on budget raise request
+- [x] work on budget raise request
 - [x] payment history ui
 # for 05/07/2006
 - [x] add checks on milestone creation like user cant create milestone if budget reached, and only not started status milestones after one in progress  milestone
-- [ ] payement history controllers
 - [x] budget raise request ui
 - [x] see budget requests page
-- [ ] approve budget controller
-- [ ] delete request controller
 - [x] create budget request controller
+- [x] add handleDelay and milestone delete in milestones page of freelancer
+- [x] connect budget request creation
+# for 06/07/2026
 - [ ] verify payments page ui
 - [ ] verify payments controller
+- [ ] payement history controllers
+- [ ] make controller for budget approve
+- [ ] function to markReviewd in budgetcontroller
+- [ ] controller for rejecting the request
+- [ ] add those controllers in frontend
+- [ ] approve budget controller
+- [ ] delete request controller

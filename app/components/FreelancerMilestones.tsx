@@ -21,11 +21,16 @@ import {
   Projectstatus,
   type Milestonestatus,
 } from "@/app/generated/prisma/enums";
-import type { createMilestoneInput } from "@/app/lib/validations/MilestoneValidation";
+import type {
+  createMilestoneInput,
+  delayMilestoneInput,
+} from "@/app/lib/validations/MilestoneValidation";
 import { MilestoneCard } from "@/app/components/Cards/MilestoneCard";
 import { formatDate } from "@/app/lib/utilitys";
 import { AddMilestoneModal } from "@/app/components/AddMilestoneModal";
 import { useToast } from "@/app/components/ToastProvider";
+import { RaiseBudgetForm } from "./RaiseBudgetForm";
+import { createBudgetInput } from "../lib/validations/Budgetrequest";
 
 const STATUS_CONFIG: Record<
   Milestonestatus,
@@ -82,16 +87,49 @@ const STATUS_ICON: Record<Milestonestatus, React.ReactNode> = {
   STOPPED: <Ban size={9} strokeWidth={2.5} />,
 };
 
-function FlagDelayModal({ onClose }: { onClose: () => void }) {
+function FlagDelayModal({
+  milestoneId,
+  onClose,
+  handleDelay,
+}: {
+  milestoneId: string;
+  onClose: () => void;
+  handleDelay: (data: delayMilestoneInput) => Promise<any>;
+}) {
   const [reason, setReason] = useState("");
+  const [deadline, setDeadline] = useState("");
   const [loading, setLoading] = useState(false);
+  const { addToast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!deadline) {
+      addToast({
+        title: "Error",
+        message: "Please select a new deadline",
+        type: "error",
+      });
+      return;
+    }
+
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 700));
+    const result = await handleDelay({
+      milestoneId,
+      delayReason: reason,
+      newDeadline: new Date(deadline),
+    });
     setLoading(false);
-    onClose();
+
+    if (result?.error) {
+      addToast({ title: "Error", message: result.error, type: "error" });
+    } else {
+      addToast({
+        title: "Success",
+        message: "Delay flagged successfully",
+        type: "success",
+      });
+      onClose();
+    }
   };
 
   return (
@@ -126,12 +164,24 @@ function FlagDelayModal({ onClose }: { onClose: () => void }) {
               Reason for delay
             </label>
             <textarea
-              rows={4}
+              rows={3}
               placeholder="Describe what caused the delay..."
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               required
               className="w-full bg-[var(--color-dash-surface2)] border border-[var(--color-dash-border)] rounded-md px-4 py-3 font-sans text-[13px] text-white placeholder:text-[var(--color-dash-ink4)] focus:outline-none focus:border-[var(--color-dash-amber)] duration-200 resize-none"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="font-mono text-[10px] tracking-[1.5px] uppercase text-[var(--color-dash-ink3)]">
+              New Deadline
+            </label>
+            <input
+              type="date"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+              required
+              className="w-full bg-[var(--color-dash-surface2)] border border-[var(--color-dash-border)] rounded-md px-4 py-3 font-sans text-[13px] text-white focus:outline-none focus:border-[var(--color-dash-amber)] duration-200"
             />
           </div>
           <button
@@ -243,6 +293,15 @@ interface FreelancerMilestonesProps {
   projectStatus: string;
   role: "CLIENT" | "FREELANCER";
   onCreate: (data: createMilestoneInput) => Promise<any>;
+  onDelete?: (milestoneId: string, projectId: string) => Promise<any>;
+  onDelayMilestone?: (
+    data: delayMilestoneInput,
+    projectId: string,
+  ) => Promise<any>;
+  onBudgetRaiseRequest: (
+    data: createBudgetInput,
+    projectId: string,
+  ) => Promise<any>;
 }
 
 export function FreelancerMilestones({
@@ -251,10 +310,14 @@ export function FreelancerMilestones({
   projectStatus,
   onCreate,
   role,
+  onDelete,
+  onDelayMilestone,
+  onBudgetRaiseRequest,
 }: FreelancerMilestonesProps) {
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showFlagModal, setShowFlagModal] = useState(false);
+  const [showFlagModal, setShowFlagModal] = useState<string | null>(null);
   const [showStopModal, setShowStopModal] = useState(false);
+  const [showBudgetrequestModal, setshowBudgetrequestModal] = useState(false);
   const { addToast } = useToast();
 
   const totalEarned =
@@ -315,13 +378,26 @@ export function FreelancerMilestones({
             }}
           />
         )}
-        {showFlagModal && (
-          <FlagDelayModal key="flag" onClose={() => setShowFlagModal(false)} />
+        {showFlagModal && onDelayMilestone && (
+          <FlagDelayModal
+            key="flag"
+            milestoneId={showFlagModal}
+            handleDelay={(data) => onDelayMilestone(data, project.id)}
+            onClose={() => setShowFlagModal(null)}
+          />
         )}
         {showStopModal && (
           <StopProjectModal
             key="stop"
             onClose={() => setShowStopModal(false)}
+          />
+        )}
+        {showBudgetrequestModal && (
+          <RaiseBudgetForm
+            currentBudget={project.agreedCost}
+            onClose={() => setshowBudgetrequestModal(false)}
+            onSubmit={onBudgetRaiseRequest}
+            projectId={project.id}
           />
         )}
       </AnimatePresence>
@@ -397,7 +473,10 @@ export function FreelancerMilestones({
                     : "budget limit riched - see budget raise requests"}
                 </p>
                 {role === "FREELANCER" ? (
-                  <button className="w-full py-2 bg-[var(--color-dash-amber-bg)] border border-[rgba(200,120,64,0.3)] rounded-md text-[var(--color-dash-amber)] font-mono text-[10px] uppercase tracking-[1px] hover:bg-[rgba(200,120,64,0.15)] transition-all duration-200">
+                  <button
+                    onClick={() => setshowBudgetrequestModal(true)}
+                    className="w-full py-2 bg-[var(--color-dash-amber-bg)] border border-[rgba(200,120,64,0.3)] rounded-md text-[var(--color-dash-amber)] font-mono text-[10px] uppercase tracking-[1px] hover:bg-[rgba(200,120,64,0.15)] transition-all duration-200"
+                  >
                     Raise Budget
                   </button>
                 ) : (
@@ -504,7 +583,20 @@ export function FreelancerMilestones({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.22, delay: 0.14 }}
-              onClick={() => setShowFlagModal(true)}
+              onClick={() => {
+                const inProgress = project.milestones.find(
+                  (m) => m.status === "IN_PROGRESS",
+                );
+                if (inProgress) {
+                  setShowFlagModal(inProgress.id);
+                } else {
+                  addToast({
+                    title: "Error",
+                    message: "No active milestone in progress to flag",
+                    type: "error",
+                  });
+                }
+              }}
               className="w-full h-[42px] px-5 bg-transparent border border-[var(--color-dash-border-hover)] rounded-xl text-white font-mono text-[10px] uppercase tracking-[1.5px] hover:bg-[var(--color-dash-amber-bg)] hover:border-[rgba(200,120,64,0.35)] hover:text-[var(--color-dash-amber)] transition-all duration-200 flex items-center justify-center gap-2"
             >
               <Flag size={12} />
@@ -558,6 +650,29 @@ export function FreelancerMilestones({
                   index={idx}
                   isLast={idx === project.milestones.length - 1}
                   role={role}
+                  onDelete={
+                    onDelete
+                      ? async (milestoneId) => {
+                          const result = await onDelete(
+                            milestoneId,
+                            project.id,
+                          );
+                          if (result?.error) {
+                            addToast({
+                              title: "Error",
+                              message: result.error,
+                              type: "error",
+                            });
+                          } else {
+                            addToast({
+                              title: "Success",
+                              message: "Milestone deleted successfully",
+                              type: "success",
+                            });
+                          }
+                        }
+                      : undefined
+                  }
                 />
               ))}
               <div className="flex gap-0">

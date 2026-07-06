@@ -52,6 +52,8 @@ export type AcceptProjectDetails = {
   agreedcost: string | number;
   deadline: string;
   description: string;
-  freelancerName: string;
-  freelancerEmail: string;
+  freelancer: {
+    name: string | undefined,
+    email: string | undefined
+  }
 };

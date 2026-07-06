@@ -2,7 +2,7 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, SlidersHorizontal, ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { BudgetRequestItem } from "@/types/budget";
 import type { BudgetRequestStatus } from "@/app/generated/prisma/enums";
 import { BudgetRequestCard } from "@/app/components/Cards/BudgetRequestCard";
@@ -74,6 +74,8 @@ export function BudgetRequestsList({
   const [activeStatus, setActiveStatus] = useState<BudgetRequestStatus | "ALL">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const projectIdParam = searchParams?.get("projectId");
 
   // UNIQUE PROJECTS FOR FILTER
   const uniqueProjects = useMemo(
@@ -90,13 +92,14 @@ export function BudgetRequestsList({
         const matchesSearch =
           searchQuery.trim() === "" ||
           r.project.title.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesStatus && matchesSearch;
+        const matchesProject = projectIdParam ? r.projectId === projectIdParam : true;
+        return matchesStatus && matchesSearch && matchesProject;
       })
       .sort(
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
-  }, [budgetRequests, activeStatus, searchQuery]);
+  }, [budgetRequests, activeStatus, searchQuery, projectIdParam]);
 
   // COUNTS PER STATUS
   const counts = useMemo(() => {
@@ -132,64 +135,66 @@ export function BudgetRequestsList({
       <div className="w-full h-px bg-[var(--color-dash-border)] mb-6" />
 
       {/* FILTERS ROW */}
-      <div className="flex flex-col gap-3 mb-6 lg:flex-row lg:items-center lg:justify-between">
-        {/* STATUS TABS */}
-        <div className="flex items-center gap-2 flex-wrap">
-          {STATUS_TABS.map((tab) => {
-            const isActive = activeStatus === tab.value;
-            const styles = TAB_STYLES[tab.value];
-            return (
-              <button
-                key={tab.value}
-                onClick={() => setActiveStatus(tab.value)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 border font-mono text-[10px] tracking-[1.5px] uppercase transition-all duration-200 ${
-                  isActive
-                    ? styles.active
-                    : "border-[var(--color-dash-border)] text-[var(--color-dash-ink3)] bg-transparent hover:border-[var(--color-dash-border-hover)] hover:text-[var(--color-dash-ink2)]"
-                }`}
-              >
-                {tab.value !== "ALL" && (
-                  <span
-                    className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                      isActive ? styles.dot : "bg-[var(--color-dash-ink4)]"
-                    }`}
-                  />
-                )}
-                {tab.label}
-                <span
-                  className={`font-mono text-[9px] px-1 py-px ${
+      {!projectIdParam && (
+        <div className="flex flex-col gap-3 mb-6 lg:flex-row lg:items-center lg:justify-between">
+          {/* STATUS TABS */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {STATUS_TABS.map((tab) => {
+              const isActive = activeStatus === tab.value;
+              const styles = TAB_STYLES[tab.value];
+              return (
+                <button
+                  key={tab.value}
+                  onClick={() => setActiveStatus(tab.value)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 border font-mono text-[10px] tracking-[1.5px] uppercase transition-all duration-200 ${
                     isActive
-                      ? "opacity-70"
-                      : "text-[var(--color-dash-ink4)]"
+                      ? styles.active
+                      : "border-[var(--color-dash-border)] text-[var(--color-dash-ink3)] bg-transparent hover:border-[var(--color-dash-border-hover)] hover:text-[var(--color-dash-ink2)]"
                   }`}
                 >
-                  {counts[tab.value]}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+                  {tab.value !== "ALL" && (
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                        isActive ? styles.dot : "bg-[var(--color-dash-ink4)]"
+                      }`}
+                    />
+                  )}
+                  {tab.label}
+                  <span
+                    className={`font-mono text-[9px] px-1 py-px ${
+                      isActive
+                        ? "opacity-70"
+                        : "text-[var(--color-dash-ink4)]"
+                    }`}
+                  >
+                    {counts[tab.value]}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
 
-        {/* SEARCH BY PROJECT TITLE */}
-        <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-dash-surface2)] border border-[var(--color-dash-border)] focus-within:border-[var(--color-dash-border-hover)] transition-colors duration-200 w-full lg:w-64">
-          <Search size={12} strokeWidth={2} className="text-[var(--color-dash-ink3)] shrink-0" />
-          <input
-            type="text"
-            placeholder="Search by project..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 bg-transparent font-sans text-[12px] text-white placeholder:text-[var(--color-dash-ink4)] focus:outline-none min-w-0"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="text-[var(--color-dash-ink3)] hover:text-white transition-colors duration-200"
-            >
-              ×
-            </button>
-          )}
+          {/* SEARCH BY PROJECT TITLE */}
+          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-dash-surface2)] border border-[var(--color-dash-border)] focus-within:border-[var(--color-dash-border-hover)] transition-colors duration-200 w-full lg:w-64">
+            <Search size={12} strokeWidth={2} className="text-[var(--color-dash-ink3)] shrink-0" />
+            <input
+              type="text"
+              placeholder="Search by project..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 bg-transparent font-sans text-[12px] text-white placeholder:text-[var(--color-dash-ink4)] focus:outline-none min-w-0"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="text-[var(--color-dash-ink3)] hover:text-white transition-colors duration-200"
+              >
+                ×
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ACTIVE FILTER HINT */}
       {(activeStatus !== "ALL" || searchQuery) && (

@@ -131,9 +131,13 @@ export const createNewProject = async (input: newProjectInput) => {
     }
 };
 
-export const acceptProject = async (clientEmail: string, projectCode: string) => {
+export const acceptProject = async (projectCode: string) => {
+    const session = await getSession();
+    if (!session) return { success: false, error: "Unauthorized", status: 401 };
+    if (session.user.role.toLowerCase() !== "client") return { success: false, error: "Forbidden", status: 403 };
+
     const clientProfile = await prisma.userprofile.findFirst({
-        where: { user: { email: clientEmail } },
+        where: { userId: session.user.id },
         select: {
             id: true,
             user: {
@@ -163,6 +167,9 @@ export const acceptProject = async (clientEmail: string, projectCode: string) =>
                 clientId: clientProfile.id,
                 projectcode: null,
                 status: "ACTIVE"
+            },
+            select: {
+                id: true
             }
         });
 
@@ -501,4 +508,19 @@ export const getAllProjects = async (profileid: string, role: userrole, cursor?:
         return { success: true, projects: projects, nextCursor }
     }
     return { success: false, error: "Invalid role", status: 403 }
+}
+
+export const searchProject = async (projectCode: string) => {
+    const session = await getSession();
+    if (!session) return { success: false, error: "Unauthorized", status: 401 };
+    if (session.user.role.toLowerCase() !== "client") return { success: false, error: "Forbidden", status: 403 };
+    const findProject = await prisma.project.findFirst({
+        where: { projectcode: projectCode, status: "PENDING" },
+        include: { freelancer: { select: { user: { select: { name: true, email: true } } } } }
+    });
+    if (!findProject) {
+        return { success: false, error: "Invalid Project Code", status: 400 }
+    };
+
+    return { success: true, project: findProject, status: 200 }
 }

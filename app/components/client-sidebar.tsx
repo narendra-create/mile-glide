@@ -1,4 +1,6 @@
+"use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Home,
   LayoutDashboard,
@@ -7,18 +9,23 @@ import {
   MessageSquare,
   Settings,
 } from "lucide-react";
+import Image from "next/image";
 
 interface SidebarProps {
-  activePath?: string;
+  name?: string;
+  role?: string;
+  image?: string;
+  initials?: string;
 }
 
-export function ClientSidebar({ activePath = "/overview" }: SidebarProps) {
+export function ClientSidebar({ name, role, initials, image }: SidebarProps) {
+  const activePath = usePathname();
   return (
     <>
       <aside
-        className={`fixed z-50 flex bg-dash-surface1 transition-transform duration-200 ease-dash-custom
+        className={`fixed z-100 lg:z-50 flex bg-dash-surface1 transition-transform duration-200 ease-dash-custom
         bottom-0 left-0 w-full flex-row border-t border-dash-border
-        md:top-0 md:h-screen md:w-[20%] md:flex-col md:border-r md:border-t-0 md:translate-x-0`}
+        md:top-0 md:h-screen md:w-[15%] md:flex-col md:border-r md:border-t-0 md:translate-x-0`}
       >
         <div className="hidden md:flex relative items-center gap-2.5 border-b border-dash-border p-[22px_20px_18px]">
           <div className="grid h-8 w-8 shrink-0 place-items-center rounded bg-dash-gold-glow2 border border-[rgba(200,169,110,0.25)] font-serif text-[1rem] text-dash-gold">
@@ -32,18 +39,32 @@ export function ClientSidebar({ activePath = "/overview" }: SidebarProps) {
           </div>
         </div>
 
-        <div className="hidden md:block border-b border-dash-border bg-dash-surface2 p-[12px_20px]">
-          <div className="text-[0.82rem] font-semibold text-dash-ink">
-            NovaTech Solutions
+        <div className="hidden md:flex items-center gap-2.5 border-b border-dash-border p-[14px_20px]">
+          <div className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,var(--color-dash-gold-dim),var(--color-dash-gold))] font-sans text-[0.75rem] font-semibold text-[#0d0d0d]">
+            {image ? (
+              <Image
+                height={10}
+                width={10}
+                src={image ?? ""}
+                alt="avtar"
+              ></Image>
+            ) : (
+              initials
+            )}
           </div>
-          <div className="mt-0.5 font-mono text-[7px] uppercase tracking-[1.5px] text-dash-ink3">
-            <span className="mr-1 inline-block h-[5px] w-[5px] align-middle rounded-full bg-dash-green"></span>
-            Active Client
+          <div className="min-w-0">
+            <div className="text-[0.96rem] font-semibold text-dash-ink">
+              {name}
+            </div>
+            <div className="mt-0.5 font-mono text-[7.5px] uppercase tracking-[1.5px] text-dash-ink2 flex items-center">
+              <span className="mr-1 inline-block h-[5px] w-[5px] align-middle rounded-full bg-dash-green"></span>
+              {role} ACCOUNT
+            </div>
           </div>
         </div>
 
         <nav className="flex w-full flex-row items-center justify-between px-1 py-0 md:flex-1 md:flex-col md:items-stretch md:justify-start md:p-[12px_10px] overflow-y-auto">
-          <div className="hidden md:block p-[8px_10px_5px] font-mono text-[7px] uppercase tracking-[2px] text-dash-ink4">
+          <div className="hidden md:block p-[8px_10px_5px] font-mono text-[10px] uppercase tracking-[2px] text-ink-dim">
             Menu
           </div>
 
@@ -65,6 +86,7 @@ export function ClientSidebar({ activePath = "/overview" }: SidebarProps) {
             label="My Projects"
             badge={4}
             isActive={activePath === "/client/my-projects"}
+            hideOnMobile
           />
           <NavLink
             href="/client/payments"
@@ -87,21 +109,6 @@ export function ClientSidebar({ activePath = "/overview" }: SidebarProps) {
             isActive={activePath === "/client/settings"}
           />
         </nav>
-
-        <div className="hidden md:flex mt-auto items-center gap-2.5 border-t border-dash-border p-[14px_20px]">
-          <div className="grid h-[32px] w-[32px] shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,var(--color-dash-gold-dim),var(--color-dash-gold))] font-sans text-[0.72rem] font-semibold text-[#0d0d0d]">
-            RS
-          </div>
-          <div>
-            <div className="text-[0.8rem] font-semibold text-dash-ink">
-              Rahul Sharma
-            </div>
-            <div className="mt-0.5 font-mono text-[7px] uppercase tracking-[1.5px] text-dash-ink3">
-              <span className="mr-1 inline-block h-[5px] w-[5px] align-middle rounded-full bg-dash-green"></span>
-              Project Manager
-            </div>
-          </div>
-        </div>
       </aside>
     </>
   );
@@ -113,19 +120,22 @@ function NavLink({
   label,
   badge,
   isActive,
+  hideOnMobile,
 }: {
   href: string;
   icon: React.ElementType;
   label: string;
   badge?: number;
   isActive: boolean;
+  hideOnMobile?: boolean;
 }) {
   return (
     <Link
       href={href}
-      className={`relative flex cursor-pointer transition-colors duration-150
-        h-[75px] flex-1 flex-col items-center justify-center gap-1.5 text-[11px] font-medium
+      className={`relative cursor-pointer transition-colors duration-150
+        h-[75px] flex-col items-center justify-center gap-1 font-medium
         md:mb-0.5 md:h-auto md:flex-none md:flex-row md:justify-start md:gap-2.5 md:rounded md:p-[9px_10px] md:text-[0.82rem]
+        ${hideOnMobile ? "hidden md:flex" : "flex flex-1"}
         ${
           isActive
             ? "text-dash-gold bg-dash-gold-glow/40 md:bg-dash-gold-glow"
@@ -150,7 +160,9 @@ function NavLink({
           </span>
         )}
       </div>
-      <span className="whitespace-nowrap">{label}</span>
+      <span className="text-center text-[9px] leading-[1.2] px-1 md:px-0 md:text-[0.82rem] md:text-left whitespace-normal md:whitespace-nowrap">
+        {label}
+      </span>
 
       {/* Desktop Badge */}
       {badge !== undefined && (

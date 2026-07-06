@@ -293,7 +293,7 @@ interface FreelancerMilestonesProps {
   projectTitle: string;
   projectStatus: string;
   role: "CLIENT" | "FREELANCER";
-  onCreate: (data: createMilestoneInput) => Promise<any>;
+  onCreate?: (data: createMilestoneInput) => Promise<any>;
   onDelete?: (milestoneId: string, projectId: string) => Promise<any>;
   onDelayMilestone?: (
     data: delayMilestoneInput,
@@ -362,6 +362,7 @@ export function FreelancerMilestones({
             productId={project.id}
             onClose={() => setShowAddModal(false)}
             handleSubmit={async (data) => {
+              if (!onCreate) return;
               const result = await onCreate(data);
               if (result?.error) {
                 addToast({

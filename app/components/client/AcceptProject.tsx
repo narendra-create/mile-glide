@@ -3,19 +3,30 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Check, AlertCircle, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useToast } from "../ToastProvider";
 import type { AcceptProjectDetails } from "@/types/allprojects";
 
 interface AcceptProjectProps {
-  acceptProject: (projectCode: string) => Promise<{ success?: boolean; error?: string } | void>;
+  acceptProject: (
+    projectCode: string,
+  ) => Promise<{ projectId?: string; error?: string } | void>;
+  searchProject: (
+    projectCode: string,
+  ) => Promise<{ error?: string; project?: any }>;
 }
 
-export function AcceptProject({ acceptProject }: AcceptProjectProps) {
+export function AcceptProject({
+  acceptProject,
+  searchProject,
+}: AcceptProjectProps) {
+  const router = useRouter();
   const { addToast } = useToast();
   const [projectCode, setProjectCode] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
-  const [projectDetails, setProjectDetails] = useState<AcceptProjectDetails | null>(null);
+  const [projectDetails, setProjectDetails] =
+    useState<AcceptProjectDetails | null>(null);
   const [searchError, setSearchError] = useState("");
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -24,40 +35,49 @@ export function AcceptProject({ acceptProject }: AcceptProjectProps) {
       setSearchError("Please enter a valid 8-character code");
       return;
     }
-    
+
     setSearchError("");
     setIsSearching(true);
     setProjectDetails(null);
 
-    // Simulate API call to fetch project details
-    setTimeout(() => {
-      setIsSearching(false);
-      
-      if (projectCode.toUpperCase() === "INVALID1") {
-        setSearchError("Project not found. Please check the code and try again.");
-        return;
+    try {
+      const result = await searchProject(projectCode);
+      if (result && result.project) {
+        const p = result.project;
+        setProjectDetails({
+          projectId: p.id,
+          title: p.title,
+          agreedcost: p.agreedCost || 0,
+          deadline: p.deadline
+            ? new Date(p.deadline).toISOString().split("T")[0]
+            : "No deadline",
+          description: p.description || "No description provided",
+          freelancer: {
+            name: p.freelancer?.user?.name || "Unknown",
+            email: p.freelancer?.user?.email || "Unknown",
+          },
+        });
+        addToast({
+          title: "Project Found",
+          message: "Project details loaded successfully.",
+          type: "success",
+        });
+      } else {
+        setSearchError(
+          result?.error ||
+            "Project not found. Please check the code and try again.",
+        );
       }
-      
-      setProjectDetails({
-        projectId: "proj_" + Math.random().toString(36).substring(2, 9),
-        title: "E-commerce Platform Redesign",
-        agreedcost: "85,000",
-        deadline: "2026-08-15",
-        description: "Complete redesign of the main e-commerce website including checkout flow and user dashboard.",
-        freelancerName: "Alex Developer",
-        freelancerEmail: "alex@example.com",
-      });
-      addToast({
-        title: "Project Found",
-        message: "Project details loaded successfully.",
-        type: "success"
-      });
-    }, 1500);
+    } catch (error) {
+      setSearchError("An error occurred while searching for the project.");
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   const handleAccept = async () => {
     if (!projectDetails || !projectCode) return;
-    
+
     setIsAccepting(true);
     try {
       const result = await acceptProject(projectCode);
@@ -65,20 +85,27 @@ export function AcceptProject({ acceptProject }: AcceptProjectProps) {
         addToast({
           title: "Error",
           message: result.error,
-          type: "error"
+          type: "error",
         });
+      } else if (result && result.projectId) {
+        addToast({
+          title: "Success",
+          message: "Project accepted successfully!",
+          type: "success",
+        });
+        router.push(`/client/milestones/${result.projectId}`);
       } else {
         addToast({
           title: "Success",
           message: "Project accepted successfully!",
-          type: "success"
+          type: "success",
         });
       }
     } catch (error) {
       addToast({
         title: "Error",
         message: "Something went wrong while accepting the project.",
-        type: "error"
+        type: "error",
       });
     } finally {
       setIsAccepting(false);
@@ -121,7 +148,10 @@ export function AcceptProject({ acceptProject }: AcceptProjectProps) {
                     font-mono text-[14px] tracking-widest text-white placeholder:text-[#4a4642]
                     focus:outline-none focus:border-[#7a7570] duration-200"
                 />
-                <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-[#4a4642]" size={18} />
+                <Search
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#4a4642]"
+                  size={18}
+                />
               </div>
               <AnimatePresence>
                 {searchError && (
@@ -137,7 +167,7 @@ export function AcceptProject({ acceptProject }: AcceptProjectProps) {
                 )}
               </AnimatePresence>
             </div>
-            
+
             <button
               type="submit"
               disabled={isSearching || projectCode.length === 0}
@@ -147,7 +177,11 @@ export function AcceptProject({ acceptProject }: AcceptProjectProps) {
                 <>
                   <motion.div
                     animate={{ rotate: 360 }}
-                    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 1,
+                      ease: "linear",
+                    }}
                   >
                     <Loader2 size={14} />
                   </motion.div>
@@ -172,42 +206,42 @@ export function AcceptProject({ acceptProject }: AcceptProjectProps) {
           className="flex flex-col gap-6"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <ReadOnlyField 
-              label="Freelancer Name" 
-              value={projectDetails?.freelancerName} 
-              placeholder="Waiting for project code..." 
+            <ReadOnlyField
+              label="Freelancer Name"
+              value={projectDetails?.freelancer.name}
+              placeholder="Waiting for project code..."
             />
-            <ReadOnlyField 
-              label="Freelancer Email" 
-              value={projectDetails?.freelancerEmail} 
-              placeholder="Waiting for project code..." 
+            <ReadOnlyField
+              label="Freelancer Email"
+              value={projectDetails?.freelancer.email}
+              placeholder="Waiting for project code..."
             />
           </div>
 
-          <ReadOnlyField 
-            label="Project Title" 
-            value={projectDetails?.title} 
-            placeholder="Waiting for project code..." 
+          <ReadOnlyField
+            label="Project Title"
+            value={projectDetails?.title}
+            placeholder="Waiting for project code..."
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <ReadOnlyField 
-              label="Agreed Amount (₹)" 
-              value={projectDetails?.agreedcost?.toString()} 
-              placeholder="Waiting for project code..." 
+            <ReadOnlyField
+              label="Agreed Amount (₹)"
+              value={projectDetails?.agreedcost?.toString()}
+              placeholder="Waiting for project code..."
             />
-            <ReadOnlyField 
-              label="Deadline" 
-              value={projectDetails?.deadline} 
-              placeholder="Waiting for project code..." 
+            <ReadOnlyField
+              label="Deadline"
+              value={projectDetails?.deadline}
+              placeholder="Waiting for project code..."
             />
           </div>
 
-          <ReadOnlyField 
-            label="Brief Description" 
-            value={projectDetails?.description} 
-            placeholder="Waiting for project code..." 
-            isTextArea 
+          <ReadOnlyField
+            label="Brief Description"
+            value={projectDetails?.description}
+            placeholder="Waiting for project code..."
+            isTextArea
           />
 
           {/* --- Submit Button --- */}
@@ -225,7 +259,11 @@ export function AcceptProject({ acceptProject }: AcceptProjectProps) {
                 <>
                   <motion.div
                     animate={{ rotate: 360 }}
-                    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 1,
+                      ease: "linear",
+                    }}
                   >
                     <Loader2 size={14} />
                   </motion.div>
@@ -234,7 +272,11 @@ export function AcceptProject({ acceptProject }: AcceptProjectProps) {
               ) : (
                 <>
                   Accept Project
-                  {projectDetails ? <Check size={14} className="text-green-500" /> : <span className="text-[14px] font-sans">→</span>}
+                  {projectDetails ? (
+                    <Check size={14} className="text-green-500" />
+                  ) : (
+                    <span className="text-[14px] font-sans">→</span>
+                  )}
                 </>
               )}
             </button>
@@ -245,14 +287,14 @@ export function AcceptProject({ acceptProject }: AcceptProjectProps) {
   );
 }
 
-function ReadOnlyField({ 
-  label, 
-  value, 
-  placeholder, 
-  isTextArea = false 
-}: { 
-  label: string; 
-  value?: string; 
+function ReadOnlyField({
+  label,
+  value,
+  placeholder,
+  isTextArea = false,
+}: {
+  label: string;
+  value?: string;
   placeholder: string;
   isTextArea?: boolean;
 }) {
@@ -261,10 +303,10 @@ function ReadOnlyField({
       <label className="font-mono text-[10px] tracking-[1.5px] uppercase text-[#7a7570]">
         {label}
       </label>
-      <div 
+      <div
         className={`w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-md px-4 py-3
-          font-sans text-[14px] ${value ? 'text-white' : 'text-[#4a4642] italic'}
-          ${isTextArea ? 'min-h-[100px] whitespace-pre-wrap' : ''}`}
+          font-sans text-[14px] ${value ? "text-white" : "text-[#4a4642] italic"}
+          ${isTextArea ? "min-h-[100px] whitespace-pre-wrap" : ""}`}
       >
         {value || placeholder}
       </div>

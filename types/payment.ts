@@ -18,7 +18,6 @@ export interface PaymentHistory {
   total_cost: number;
   paid_amount: number;
   payment_status: Paymentstatus;
-  txn_number?: string | null;
   due_date: Date;
   createdAt: Date;
   completedAt?: Date | null;

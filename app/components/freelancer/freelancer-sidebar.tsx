@@ -34,7 +34,7 @@ export function FreelancerSidebar({
       >
         <div className="hidden md:flex relative items-center gap-2.5 border-b border-dash-border p-[22px_20px_18px]">
           <div className="grid h-8 w-8 shrink-0 place-items-center rounded bg-dash-gold-glow2 border border-[rgba(200,169,110,0.25)] font-serif text-[1rem] text-dash-gold">
-            T
+            T {/* Logo here */}
           </div>
           <div className="font-serif text-[1.05rem] leading-none tracking-[0.2px] text-dash-gold">
             Track Lancer
@@ -74,16 +74,16 @@ export function FreelancerSidebar({
           </div>
 
           <NavLink
-            href="/"
-            icon={Home}
-            label="Home"
-            isActive={activePath === "/"}
-          />
-          <NavLink
             href="/freelancer/dashboard"
             icon={LayoutDashboard}
             label="Overview"
             isActive={activePath === "/freelancer/dashboard"}
+          />
+          <NavLink
+            href="/"
+            icon={Home}
+            label="Home"
+            isActive={activePath === "/"}
           />
           <NavLink
             href="/freelancer/past-projects"
@@ -163,7 +163,9 @@ function NavLink({
           </span>
         )}
       </div>
-      <span className="text-center text-[9px] leading-[1.2] px-1 md:px-0 md:text-[0.82rem] md:text-left whitespace-normal md:whitespace-nowrap">{label}</span>
+      <span className="text-center text-[9px] leading-[1.2] px-1 md:px-0 md:text-[0.82rem] md:text-left whitespace-normal md:whitespace-nowrap">
+        {label}
+      </span>
 
       {/* Desktop Badge */}
       {badge !== undefined && (

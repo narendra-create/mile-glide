@@ -67,18 +67,17 @@ export function ClientSidebar({ name, role, initials, image }: SidebarProps) {
           <div className="hidden md:block p-[8px_10px_5px] font-mono text-[10px] uppercase tracking-[2px] text-ink-dim">
             Menu
           </div>
-
-          <NavLink
-            href="/"
-            icon={Home}
-            label="Home"
-            isActive={activePath === "/"}
-          />
           <NavLink
             href="/client/dashboard"
             icon={LayoutDashboard}
             label="Overview"
             isActive={activePath === "/client/dashboard"}
+          />
+          <NavLink
+            href="/"
+            icon={Home}
+            label="Home"
+            isActive={activePath === "/"}
           />
           <NavLink
             href="/client/all-projects"

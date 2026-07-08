@@ -24,7 +24,7 @@ export const DUMMY_PROJECTS: ProjectWithPayments[] = [
         project: { title: "E-Commerce Platform Redesign" },
         total_cost: 30000,
         paid_amount: 0,
-        payment_status: Paymentstatus.PENDING_VERIFICATION,
+        payment_status: Paymentstatus.DUE,
         due_date: new Date("2026-04-15T23:59:59Z"),
         createdAt: new Date("2026-04-01T10:00:00Z"),
         completedAt: null
@@ -100,7 +100,7 @@ export const DUMMY_PROJECTS: ProjectWithPayments[] = [
         project: { title: "SEO & Marketing Retainer" },
         total_cost: 5000,
         paid_amount: 0,
-        payment_status: Paymentstatus.PENDING_VERIFICATION,
+        payment_status: Paymentstatus.DUE,
         due_date: new Date("2026-04-01T23:59:59Z"),
         createdAt: new Date("2026-03-25T10:00:00Z"),
         completedAt: null
@@ -111,7 +111,7 @@ export const DUMMY_PROJECTS: ProjectWithPayments[] = [
         project: { title: "SEO & Marketing Retainer" },
         total_cost: 5000,
         paid_amount: 0,
-        payment_status: Paymentstatus.PENDING_VERIFICATION,
+        payment_status: Paymentstatus.DUE,
         due_date: new Date("2026-05-01T23:59:59Z"),
         createdAt: new Date("2026-04-25T10:00:00Z"),
         completedAt: null
@@ -215,7 +215,7 @@ export const DUMMY_PROJECTS: ProjectWithPayments[] = [
         project: { title: "Video Editing - Monthly Vlog" },
         total_cost: 12000,
         paid_amount: 0,
-        payment_status: Paymentstatus.PENDING_VERIFICATION,
+        payment_status: Paymentstatus.DUE,
         due_date: new Date("2026-06-10T23:59:59Z"),
         createdAt: new Date("2026-05-25T10:00:00Z"),
         completedAt: null
@@ -244,7 +244,7 @@ export const DUMMY_PROJECTS: ProjectWithPayments[] = [
         project: { title: "Copywriting - Landing Page" },
         total_cost: 8500,
         paid_amount: 0,
-        payment_status: Paymentstatus.PENDING_VERIFICATION,
+        payment_status: Paymentstatus.DUE,
         due_date: new Date("2026-06-30T23:59:59Z"),
         createdAt: new Date("2026-06-22T10:00:00Z"),
         completedAt: null

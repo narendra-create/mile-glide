@@ -25,6 +25,7 @@ import { FreelancerDashboardData } from "@/types/dashboard";
 import type { LoadMoreResult } from "@/types/dashboard";
 import { useState } from "react";
 import ProjectCardSkeleton from "@/app/components/Cards/ProjectCardSkeleton";
+import { getGreeting } from "@/app/lib/utilitys";
 
 const FreelancerDashboard = ({
   data,
@@ -108,10 +109,10 @@ const FreelancerDashboard = ({
           <h4 className="hero-tag">FREELANCER DASHBOARD</h4>
           <div className="flex flex-col gap-0.5">
             <h1 className="font-serif text-2xl text-ink">
-              Good Morning {data.name}
+              {getGreeting()} {data.name}
             </h1>
             <h1 className="font-sans text-[13px] text-ink-muted">
-              `{today} • {data.projects?.length} Active projects`
+              {today} • {data.projects?.length} Active projects
             </h1>
           </div>
         </div>

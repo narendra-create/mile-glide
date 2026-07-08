@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ArrowLeft } from "lucide-react";
 import { PaymentHistoryCard } from "./Cards/PaymentHistoryCard";
 import type { PaymentHistory } from "@/types/payment";
 import { Paymentstatus } from "@/app/generated/prisma/enums";
@@ -25,6 +26,10 @@ export function PaymentHistoryList({ initialPayments, role }: PaymentHistoryList
     (p) => p.payment_status === Paymentstatus.DUE
   );
   
+  const paidPayments = sortedPayments.filter(
+    (p) => p.payment_status === Paymentstatus.PAID
+  );
+  
   const visibleDue = duePayments.slice(0, dueDisplayCount);
   const visiblePaid = paidPayments.slice(0, paidDisplayCount);
   
@@ -39,9 +44,18 @@ export function PaymentHistoryList({ initialPayments, role }: PaymentHistoryList
         <div className="absolute top-[40%] right-[-10%] w-[40%] h-[600px] bg-[var(--color-status-paid-bg)] opacity-20 rounded-full blur-[120px]" />
       </div>
 
-      <h1 className="font-serif text-[28px] lg:text-[36px] mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white to-[var(--color-dash-ink2)]">
-        Payment History
-      </h1>
+      <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
+        <button
+          onClick={() => window.history.back()}
+          className="px-4 py-2 bg-transparent border border-[var(--color-dash-border)] rounded-md text-white font-mono text-[10px] lg:text-[12px] uppercase tracking-[1.5px] hover:bg-[var(--color-dash-surface2)] hover:border-[var(--color-dash-border-hover)] transition-all duration-200 flex items-center gap-2 w-fit"
+        >
+          <ArrowLeft size={13} />
+          Back
+        </button>
+        <h1 className="font-serif text-[28px] lg:text-[36px] text-transparent bg-clip-text bg-gradient-to-r from-white to-[var(--color-dash-ink2)]">
+          Payment History
+        </h1>
+      </div>
 
       {/* Verification Banner */}
       <div className="mb-10 w-full rounded-xl overflow-hidden relative p-[1px] bg-gradient-to-r from-[rgba(200,120,64,0.5)] via-[rgba(200,120,64,0.1)] to-[rgba(200,120,64,0.5)] shadow-[0_0_30px_rgba(200,120,64,0.15)] group">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ArrowLeft } from "lucide-react";
 import { VerifyPaymentCard } from "./Cards/VerifyPaymentCard";
 import type { VerifyPaymentType } from "@/types/verifypayments";
 
@@ -27,9 +28,18 @@ export function VerifyPaymentsList({ initialVerifications, role }: VerifyPayment
         <div className="absolute top-[10%] right-[-10%] w-[50%] h-[500px] bg-[var(--color-dash-amber)] opacity-10 rounded-full blur-[120px]" />
       </div>
 
-      <h1 className="font-serif text-[28px] lg:text-[36px] mb-10 text-transparent bg-clip-text bg-gradient-to-r from-white to-[var(--color-dash-ink2)]">
-        Payment Verifications
-      </h1>
+      <div className="flex flex-col md:flex-row md:items-center gap-4 mb-10">
+        <button
+          onClick={() => window.history.back()}
+          className="px-4 py-2 bg-transparent border border-[var(--color-dash-border)] rounded-md text-white font-mono text-[10px] lg:text-[12px] uppercase tracking-[1.5px] hover:bg-[var(--color-dash-surface2)] hover:border-[var(--color-dash-border-hover)] transition-all duration-200 flex items-center gap-2 w-fit"
+        >
+          <ArrowLeft size={13} />
+          Back
+        </button>
+        <h1 className="font-serif text-[28px] lg:text-[36px] text-transparent bg-clip-text bg-gradient-to-r from-white to-[var(--color-dash-ink2)]">
+          Payment Verifications
+        </h1>
+      </div>
 
       <div className="mb-12">
         <h2 className="font-serif text-[20px] lg:text-[24px] text-white mb-6 flex items-center gap-3">

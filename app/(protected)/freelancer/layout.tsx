@@ -25,7 +25,7 @@ export default async function Freelancerlayout({
   const data = await loadprofiledetails();
 
   return (
-    <div className="flex min-h-screen w-full bg-dash-surface flex-col mt-5">
+    <div className="flex min-h-screen w-full bg-dash-surface flex-col pt-5">
       <FreelancerSidebar
         image={data.image ?? undefined}
         initials={getInitials(data.name)}
@@ -34,7 +34,7 @@ export default async function Freelancerlayout({
       />
 
       {/* Main Content Area (80% width on desktop, 20% left margin) */}
-      <main className="flex-1 pb-[80px] lg:ml-[15%] lg:px-3 lg:w-[85%] lg:pb-0">
+      <main className="flex-1 w-full overflow-x-hidden pb-[80px] lg:ml-[15%] lg:px-3 lg:w-[85%] lg:pb-0">
         {children}
       </main>
     </div>

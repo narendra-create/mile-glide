@@ -63,7 +63,7 @@ export function ClientSidebar({ name, role, initials, image }: SidebarProps) {
           </div>
         </div>
 
-        <nav className="flex w-full flex-row items-center justify-between px-1 py-0 md:flex-1 md:flex-col md:items-stretch md:justify-start md:p-[12px_10px] overflow-y-auto">
+        <nav className="flex w-full flex-row items-center justify-between px-1 py-0 md:flex-1 md:flex-col md:items-stretch md:justify-start md:p-[12px_10px] overflow-x-auto overflow-y-hidden md:overflow-x-hidden md:overflow-y-auto">
           <div className="hidden md:block p-[8px_10px_5px] font-mono text-[10px] uppercase tracking-[2px] text-ink-dim">
             Menu
           </div>
@@ -87,10 +87,10 @@ export function ClientSidebar({ name, role, initials, image }: SidebarProps) {
             hideOnMobile
           />
           <NavLink
-            href="/client/payments"
+            href="/client/payment-history"
             icon={CreditCard}
             label="Payments"
-            isActive={activePath === "/client/payments"}
+            isActive={activePath === "/client/payment-history"}
           />
           <NavLink
             href="/client/activity"
@@ -132,7 +132,7 @@ function NavLink({
       className={`relative cursor-pointer transition-colors duration-150
         h-[75px] flex-col items-center justify-center gap-1 font-medium
         md:mb-0.5 md:h-auto md:flex-none md:flex-row md:justify-start md:gap-2.5 md:rounded md:p-[9px_10px] md:text-[0.82rem]
-        ${hideOnMobile ? "hidden md:flex" : "flex flex-1"}
+        ${hideOnMobile ? "hidden md:flex" : "flex flex-1 min-w-0"}
         ${
           isActive
             ? "text-dash-gold bg-dash-gold-glow/40 md:bg-dash-gold-glow"

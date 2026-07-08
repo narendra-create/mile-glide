@@ -73,7 +73,7 @@ type MilestoneSeed = {
 type PaymentSeed = {
   total_cost: number;
   paid_amount: number;
-  payment_status: "DUE" | "PENDING_VERIFICATION" | "PAID";
+  payment_status: "DUE" | "PAID";
   due_date: Date;
   createdAt: Date;
   completedAt?: Date;
@@ -380,7 +380,7 @@ async function main() {
         { title: "Testing & Launch", subtitle: "QA + deploy", milestonecost: 10000, status: "IN_PROGRESS", deadline: daysFromNow(45) },
       ],
       payments: [
-        { total_cost: 75000, paid_amount: 45000, payment_status: "PENDING_VERIFICATION", due_date: daysFromNow(5), createdAt: monthsAgo(3, 10) },
+        { total_cost: 75000, paid_amount: 45000, payment_status: "DUE", due_date: daysFromNow(5), createdAt: monthsAgo(3, 10) },
       ],
     },
     {
@@ -548,7 +548,7 @@ async function main() {
       }
     });
   }
-  const paymentToVerify = await prisma.payment.findFirst({ where: { payment_status: "PENDING_VERIFICATION" }, include: { project: true } });
+  const paymentToVerify = await prisma.payment.findFirst({ include: { project: true } });
   if (paymentToVerify && paymentToVerify.project && paymentToVerify.project.clientId) {
     await prisma.paymentverification.create({
       data: {

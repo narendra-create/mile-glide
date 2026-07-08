@@ -80,6 +80,7 @@
 - [x] make past projects page for client
 - [ ] verify payments page ui
 - [ ] verify payments controller
+- [x] payment history cards and page
 - [ ] payment history controllers
 - [ ] WIREUP: Wire up the Milestone status update buttons (Approve, Stop, Pending) to backend
 # for 08/07/2026

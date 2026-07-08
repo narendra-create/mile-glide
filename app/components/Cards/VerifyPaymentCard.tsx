@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import { CheckCircle, Image as ImageIcon, ExternalLink, Calendar, User } from "lucide-react";
+import { CheckCircle, XCircle, Image as ImageIcon, ExternalLink, Calendar, User } from "lucide-react";
 import type { VerifyPaymentType } from "@/types/verifypayments";
 import { formatDate } from "@/app/lib/utilitys";
 
@@ -10,10 +10,12 @@ interface VerifyPaymentCardProps {
   verification: VerifyPaymentType;
   role: "CLIENT" | "FREELANCER";
   onVerify?: (id: string) => void;
+  onReject?: (id: string) => void;
 }
 
-export function VerifyPaymentCard({ verification, role, onVerify }: VerifyPaymentCardProps) {
+export function VerifyPaymentCard({ verification, role, onVerify, onReject }: VerifyPaymentCardProps) {
   const [isConfirming, setIsConfirming] = useState(false);
+  const [isRejectConfirming, setIsRejectConfirming] = useState(false);
 
   const handleVerifyClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -22,9 +24,25 @@ export function VerifyPaymentCard({ verification, role, onVerify }: VerifyPaymen
       setIsConfirming(false);
     } else {
       setIsConfirming(true);
-      // Automatically reset confirmation after 3 seconds
-      setTimeout(() => setIsConfirming(false), 3000);
+      setIsRejectConfirming(false);
     }
+  };
+
+  const handleRejectClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isRejectConfirming) {
+      onReject?.(verification.id);
+      setIsRejectConfirming(false);
+    } else {
+      setIsRejectConfirming(true);
+      setIsConfirming(false);
+    }
+  };
+
+  const handleCancel = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsConfirming(false);
+    setIsRejectConfirming(false);
   };
 
   const opponentName = role === "FREELANCER" 
@@ -96,24 +114,63 @@ export function VerifyPaymentCard({ verification, role, onVerify }: VerifyPaymen
 
       {/* Actions */}
       {role === "FREELANCER" && (
-        <div className="mt-4 pt-4 border-t border-[rgba(200,120,64,0.15)] flex justify-end">
-          <button
-            onClick={handleVerifyClick}
-            className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-md font-mono text-[11px] lg:text-[13px] tracking-[1.5px] uppercase transition-all duration-200 ${
-              isConfirming 
-                ? "bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/50" 
-                : "bg-[rgba(16,185,129,0.1)] border border-[rgba(16,185,129,0.3)] text-[var(--color-dash-green)] hover:bg-[rgba(16,185,129,0.18)] hover:border-[rgba(16,185,129,0.5)]"
-            }`}
-          >
-            {isConfirming ? (
-              "Are you sure you verified this payment?"
-            ) : (
-              <>
-                <CheckCircle size={14} strokeWidth={2} />
-                Mark Paid
-              </>
-            )}
-          </button>
+        <div className="mt-4 pt-4 border-t border-[rgba(200,120,64,0.15)] flex justify-end gap-3">
+          
+          {/* Reject / Cancel Button */}
+          {isConfirming ? (
+            <button
+              onClick={handleCancel}
+              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-md font-mono text-[11px] lg:text-[13px] tracking-[1.5px] uppercase transition-all duration-200 bg-transparent border border-[var(--color-dash-border)] text-[var(--color-dash-ink3)] hover:text-white hover:border-[var(--color-dash-border-hover)]"
+            >
+              Cancel
+            </button>
+          ) : (
+            <button
+              onClick={handleRejectClick}
+              className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-md font-mono text-[11px] lg:text-[13px] tracking-[1.5px] uppercase transition-all duration-200 ${
+                isRejectConfirming 
+                  ? "bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 hover:border-red-500/50" 
+                  : "bg-transparent border border-[var(--color-dash-border)] text-[var(--color-dash-ink3)] hover:text-white hover:border-[var(--color-dash-border-hover)]"
+              }`}
+            >
+              {isRejectConfirming ? (
+                "Confirm Reject?"
+              ) : (
+                <>
+                  <XCircle size={14} strokeWidth={2} />
+                  Reject
+                </>
+              )}
+            </button>
+          )}
+
+          {/* Mark Paid / Cancel Button */}
+          {isRejectConfirming ? (
+            <button
+              onClick={handleCancel}
+              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-md font-mono text-[11px] lg:text-[13px] tracking-[1.5px] uppercase transition-all duration-200 bg-transparent border border-[var(--color-dash-border)] text-[var(--color-dash-ink3)] hover:text-white hover:border-[var(--color-dash-border-hover)]"
+            >
+              Cancel
+            </button>
+          ) : (
+            <button
+              onClick={handleVerifyClick}
+              className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-md font-mono text-[11px] lg:text-[13px] tracking-[1.5px] uppercase transition-all duration-200 ${
+                isConfirming 
+                  ? "bg-[rgba(16,185,129,0.15)] border border-[rgba(16,185,129,0.4)] text-[var(--color-dash-green)] hover:bg-[rgba(16,185,129,0.25)] hover:border-[rgba(16,185,129,0.6)]" 
+                  : "bg-[rgba(16,185,129,0.1)] border border-[rgba(16,185,129,0.3)] text-[var(--color-dash-green)] hover:bg-[rgba(16,185,129,0.18)] hover:border-[rgba(16,185,129,0.5)]"
+              }`}
+            >
+              {isConfirming ? (
+                "Are you sure you verified this payment?"
+              ) : (
+                <>
+                  <CheckCircle size={14} strokeWidth={2} />
+                  Mark Paid
+                </>
+              )}
+            </button>
+          )}
         </div>
       )}
     </motion.div>

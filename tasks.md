@@ -78,7 +78,7 @@
 - [x] budget requests page for client
 - [x] project specific budget requests page
 - [x] make past projects page for client
-- [ ] verify payments page ui
+- [x] verify payments page ui
 - [ ] verify payments controller
 - [x] payment history cards and page
 - [ ] payment history controllers

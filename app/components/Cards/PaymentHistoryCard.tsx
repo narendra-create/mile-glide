@@ -30,19 +30,11 @@ const STATUS_CONFIG: Record<
     badgeBorder: "border-[var(--color-status-pending-border)]",
     badgeText: "text-[var(--color-dash-gold)]",
   },
-  PENDING_VERIFICATION: {
-    label: "VERIFICATION PENDING",
-    dotColor: "bg-[var(--color-dash-amber)]",
-    badgeBg: "bg-[var(--color-dash-amber-bg)]",
-    badgeBorder: "border-[rgba(200,120,64,0.3)]",
-    badgeText: "text-[var(--color-dash-amber)]",
-  },
 };
 
 const STATUS_ICON: Record<Paymentstatus, React.ReactNode> = {
   PAID: <Check size={11} strokeWidth={2.5} />,
   DUE: <Clock size={11} strokeWidth={2.5} />,
-  PENDING_VERIFICATION: <Zap size={11} strokeWidth={2.5} />,
 };
 
 interface PaymentHistoryCardProps {
@@ -55,7 +47,6 @@ export function PaymentHistoryCard({ payment, index, role }: PaymentHistoryCardP
   const cfg = STATUS_CONFIG[payment.payment_status];
   const isPaid = payment.payment_status === "PAID";
   const isDue = payment.payment_status === "DUE";
-  const isPendingVerification = payment.payment_status === "PENDING_VERIFICATION";
 
   const handleCardClick = () => {
     // Placeholder for future action
@@ -75,15 +66,12 @@ export function PaymentHistoryCard({ payment, index, role }: PaymentHistoryCardP
         className={`relative flex-1 flex flex-col justify-between mb-6 border rounded-xl p-4 lg:p-6 transition-all duration-300 cursor-pointer group overflow-hidden ${
           isDue
             ? "bg-[rgba(200,169,110,0.02)] backdrop-blur-md border-[rgba(200,169,110,0.15)] hover:border-[rgba(200,169,110,0.4)] hover:shadow-[0_8px_32px_-8px_rgba(200,169,110,0.15)] hover:-translate-y-1"
-            : isPendingVerification
-              ? "bg-[rgba(200,120,64,0.03)] backdrop-blur-md border-[rgba(200,120,64,0.25)] hover:border-[rgba(200,120,64,0.55)] shadow-[0_4px_24px_rgba(200,120,64,0.08)] hover:shadow-[0_8px_32px_-8px_rgba(200,120,64,0.25)] hover:-translate-y-1"
-              : "bg-[var(--color-dash-surface1)]/60 backdrop-blur-md border-[var(--color-dash-border)] hover:border-[var(--color-dash-border-hover)] hover:shadow-[0_8px_32px_-8px_rgba(16,185,129,0.1)] hover:-translate-y-1"
+            : "bg-[var(--color-dash-surface1)]/60 backdrop-blur-md border-[var(--color-dash-border)] hover:border-[var(--color-dash-border-hover)] hover:shadow-[0_8px_32px_-8px_rgba(16,185,129,0.1)] hover:-translate-y-1"
         }`}
       >
         {/* Subtle Top Gradient Highlight */}
         <div className={`absolute top-0 left-0 w-full h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r ${
           isDue ? "from-transparent via-[var(--color-dash-gold)] to-transparent" : 
-          isPendingVerification ? "from-transparent via-[var(--color-dash-amber)] to-transparent" : 
           "from-transparent via-dash-green to-transparent"
         }`} />
         {/* Mobile & Large Screen Flex Layout */}
@@ -161,17 +149,13 @@ export function PaymentHistoryCard({ payment, index, role }: PaymentHistoryCardP
         </div>
 
         {/* Actions Section */}
-        {(isDue || isPendingVerification) && (
+        {isDue && (
           <div 
-            className={`mt-4 pt-4 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-              isDue ? "border-[rgba(200,169,110,0.15)]" : "border-[rgba(200,120,64,0.15)]"
-            }`}
+            className="mt-4 pt-4 border-t border-[rgba(200,169,110,0.15)] flex flex-col sm:flex-row sm:items-center justify-between gap-3"
             onClick={(e) => e.stopPropagation()}
           >
             <p className="font-mono text-[9px] lg:text-[11px] tracking-[1.5px] uppercase text-[var(--color-dash-ink3)]">
-              {isDue 
-                ? (role === "CLIENT" ? "Payment required" : "Awaiting payment") 
-                : (role === "FREELANCER" ? "Verification required" : "Awaiting verification")}
+              {role === "CLIENT" ? "Payment required" : "Awaiting payment"}
             </p>
             
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
@@ -179,11 +163,7 @@ export function PaymentHistoryCard({ payment, index, role }: PaymentHistoryCardP
               {payment.projectId && (
                 <Link href={`/${role.toLowerCase()}/milestones/${payment.projectId}`} className="w-full sm:w-auto">
                   <button
-                    className={`w-full flex items-center justify-center gap-2 px-5 py-2.5 bg-transparent border rounded-md font-mono text-[11px] lg:text-[13px] tracking-[1.5px] uppercase transition-all duration-200 ${
-                      isDue 
-                        ? "border-[rgba(200,169,110,0.3)] text-[var(--color-dash-gold)] hover:bg-[rgba(200,169,110,0.1)] hover:border-[rgba(200,169,110,0.5)]" 
-                        : "border-[rgba(200,120,64,0.3)] text-[var(--color-dash-amber)] hover:bg-[rgba(200,120,64,0.1)] hover:border-[rgba(200,120,64,0.5)]"
-                    }`}
+                    className="w-full flex items-center justify-center gap-2 px-5 py-2.5 bg-transparent border border-[rgba(200,169,110,0.3)] text-[var(--color-dash-gold)] hover:bg-[rgba(200,169,110,0.1)] hover:border-[rgba(200,169,110,0.5)] rounded-md font-mono text-[11px] lg:text-[13px] tracking-[1.5px] uppercase transition-all duration-200"
                   >
                     View Project
                   </button>
@@ -191,24 +171,13 @@ export function PaymentHistoryCard({ payment, index, role }: PaymentHistoryCardP
               )}
 
               {/* Primary Action Button */}
-              {role === "CLIENT" && isDue && (
+              {role === "CLIENT" && (
                 <Link href={`/client/pay-now/${payment.id}`} className="w-full sm:w-auto">
                   <button
                     className="w-full flex items-center justify-center gap-2 px-5 py-2.5 bg-[rgba(200,169,110,0.1)] border border-[rgba(200,169,110,0.3)] rounded-md font-mono text-[11px] lg:text-[13px] tracking-[1.5px] uppercase text-[var(--color-dash-gold)] hover:bg-[rgba(200,169,110,0.18)] hover:border-[rgba(200,169,110,0.5)] transition-all duration-200"
                   >
                     <CreditCard size={14} strokeWidth={2} />
                     Pay Now
-                  </button>
-                </Link>
-              )}
-
-              {role === "FREELANCER" && isPendingVerification && (
-                <Link href={`/freelancer/verify-payment/${payment.id}`} className="w-full sm:w-auto">
-                  <button
-                    className="w-full flex items-center justify-center gap-2 px-5 py-2.5 bg-[rgba(200,120,64,0.1)] border border-[rgba(200,120,64,0.3)] rounded-md font-mono text-[11px] lg:text-[13px] tracking-[1.5px] uppercase text-[var(--color-dash-amber)] hover:bg-[rgba(200,120,64,0.18)] hover:border-[rgba(200,120,64,0.5)] transition-all duration-200"
-                  >
-                    <CheckCircle size={14} strokeWidth={2} />
-                    Verify Payment
                   </button>
                 </Link>
               )}

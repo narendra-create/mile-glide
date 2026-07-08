@@ -82,7 +82,7 @@
 - [ ] verify payments controller
 - [x] payment history cards and page
 - [ ] payment history controllers
-- [ ] WIREUP: Wire up the Milestone status update buttons (Approve, Stop, Pending) to backend
+- [ ] Milestone status update buttons to backend
 # for 08/07/2026
 - [ ] make profile update system
 - [ ] update settings page to update profile and more

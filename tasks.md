@@ -8,40 +8,32 @@
 - [x] CONTROLLER: Implement Milestone creation, updates workflows
 - [x] CONTROLLER: Handle Budget Raise Requests (creation, approval, rejection)
 - [x] API/REALDATA: Fetch paginated list of projects for Freelancer dashboard
-- [ ] API/REALDATA: Fetch paginated list of projects for Client dashboard
 - [x] API/REALDATA: Fetch detailed view of a single project including milestones and payments
-- [ ] API/REALDATA: Fetch and calculate payment due dates and amounts
+- [x] API/REALDATA: Fetch and calculate payment due dates and amounts
 - [x] API/REALDATA: Create endpoints for budget raise request actions
 - [x] UI: Design and implement the Freelancer dashboard overview page
-- [ ] UI: Design and implement the Client dashboard overview page
+- [x] UI: Design and implement the Client dashboard overview page
 - [x] UI: Create the Project Details view (showing timeline, budget, and milestones)
 - [x] UI: Build the component for adding milestones within a project
 - [x] UI: Create the Budget Raise Request form modal or page
-- [ ] UI: Design the Payment history and status tracking table
+- [x] UI: Design the Payment history and status tracking table
 - [x] WIREUP: Connect the Freelancer dashboard UI to the project fetching API
-- [ ] WIREUP: Connect the Client dashboard UI to the project fetching API
 - [x] WIREUP: Integrate the Project Details view with live milestone and payment data
 - [x] WIREUP: Connect Budget Raise Request actions to real API endpoints
-- [ ] ADDITIONAL: Set up email notifications or in-app alerts for milestone status changes
-- [ ] ADDITIONAL: Implement automated reminders for pending payments
 - [x] ADDITIONAL: Add role-based access control (RBAC) checks on all sensitive API routes
 - [x] UI: Create Past Projects component with reusable cards for completed projects
 - [x] API/REALDATA: Fetch completed projects and map data to PastProjects component
 - [x] WIREUP: Integrate PastProjects component into Freelancer
-- [ ] and Client dashboard views
 - [x] UI: Add pagination or "Load More" functionality to Past Projects list
 - [x] UI: Implement filtering or sorting options for Past Projects (e.g., by date or cost)
 - [x] VALIDATION: Make validation file for creating projects
 - [x] make controller for deleting projects, only unverified projects
-- [ ] make a function to archive projects from freelancer or from client side
 - [x] make a controller for stopping the project
 - [x] make a page to see unverified projects for freelancer
 - [x] connect create project feature with controller
 - [x] Make milestones ui
 - [x] make budget raise request ui
 - [x] add extra buttons in settings page
-- [ ] Payment history page ui
-- [ ] Approve payments feature with txn beside it
 - [x] make controllers for projectid based milestones
 - [x] make one controller to return all projects
 # for 02/07/2026
@@ -103,6 +95,13 @@
 - [ ] make controllers for client dashboard stats and data
 - [ ] Add real data to client dashboard stage 2
 - [ ] make controller for get client money stats, upcoming deadlines, client dashboard stats
+- [ ] API/REALDATA: Fetch paginated list of projects for Client dashboard
 # for 11/07/2026
 - [ ] make setnew password controller for settings page
 - [ ] make notification off system for settings page
+- [ ] make a function to archive projects from freelancer or from client side
+
+
+## additionals
+- [ ] ADDITIONAL: Set up email notifications or in-app alerts for milestone status changes
+- [ ] ADDITIONAL: Implement automated reminders for pending payments

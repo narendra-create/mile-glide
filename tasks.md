@@ -91,3 +91,5 @@
 - [ ] update settings page to update profile and more
 - [ ] fix - background of verify-payments page
 - [x] continue paymentController
+- [ ] add real data in payment history page
+- [ ] add real data in verification requests page

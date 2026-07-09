@@ -209,11 +209,7 @@ export const markVerifiedPayment = async (verificationPaymentId: string) => {
             id: verificationPaymentId
         },
         include: {
-            Payment: {
-                include: {
-                    project: true
-                }
-            }
+            Payment: true
         }
     });
     if (!findverification) {
@@ -269,6 +265,64 @@ export const markVerifiedPayment = async (verificationPaymentId: string) => {
         });
 
         return { success: true, updated: accepted, status: 200 }
+    }
+    catch (err) {
+        return {
+            success: false,
+            error: err instanceof Error ? err.message : "Server Error",
+            status: 500
+        };
+    }
+}
+
+export const markRejectPayment = async (verificationPaymentId: string) => {
+    const session = await getSession();
+    if (!session) return { success: false, error: "Unauthorized", status: 401 };
+    const role = session.user.role.toLowerCase();
+    if (role !== "freelancer") { return { success: false, error: "Invalid Role", status: 403 } };
+
+    const findfreelancer = await prisma.freelancer.findUnique({
+        where: { userId: session.user.id }
+    })
+    if (!findfreelancer) {
+        return { success: false, error: "freelancer not found", status: 404 }
+    };
+
+    const findverification = await prisma.paymentverification.findUnique({
+        where: {
+            id: verificationPaymentId
+        },
+        include: {
+            Payment: true
+        }
+    });
+    if (!findverification) {
+        return { success: false, error: "Verification Request not found", status: 404 }
+    };
+    if (findverification.status !== "PENDING_VERIFICATION") {
+        return { success: false, error: "Verification Already processed", status: 409 }
+    }
+    if (findfreelancer.id !== findverification?.freelancerId) {
+        return { success: false, error: "You are not Associated with this Project", status: 403 }
+    }
+
+    try {
+        const rejected = await prisma.$transaction(async (tx) => {
+            if (findfreelancer.id !== findverification.freelancerId) {
+                throw new Error("This project does not belong to you")
+            }
+
+            const verificationUpdated = await tx.paymentverification.update({
+                where: { id: findverification.id },
+                data: {
+                    status: "REJECTED"
+                }
+            });
+
+            return { status: verificationUpdated.status, id: verificationUpdated.id }
+        });
+
+        return { success: true, updated: rejected, status: 200 }
     }
     catch (err) {
         return {

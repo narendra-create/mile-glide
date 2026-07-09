@@ -65,6 +65,8 @@ export function VerifyPaymentsList({
           title: "Got an error",
           type: "error",
         });
+      } else {
+        setVerifications((prev) => prev.filter((v) => v.id !== id));
       }
     } else {
       const result = await onReject(id);
@@ -74,12 +76,14 @@ export function VerifyPaymentsList({
           title: "Got an error",
           type: "error",
         });
+      } else {
+        setVerifications((prev) => prev.filter((v) => v.id !== id));
       }
     }
   };
 
   return (
-    <div className="w-full py-4 lg:py-8 relative min-h-screen">
+    <div className="w-full py-4 lg:py-8 relative min-h-screen mx-4 lg:pl-7 lg:pt-10">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
         <div className="absolute top-[10%] right-[-10%] w-[50%] h-[500px] bg-[var(--color-dash-amber)] opacity-10 rounded-full blur-[120px]" />

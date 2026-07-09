@@ -89,7 +89,7 @@
 - [x] payment history controllers
 - [ ] make profile update system
 - [ ] update settings page to update profile and more
-- [ ] fix - background of verify-payments page
+- [x] fix - background of verify-payments page
 - [x] continue paymentController
 - [x] add real data in payment history page
 - [x] add real data in verification requests page

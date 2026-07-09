@@ -36,10 +36,18 @@ export const getPaymentHistory = async (cursor?: string) => {
                     due_date: true,
                     createdAt: true,
                     completedAt: true
+                },
+                orderBy: {
+                    createdAt: "desc"
                 }
             });
-            if (!getPayments) {
-                return { sucess: false, error: "No payments", status: 404 }
+            if (getPayments.length === 0) {
+                return {
+                    success: true,
+                    payments: [],
+                    nextCursor: null,
+                    status: 200
+                };
             };
             const nextCursor = getPayments.length === 6 ? getPayments[getPayments.length - 1].id : null;
             return { success: true, payments: getPayments, nextCursor, status: 200 }
@@ -82,10 +90,18 @@ export const getPaymentHistory = async (cursor?: string) => {
                     due_date: true,
                     createdAt: true,
                     completedAt: true
+                },
+                orderBy: {
+                    createdAt: "desc"
                 }
             });
-            if (!getPayments) {
-                return { sucess: false, error: "No payments", status: 404 }
+            if (getPayments.length === 0) {
+                return {
+                    success: true,
+                    payments: [],
+                    nextCursor: null,
+                    status: 200
+                };
             };
             const nextCursor = getPayments.length === 6 ? getPayments[getPayments.length - 1].id : null;
             return { success: true, payments: getPayments, nextCursor, status: 200 }
@@ -332,3 +348,141 @@ export const markRejectPayment = async (verificationPaymentId: string) => {
         };
     }
 }
+
+export const getPaymentVerificationRequests = async (cursor?: string) => {
+    const session = await getSession();
+    if (!session) return { success: false, error: "Unauthorized", status: 401 };
+    const role = session.user.role.toLowerCase();
+    if (role === "client") {
+        try {
+            const findclient = await prisma.userprofile.findUnique({
+                where: { userId: session.user.id }
+            });
+            if (!findclient) {
+                return { success: false, error: "No client account found", status: 404 }
+            };
+
+            const getPaymentRequests = await prisma.paymentverification.findMany({
+                take: 5,
+                ...(cursor && { cursor: { id: cursor }, skip: 1 }),
+                where: { clientId: findclient.id },
+                select: {
+                    Payment: {
+                        select: {
+                            project: {
+                                select: {
+                                    title: true,
+
+                                }
+                            },
+                            due_date: true
+                        }
+                    },
+                    txn_number: true,
+                    id: true,
+                    clientId: true,
+                    freelancer: {
+                        select: {
+                            id: true,
+                            user: {
+                                select: {
+                                    name: true
+                                }
+                            }
+                        }
+                    },
+                    paid_amount: true,
+                    status: true,
+                },
+                orderBy: {
+                    createdAt: "desc"
+                }
+            })
+            if (getPaymentRequests.length === 0) {
+                return {
+                    success: true,
+                    requests: [],
+                    nextCursor: null,
+                    status: 200
+                };
+            };
+            const nextCursor = getPaymentRequests.length === 5 ? getPaymentRequests[getPaymentRequests.length - 1].id : null;
+            return { success: true, requests: getPaymentRequests, nextCursor, status: 200 }
+        }
+        catch (err) {
+            return {
+                success: false,
+                error: err instanceof Error ? err.message : "Server Error",
+                status: 500
+            };
+        }
+    }
+    else if (role === "freelancer") {
+        try {
+            const freelancer = await prisma.freelancer.findUnique({
+                where: { userId: session.user.id }
+            });
+            if (!freelancer) {
+                return { success: false, error: "No freelancer account found", status: 404 }
+            };
+
+            const getPaymentRequests = await prisma.paymentverification.findMany({
+                take: 5,
+                ...(cursor && { cursor: { id: cursor }, skip: 1 }),
+                where: {
+                    freelancerId: freelancer.id
+                },
+                select: {
+                    Payment: {
+                        select: {
+                            project: {
+                                select: {
+                                    title: true,
+
+                                }
+                            },
+                            due_date: true
+                        }
+                    },
+                    txn_number: true,
+                    id: true,
+                    freelancerId: true,
+                    client: {
+                        select: {
+                            id: true,
+                            user: {
+                                select: {
+                                    name: true
+                                }
+                            }
+                        }
+                    },
+                    paid_amount: true,
+                    status: true,
+                },
+                orderBy: {
+                    createdAt: "desc"
+                }
+            });
+            if (getPaymentRequests.length === 0) {
+                return {
+                    success: true,
+                    requests: [],
+                    nextCursor: null,
+                    status: 200
+                };
+            };
+            const nextCursor = getPaymentRequests.length === 5 ? getPaymentRequests[getPaymentRequests.length - 1].id : null;
+            return { success: true, requests: getPaymentRequests, nextCursor, status: 200 }
+        }
+        catch (err) {
+            return {
+                success: false,
+                error: err instanceof Error ? err.message : "Server Error",
+                status: 500
+            };
+        }
+    }
+
+    return { success: false, error: "Invalid role", status: 403 }
+};

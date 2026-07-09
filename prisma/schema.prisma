@@ -92,7 +92,7 @@ model Payment {
 
 model Paymentverification {
   id           String             @id @default(cuid())
-  txn_number   String
+  txn_number   String             @unique
   paymentid    String
   paid_amount  Int
   status       VerificationStatus @default(PENDING_VERIFICATION)

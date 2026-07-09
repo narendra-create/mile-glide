@@ -114,6 +114,7 @@ model Freelancer {
   id       String    @id @default(cuid())
   userId   String    @unique
   category Categorys
+  phone    String?
 
   user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   projects             Project[]
@@ -122,8 +123,9 @@ model Freelancer {
 }
 
 model Userprofile {
-  id     String @id @default(cuid())
-  userId String @unique
+  id     String  @id @default(cuid())
+  userId String  @unique
+  phone  String?
 
   user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   projects             Project[]

@@ -10,9 +10,10 @@ import Link from "next/link";
 interface PaymentHistoryListProps {
   initialPayments: PaymentHistory[];
   role: "CLIENT" | "FREELANCER";
+  cursor?: string | null;
 }
 
-export function PaymentHistoryList({ initialPayments, role }: PaymentHistoryListProps) {
+export function PaymentHistoryList({ initialPayments, role, cursor }: PaymentHistoryListProps) {
   const [dueDisplayCount, setDueDisplayCount] = useState(5);
   const [paidDisplayCount, setPaidDisplayCount] = useState(5);
   

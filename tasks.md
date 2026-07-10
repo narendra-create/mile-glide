@@ -87,8 +87,8 @@
 - [x] add real data in verification requests page
 - [x] add real data to client dashboard from existing controllers stage 1
 # for 10/07/2026
-- [ ] Make Payment initiate for client with qr code
-- [ ] make i have paid page where they can submit txn number and screenshot
+- [x] Make Payment initiate for client with qr code
+- [x] make i have paid page where they can submit txn number and screenshot
 - [ ] Make controller for marking project completed
 - [ ] make button for marking project completed for freelancer
 - [ ] Start working on activity page for both client and freelancer
@@ -96,6 +96,7 @@
 - [ ] Add real data to client dashboard stage 2
 - [ ] make controller for get client money stats, upcoming deadlines, client dashboard stats
 - [ ] API/REALDATA: Fetch paginated list of projects for Client dashboard
+- [ ] make upi code submit system for freelancer
 # for 11/07/2026
 - [ ] make setnew password controller for settings page
 - [ ] make notification off system for settings page

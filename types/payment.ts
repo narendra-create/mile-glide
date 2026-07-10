@@ -11,8 +11,10 @@ import { Paymentstatus } from "@/app/generated/prisma/enums";
 export interface PaymentHistory {
   id: string;
   project?: {
+    id: string;
     title: string;
     createdAt: Date;
+    deadline: Date;
   } | null;
   _count?: any;
   total_cost: number;

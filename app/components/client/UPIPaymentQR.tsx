@@ -241,7 +241,7 @@ export function UPIPaymentQR({
               value={txnId}
               onChange={(e) => setTxnId(e.target.value)}
               placeholder="e.g. 426812345678"
-              className="w-full bg-[var(--color-dash-surface1)] border border-[var(--color-dash-border)] focus:border-[var(--color-dash-gold)] outline-none font-mono text-[14px] text-[var(--color-dash-ink)] placeholder:text-[var(--color-dash-ink4)] px-4 py-3.5 min-h-[48px] transition-colors duration-150"
+              className="w-full bg-[var(--color-dash-surface1)] border rounded-lg border-[var(--color-dash-border)] focus:border-[var(--color-dash-gold)] outline-none font-mono text-[14px] text-[var(--color-dash-ink)] placeholder:text-[var(--color-dash-ink4)] px-4 py-3.5 min-h-[48px] transition-colors duration-150"
             />
             <AnimatePresence>
               {txnId.length > 0 && txnId.trim().length < 6 && (
@@ -261,7 +261,7 @@ export function UPIPaymentQR({
           <button
             onClick={handleVerify}
             disabled={!isButtonEnabled || !resolvedAmount}
-            className="w-full min-h-[52px] py-3.5 font-mono text-[12px] tracking-[3px] uppercase transition-all duration-200 disabled:opacity-25 disabled:cursor-not-allowed enabled:cursor-pointer bg-[var(--color-dash-gold)] text-[#0d0d0d] font-medium hover:brightness-110 active:brightness-95 disabled:bg-[rgba(200,169,110,0.15)] disabled:text-[var(--color-dash-gold)] disabled:border disabled:border-[rgba(200,169,110,0.25)]"
+            className="w-full min-h-[52px] font-extrabold py-3.5 font-mono text-[12px] border-2 border-dash-border hover:border-dash-border-hover rounded-lg tracking-[2px] uppercase transition-all duration-200 disabled:opacity-25 disabled:cursor-not-allowed enabled:cursor-pointer bg-accent text-shadow-black/40 text-shadow-2xs text-[#0d0d0d] hover:brightness-110 active:brightness-95 disabled:bg-[rgba(200,169,110,0.15)] disabled:text-[var(--color-dash-gold)] disabled:border disabled:border-[rgba(200,169,110,0.25)]"
           >
             I&apos;ve Paid — Verify
           </button>

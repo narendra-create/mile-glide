@@ -10,7 +10,7 @@ import {
 } from "@/app/lib/animations";
 
 // ─── Page metadata ─────────────────────────────────────────────────────────────
-const LAST_UPDATED = "June 2026";
+const LAST_UPDATED = "July 2026";
 const CONTACT_EMAIL = "namanworkplace@gmail.com";
 
 // ─── Table of contents ─────────────────────────────────────────────────────────
@@ -26,6 +26,7 @@ const sections = [
   { id: "disclaimer", label: "Disclaimers" },
   { id: "liability", label: "Limitation of Liability" },
   { id: "termination", label: "Termination" },
+  { id: "governedby", label: "Governing Law & Jurisdiction" },
   { id: "changes", label: "Changes to Terms" },
   { id: "contact", label: "Contact" },
 ];
@@ -92,7 +93,7 @@ export default function TermsPage() {
         </motion.p>
         <motion.p
           variants={scaleIn}
-          className="font-mono text-[10px] tracking-[1.5px] uppercase text-[#3a3733] mt-6"
+          className="font-mono text-[12px] font-bold tracking-[1.5px] uppercase text-[#b9aea2] mt-6"
         >
           Last updated — {LAST_UPDATED}
         </motion.p>
@@ -230,18 +231,69 @@ export default function TermsPage() {
               This record does not constitute proof of payment in any legal
               sense.
             </p>
+            <p>
+              <b> Accuracy of Payment Information: </b> Freelancers are solely
+              responsible for providing and maintaining accurate payment
+              information, including but not limited to their UPI ID (Virtual
+              Payment Address). The Platform does not independently verify the
+              ownership or accuracy of the UPI ID provided.
+            </p>
+            <p>
+              <b>Liability for Incorrect Payment Details: </b>
+              In the event that a Freelancer provides an incorrect, inactive, or
+              invalid UPI ID, and a Client processes a payment to that provided
+              ID, the Platform shall not be held liable for any loss of funds,
+              delayed payments, or failed transactions. The Platform cannot
+              reverse or recover funds sent to an incorrect UPI ID resulting
+              from user error.
+            </p>
+            <p>
+              <b>Client Verification: </b>
+              Clients agree to exercise due diligence by verifying the
+              recipient's name displayed on their respective UPI application
+              (e.g., Google Pay, PhonePe, Paytm) prior to authorizing any
+              payment via the provided QR code or payment link.
+            </p>
+            <p>
+              <b>Platform Role: </b>The Platform acts solely as an intermediary
+              providing a peer-to-peer connection for payments. We do not
+              process, hold, or route the funds, and therefore assume no
+              responsibility for the final settlement of transactions. Any
+              disputes regarding payments made to incorrect UPI IDs must be
+              resolved directly between the Client, the Freelancer, and their
+              respective banking institutions.
+            </p>
+            <p>
+              <b>Proof of Payment: </b>
+              Clients must retain proof of payment until the Freelancer confirms
+              receipt. Screenshots alone do not constitute conclusive proof of
+              payment, and the Platform reserves the right to request additional
+              transaction details where necessary.
+            </p>
           </TermsSection>
 
           {/* 06 — Budgets */}
-          <TermsSection id="budgets" number="06" title="Project Budgets & Milestones">
+          <TermsSection
+            id="budgets"
+            number="06"
+            title="Project Budgets & Milestones"
+          >
             <p>
-              When initiating a project, the freelancer must specify a Total Cost agreed upon with the client. This Total Cost serves as the maximum authorized budget for the project.
+              When initiating a project, the freelancer must specify a Total
+              Cost agreed upon with the client. This Total Cost serves as the
+              maximum authorized budget for the project.
             </p>
             <p>
-              Freelancers may autonomously create milestones and assign costs to them without requiring individual client approval, provided that the cumulative cost of all milestones does not exceed the predefined Total Cost.
+              Freelancers may autonomously create milestones and assign costs to
+              them without requiring individual client approval, provided that
+              the cumulative cost of all milestones does not exceed the
+              predefined Total Cost.
             </p>
             <p>
-              Any milestones that would cause the project to exceed the agreed Total Cost are strictly prohibited unless the Total Cost is formally amended. Track Lancer enforces this structure to protect both parties from unexpected scope creep and billing surprises.
+              Any milestones that would cause the project to exceed the agreed
+              Total Cost are strictly prohibited unless the Total Cost is
+              formally amended. Track Lancer enforces this structure to protect
+              both parties from unexpected scope creep and billing surprises.
             </p>
           </TermsSection>
 
@@ -352,9 +404,28 @@ export default function TermsPage() {
               days before being purged. */}
             </p>
           </TermsSection>
-
-          {/* 12 — Changes */}
-          <TermsSection id="changes" number="12" title="Changes to Terms">
+          {/* 12 - Governed by */}
+          <TermsSection
+            id="governedby"
+            number="12"
+            title="Governing Law & Jurisdiction"
+          >
+            <p>
+              These Terms shall be governed by and construed in accordance with
+              the laws of India, without regard to its conflict of law
+              principles. Any dispute, claim, or controversy arising out of or
+              relating to these Terms, the Platform, or any services provided
+              through the Platform shall be subject to the exclusive
+              jurisdiction of the competent courts located in [Mahasamund,
+              Chhattisgarh, India], unless otherwise required by applicable law.
+              Before initiating any legal proceedings, users agree to make a
+              reasonable effort to resolve disputes by contacting the Platform
+              through the official support channels. Nothing in this section
+              limits any rights or remedies available under applicable law.
+            </p>
+          </TermsSection>
+          {/* 13 — Changes */}
+          <TermsSection id="changes" number="13" title="Changes to Terms">
             <p>
               We may update these Terms from time to time. When we do, we will
               update the "Last updated" date at the top of this page. Material
@@ -366,8 +437,8 @@ export default function TermsPage() {
             </p>
           </TermsSection>
 
-          {/* 13 — Contact */}
-          <TermsSection id="contact" number="13" title="Contact">
+          {/* 14 — Contact */}
+          <TermsSection id="contact" number="14" title="Contact">
             <p>
               Questions about these Terms? Reach out directly — there is a real
               person on the other end.

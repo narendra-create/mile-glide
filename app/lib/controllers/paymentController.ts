@@ -4,6 +4,7 @@ import type { intiiatePaymentInput } from "../validations/PaymentValidation";
 import { ActionResponse } from "@/types/api";
 import { PaymentHistory } from "@/types/payment";
 import { VerifyPaymentType } from "@/types/verifypayments";
+import { truncateByDomain } from "recharts/types/util/ChartUtils";
 
 export const getPaymentHistory = async (cursor?: string): Promise<ActionResponse<{ payments: PaymentHistory[], nextCursor: string | null }>> => {
     const session = await getSession();
@@ -27,8 +28,10 @@ export const getPaymentHistory = async (cursor?: string): Promise<ActionResponse
                 select: {
                     project: {
                         select: {
+                            id: true,
                             title: true,
-                            createdAt: true
+                            createdAt: true,
+                            deadline: true
                         }
                     },
                     id: true,
@@ -81,8 +84,10 @@ export const getPaymentHistory = async (cursor?: string): Promise<ActionResponse
                 select: {
                     project: {
                         select: {
+                            id: true,
                             title: true,
-                            createdAt: true
+                            createdAt: true,
+                            deadline: true
                         }
                     },
                     id: true,
@@ -490,3 +495,67 @@ export const getPaymentVerificationRequests = async (cursor?: string): Promise<A
 
     return { success: false, error: "Invalid role", status: 403 }
 };
+
+export const getPaymentDetails = async (paymentId: string) => {
+    const session = await getSession();
+    if (!session) return { success: false, error: "Unauthorized", status: 401 };
+    const role = session.user.role.toLowerCase();
+    if (role !== "client") return { success: false, error: "This account is not a client account", status: 403 };
+
+    const findPayment = await prisma.payment.findUnique({
+        where: { id: paymentId },
+        select: {
+            id: true,
+            completedAt: true,
+            createdAt: true,
+            due_date: true,
+            paid_amount: true,
+            payment_status: true,
+            total_cost: true,
+            project: {
+                select: {
+                    title: true,
+                    freelancer: {
+                        select: {
+                            user: {
+                                select: {
+                                    name: true
+                                }
+                            },
+                            upiId: true,
+                            AccountHolderName: true
+                        }
+                    },
+                    client: {
+                        select: {
+                            userId: true
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    if (!findPayment) {
+        return { success: false, error: "Payment Ledger Not found", status: 404 }
+    };
+
+    if (findPayment.project?.client?.userId !== session.user.id) {
+        return { success: false, error: "This payment ledger is not associated with you", status: 409 }
+    };
+
+    const totalDuesum = findPayment.total_cost - findPayment.paid_amount;
+    const totalDue = totalDuesum <= 0 ? 0 : totalDuesum;
+
+    const returningObject = {
+        id: findPayment.id,
+        completedAt: findPayment.completedAt,
+        createdAt: findPayment.createdAt,
+        due_date: findPayment.due_date,
+        payment_status: findPayment.payment_status,
+        totalDue: totalDue,
+        ...findPayment.project
+    };
+
+    return { success: true, details: returningObject, status: 200 }
+}

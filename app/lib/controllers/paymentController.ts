@@ -559,3 +559,9 @@ export const getPaymentDetails = async (paymentId: string) => {
 
     return { success: true, details: returningObject, status: 200 }
 }
+export type GetPaymentDetailsResponse = Awaited<
+    ReturnType<typeof getPaymentDetails>
+>;
+export type PaymentDetailsType = NonNullable<
+    Extract<GetPaymentDetailsResponse, { success: true }>["details"]
+>;

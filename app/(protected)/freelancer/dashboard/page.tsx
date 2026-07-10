@@ -2,9 +2,12 @@
 import FreelancerDashboard from "@/app/Features/Freelancer/Freelancer-dashboard";
 import { getDashboardStats } from "@/app/lib/Batch-Fetch/FreelancerDashboardStats";
 import { loadMoreProjects } from "@/app/lib/actions/LoadMoreProjects";
+import { getProfileAction } from "@/app/lib/actions/ProfileActions";
 
 const DashboardFreelancer = async () => {
   const result = await getDashboardStats();
+  const profileResponse = await getProfileAction();
+  const hasUpi = !!(profileResponse.success && profileResponse.data && profileResponse.data.upiId);
 
   const loadmore = async (nextcursor: string) => {
     "use server";
@@ -22,7 +25,7 @@ const DashboardFreelancer = async () => {
 
   return (
     <>
-      <FreelancerDashboard loadmore={loadmore} data={result.data} />
+      <FreelancerDashboard loadmore={loadmore} data={result.data} hasUpi={hasUpi} />
     </>
   );
 };

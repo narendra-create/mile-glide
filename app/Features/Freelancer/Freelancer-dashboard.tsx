@@ -30,11 +30,13 @@ import { getGreeting } from "@/app/lib/utilitys";
 const FreelancerDashboard = ({
   data,
   loadmore,
+  hasUpi,
 }: {
   data: FreelancerDashboardData;
   loadmore: (
     nextcursor: string,
   ) => Promise<{ projects: LoadMoreResult; nextCursor: string | null }>;
+  hasUpi: boolean;
 }) => {
   const [Projects, setProjects] = useState<LoadMoreResult>(data.projects ?? []);
   const [cursor, setcursor] = useState(data.nextCursor);
@@ -103,7 +105,19 @@ const FreelancerDashboard = ({
   });
 
   return (
-    <motion.main className="bg-brand-bg">
+    <motion.main className="bg-brand-bg relative">
+      {/* 1. The Dashboard Warning Banner (The Nudge) */}
+      {!hasUpi && (
+        <div className="sticky top-0 z-50 bg-[#fffbe6] border-b border-[#ffe58f] px-4 py-2.5 text-center shadow-sm">
+          <p className="text-[13px] font-bold text-[#a46905] flex items-center justify-center gap-2">
+            ⚠️ You haven't added a payment method. You won't be able to receive payments for your projects.
+            <Link href="/freelancer/settings" className="underline hover:text-[#ad6800] transition-colors">
+              [Add UPI ID now]
+            </Link>
+          </p>
+        </div>
+      )}
+
       <section className="mx-2 flex flex-col lg:flex-row gap-4 mb-6 lg:justify-between">
         <div className="mt-5 mx-2.5">
           <h4 className="hero-tag">FREELANCER DASHBOARD</h4>

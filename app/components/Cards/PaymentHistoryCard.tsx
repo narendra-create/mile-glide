@@ -1,6 +1,13 @@
 "use client";
 import { motion } from "motion/react";
-import { Check, Clock, Zap, CreditCard, CheckCircle, ArrowUpRight } from "lucide-react";
+import {
+  Check,
+  Clock,
+  Zap,
+  CreditCard,
+  CheckCircle,
+  ArrowUpRight,
+} from "lucide-react";
 import type { PaymentHistory } from "@/types/payment";
 import { formatDate } from "@/app/lib/utilitys";
 import Link from "next/link";
@@ -43,7 +50,11 @@ interface PaymentHistoryCardProps {
   role: "CLIENT" | "FREELANCER";
 }
 
-export function PaymentHistoryCard({ payment, index, role }: PaymentHistoryCardProps) {
+export function PaymentHistoryCard({
+  payment,
+  index,
+  role,
+}: PaymentHistoryCardProps) {
   const cfg = STATUS_CONFIG[payment.payment_status];
   const isPaid = payment.payment_status === "PAID";
   const isDue = payment.payment_status === "DUE";
@@ -70,18 +81,23 @@ export function PaymentHistoryCard({ payment, index, role }: PaymentHistoryCardP
         }`}
       >
         {/* Subtle Top Gradient Highlight */}
-        <div className={`absolute top-0 left-0 w-full h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r ${
-          isDue ? "from-transparent via-[var(--color-dash-gold)] to-transparent" : 
-          "from-transparent via-dash-green to-transparent"
-        }`} />
+        <div
+          className={`absolute top-0 left-0 w-full h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r ${
+            isDue
+              ? "from-transparent via-[var(--color-dash-gold)] to-transparent"
+              : "from-transparent via-dash-green to-transparent"
+          }`}
+        />
         {/* Mobile & Large Screen Flex Layout */}
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4 lg:gap-6 mb-4">
-          
           {/* Left side: Project Info & Badges */}
           <div className="flex-1 min-w-0">
             <h3 className="font-serif text-[16px] lg:text-[24px] text-white leading-tight mb-2 truncate flex items-center gap-2">
               {payment.project?.title || "Unknown Project"}
-              <ArrowUpRight size={18} className="shrink-0 opacity-100 lg:opacity-0 group-hover:opacity-100 lg:group-hover:translate-x-0.5 lg:group-hover:-translate-y-0.5 transition-all duration-300 text-[var(--color-dash-ink3)]" />
+              <ArrowUpRight
+                size={18}
+                className="shrink-0 opacity-100 lg:opacity-0 group-hover:opacity-100 lg:group-hover:translate-x-0.5 lg:group-hover:-translate-y-0.5 transition-all duration-300 text-[var(--color-dash-ink3)]"
+              />
             </h3>
             <div className="flex flex-wrap items-center gap-2 lg:gap-3">
               <span
@@ -90,25 +106,27 @@ export function PaymentHistoryCard({ payment, index, role }: PaymentHistoryCardP
                 {STATUS_ICON[payment.payment_status]}
                 {cfg.label}
               </span>
-              
-              {payment.txn_number && (
-                <span className="font-mono text-[10px] lg:text-[12px] tracking-[1px] text-[var(--color-dash-ink2)] bg-[var(--color-dash-surface2)] px-2.5 py-1 rounded-sm border border-[var(--color-dash-border)]">
-                  TXN: {payment.txn_number}
-                </span>
-              )}
             </div>
           </div>
 
           {/* Right side: Amounts */}
           <div className="flex flex-row lg:flex-col items-center lg:items-end justify-between lg:justify-start gap-4 lg:gap-2 shrink-0 border-t lg:border-t-0 border-[var(--color-dash-border)] pt-3 lg:pt-0">
             <div className="flex flex-col lg:items-end">
-              <span className="text-[var(--color-dash-ink3)] uppercase text-[9px] lg:text-[10px] tracking-[1.5px] mb-0.5">Total Cost</span>
-              <span className="font-serif text-[16px] lg:text-[18px] text-white">₹{payment.total_cost.toLocaleString('en-IN')}</span>
+              <span className="text-[var(--color-dash-ink3)] uppercase text-[9px] lg:text-[10px] tracking-[1.5px] mb-0.5">
+                Total Cost
+              </span>
+              <span className="font-serif text-[16px] lg:text-[18px] text-white">
+                ₹{payment.total_cost.toLocaleString("en-IN")}
+              </span>
             </div>
-            
+
             <div className="flex flex-col lg:items-end">
-              <span className="text-[var(--color-dash-ink3)] uppercase text-[9px] lg:text-[10px] tracking-[1.5px] mb-0.5">Paid Amount</span>
-              <span className="font-serif text-[16px] lg:text-[18px] text-[var(--color-dash-green)]">₹{payment.paid_amount.toLocaleString('en-IN')}</span>
+              <span className="text-[var(--color-dash-ink3)] uppercase text-[9px] lg:text-[10px] tracking-[1.5px] mb-0.5">
+                Paid Amount
+              </span>
+              <span className="font-serif text-[16px] lg:text-[18px] text-[var(--color-dash-green)]">
+                ₹{payment.paid_amount.toLocaleString("en-IN")}
+              </span>
             </div>
           </div>
         </div>
@@ -116,33 +134,57 @@ export function PaymentHistoryCard({ payment, index, role }: PaymentHistoryCardP
         {/* Details Grid */}
         <div className="grid grid-cols-2 lg:flex lg:flex-row lg:flex-wrap gap-x-4 lg:gap-x-8 gap-y-3 font-mono text-[10px] lg:text-[12px] tracking-[1px] mb-4">
           <div className="flex flex-col gap-1">
-            <span className="text-[var(--color-dash-ink3)] uppercase text-[9px] lg:text-[10px] tracking-[1.5px]">Due Date</span>
+            <span className="text-[var(--color-dash-ink3)] uppercase text-[9px] lg:text-[10px] tracking-[1.5px]">
+              Due Date
+            </span>
             <span className="text-[var(--color-dash-ink2)]">
-              {formatDate(payment.due_date, { day: "numeric", month: "short", year: "numeric" })}
+              {formatDate(payment.due_date, {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })}
             </span>
           </div>
-          
+
           {payment.project?.deadline && (
             <div className="flex flex-col gap-1">
-              <span className="text-[var(--color-dash-ink3)] uppercase text-[9px] lg:text-[10px] tracking-[1.5px]">Project Deadline</span>
+              <span className="text-[var(--color-dash-ink3)] uppercase text-[9px] lg:text-[10px] tracking-[1.5px]">
+                Project Deadline
+              </span>
               <span className="text-[var(--color-dash-ink2)]">
-                {formatDate(payment.project.deadline, { day: "numeric", month: "short", year: "numeric" })}
+                {formatDate(payment.project.deadline, {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}
               </span>
             </div>
           )}
 
           <div className="flex flex-col gap-1">
-            <span className="text-[var(--color-dash-ink3)] uppercase text-[9px] lg:text-[10px] tracking-[1.5px]">Initiated</span>
+            <span className="text-[var(--color-dash-ink3)] uppercase text-[9px] lg:text-[10px] tracking-[1.5px]">
+              Initiated
+            </span>
             <span className="text-[var(--color-dash-ink2)]">
-              {formatDate(payment.createdAt, { day: "numeric", month: "short", year: "numeric" })}
+              {formatDate(payment.createdAt, {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })}
             </span>
           </div>
 
           {isPaid && payment.completedAt && (
             <div className="flex flex-col gap-1">
-              <span className="text-[var(--color-dash-ink3)] uppercase text-[9px] lg:text-[10px] tracking-[1.5px]">Completed</span>
+              <span className="text-[var(--color-dash-ink3)] uppercase text-[9px] lg:text-[10px] tracking-[1.5px]">
+                Completed
+              </span>
               <span className="text-[var(--color-dash-ink2)]">
-                {formatDate(payment.completedAt, { day: "numeric", month: "short", year: "numeric" })}
+                {formatDate(payment.completedAt, {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}
               </span>
             </div>
           )}
@@ -150,21 +192,22 @@ export function PaymentHistoryCard({ payment, index, role }: PaymentHistoryCardP
 
         {/* Actions Section */}
         {isDue && (
-          <div 
+          <div
             className="mt-4 pt-4 border-t border-[rgba(200,169,110,0.15)] flex flex-col sm:flex-row sm:items-center justify-between gap-3"
             onClick={(e) => e.stopPropagation()}
           >
             <p className="font-mono text-[9px] lg:text-[11px] tracking-[1.5px] uppercase text-[var(--color-dash-ink3)]">
               {role === "CLIENT" ? "Payment required" : "Awaiting payment"}
             </p>
-            
+
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
               {/* View Project Button */}
-              {payment.projectId && (
-                <Link href={`/${role.toLowerCase()}/milestones/${payment.projectId}`} className="w-full sm:w-auto">
-                  <button
-                    className="w-full flex items-center justify-center gap-2 px-5 py-2.5 bg-transparent border border-[rgba(200,169,110,0.3)] text-[var(--color-dash-gold)] hover:bg-[rgba(200,169,110,0.1)] hover:border-[rgba(200,169,110,0.5)] rounded-md font-mono text-[11px] lg:text-[13px] tracking-[1.5px] uppercase transition-all duration-200"
-                  >
+              {payment.project?.id && (
+                <Link
+                  href={`/${role.toLowerCase()}/milestones/${payment.project.id}`}
+                  className="w-full sm:w-auto"
+                >
+                  <button className="w-full flex items-center justify-center gap-2 px-5 py-2.5 bg-transparent border border-[rgba(200,169,110,0.3)] text-[var(--color-dash-gold)] hover:bg-[rgba(200,169,110,0.1)] hover:border-[rgba(200,169,110,0.5)] rounded-md font-mono text-[11px] lg:text-[13px] tracking-[1.5px] uppercase transition-all duration-200">
                     View Project
                   </button>
                 </Link>
@@ -172,10 +215,11 @@ export function PaymentHistoryCard({ payment, index, role }: PaymentHistoryCardP
 
               {/* Primary Action Button */}
               {role === "CLIENT" && (
-                <Link href={`/client/pay-now/${payment.id}`} className="w-full sm:w-auto">
-                  <button
-                    className="w-full flex items-center justify-center gap-2 px-5 py-2.5 bg-[rgba(200,169,110,0.1)] border border-[rgba(200,169,110,0.3)] rounded-md font-mono text-[11px] lg:text-[13px] tracking-[1.5px] uppercase text-[var(--color-dash-gold)] hover:bg-[rgba(200,169,110,0.18)] hover:border-[rgba(200,169,110,0.5)] transition-all duration-200"
-                  >
+                <Link
+                  href={`/client/pay-now/${payment.id}`}
+                  className="w-full sm:w-auto"
+                >
+                  <button className="w-full flex items-center justify-center gap-2 px-5 py-2.5 bg-[rgba(200,169,110,0.1)] border border-[rgba(200,169,110,0.3)] rounded-md font-mono text-[11px] lg:text-[13px] tracking-[1.5px] uppercase text-[var(--color-dash-gold)] hover:bg-[rgba(200,169,110,0.18)] hover:border-[rgba(200,169,110,0.5)] transition-all duration-200">
                     <CreditCard size={14} strokeWidth={2} />
                     Pay Now
                   </button>

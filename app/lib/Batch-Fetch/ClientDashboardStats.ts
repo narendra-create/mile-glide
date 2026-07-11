@@ -1,10 +1,7 @@
 "use server";
 import { prisma } from "@/app/lib/prisma";
-import { getCurrentProjects } from "@/app/lib/controllers/clientController";
 import { getSession } from "@/app/lib/session";
-import type { DashboardStatsResponse } from "@/types/dashboard";
 import type { ClientDashboardData } from "@/app/Features/Client/Client-dashboard";
-import { getAllProjects } from "@/app/lib/controllers/ProjectController";
 import { getClientCurrentProjects, getClientMoneyStats, getDeadlines } from "../controllers/clientStatsController";
 
 export const getClientStats = async () => {
@@ -21,8 +18,7 @@ export const getClientStats = async () => {
     });
     if (!clientProfile) return { success: false, error: "Freelancer profile not found", status: 404 };
     try {
-        const [activeProjectsResult, moneyStatsResult, currentProjectsRestult, deadlinesResult] = await Promise.all([
-            getAllProjects(clientProfile.id, "CLIENT"),
+        const [moneyStatsResult, currentProjectsRestult, deadlinesResult] = await Promise.all([
             getClientMoneyStats(clientProfile.id),
             getClientCurrentProjects(clientProfile.id),
             getDeadlines(clientProfile.id)
@@ -55,16 +51,16 @@ export const getClientStats = async () => {
                 freelancerCategory: p.freelancerCategory,
                 paid: p.money?.received || 0,
                 remaining: p.money?.remaining || 0,
-                milestones: []
+                milestones: p.milestones || []
             })) : [],
             deadlines: deadlinesResult.success ? (deadlinesResult as any).milestones : [],
             activity: []
         };
 
-        return { success: true, data: returnObject };
+        return { success: true, data: returnObject, status: 200 };
     }
     catch (err) {
         console.error("Dashboard fetch failed:", err);
         return { success: false, error: "Failed to load dashboard", status: 500 };
     }
-}
+};

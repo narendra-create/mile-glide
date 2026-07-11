@@ -310,7 +310,7 @@ export const getAllProjects = async (profileid: string, role: userrole, cursor?:
             ...(cursor && { cursor: { id: cursor }, skip: 1 }),
             where: {
                 freelancerId: profileid, status: {
-                    notIn: ["PENDING", "COMPLETED"]
+                    not: "PENDING"
                 }
             },
             select: {
@@ -412,7 +412,7 @@ export const getAllProjects = async (profileid: string, role: userrole, cursor?:
             ...(cursor && { cursor: { id: cursor }, skip: 1 }),
             where: {
                 clientId: profileid, status: {
-                    notIn: ["PENDING", "COMPLETED"]
+                    not: "PENDING"
                 }
             },
             select: {

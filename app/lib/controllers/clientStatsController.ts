@@ -1,9 +1,6 @@
 import { prisma } from "@/app/lib/prisma";
 import { getInitials } from "../utilitys";
 
-// getClientMoneyStats(clientProfileId: string)
-//getClientUpcomingDeadlines(clientProfileId: string)
-// ClientDashboardStats.ts
 export type ClientDeadlineItem = {
     id: string;             // Milestone ID
     projectTitle: string;   // The title of the project this milestone belongs to
@@ -191,11 +188,15 @@ export const getClientCurrentProjects = async (clientId: string, cursor?: string
             status: true,
             milestones: {
                 select: {
+                    id: true,
+                    title: true,
+                    milestonecost: true,
                     status: true,
+                    position: true,
                     deadline: true
                 },
                 orderBy: {
-                    deadline: "desc"
+                    position: "asc"
                 }
             },
             createdAt: true
@@ -239,6 +240,7 @@ export const getClientCurrentProjects = async (clientId: string, cursor?: string
                 completedMilestones,
                 progress
             },
+            milestones: project.milestones,
             deadline: projectDeadline
         }
     })

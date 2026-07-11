@@ -604,6 +604,14 @@ export function FreelancerMilestones({
           {role === "FREELANCER" && (
             <button
               onClick={() => {
+                if (project.status === "COMPLETED" || project.status === "CANCELLED") {
+                  addToast({
+                    title: "Project Closed",
+                    message: "You cannot create milestones for a closed project.",
+                    type: "error",
+                  });
+                  return;
+                }
                 if (costUsed >= totalCost) {
                   addToast({
                     title: "Budget Reached",
@@ -615,8 +623,8 @@ export function FreelancerMilestones({
                 setShowAddModal(true);
               }}
               className={`px-4 py-2 lg:text-[16px] bg-transparent border border-[var(--color-dash-border-hover)] rounded-md text-white font-mono text-[10px] uppercase tracking-[1.5px] transition-all duration-200 flex items-center gap-2 ${
-                costUsed >= totalCost 
-                  ? "opacity-50 cursor-not-allowed" 
+                (project.status === "COMPLETED" || project.status === "CANCELLED") || costUsed >= totalCost 
+                  ? "opacity-50 cursor-not-allowed text-[var(--color-dash-ink3)]" 
                   : "hover:bg-[var(--color-dash-surface2)]"
               }`}
             >
@@ -665,8 +673,22 @@ export function FreelancerMilestones({
                 </p>
                 {role === "FREELANCER" ? (
                   <button
-                    onClick={() => setshowBudgetrequestModal(true)}
-                    className="w-full py-2 bg-[var(--color-dash-amber-bg)] border border-[rgba(200,120,64,0.3)] rounded-md text-[var(--color-dash-amber)] font-mono text-[10px] uppercase tracking-[1px] hover:bg-[rgba(200,120,64,0.15)] transition-all duration-200"
+                    onClick={() => {
+                      if (project.status === "COMPLETED" || project.status === "CANCELLED") {
+                        addToast({
+                          title: "Project Closed",
+                          message: "You cannot raise budget for a closed project.",
+                          type: "error",
+                        });
+                        return;
+                      }
+                      setshowBudgetrequestModal(true)
+                    }}
+                    className={`w-full py-2 border rounded-md font-mono text-[10px] uppercase tracking-[1px] transition-all duration-200 ${
+                       project.status === "COMPLETED" || project.status === "CANCELLED"
+                         ? "bg-[var(--color-dash-surface2)] border-[var(--color-dash-border)] text-[var(--color-dash-ink3)] opacity-50 cursor-not-allowed"
+                         : "bg-[var(--color-dash-amber-bg)] border-[rgba(200,120,64,0.3)] text-[var(--color-dash-amber)] hover:bg-[rgba(200,120,64,0.15)]"
+                    }`}
                   >
                     Raise Budget
                   </button>
@@ -766,7 +788,20 @@ export function FreelancerMilestones({
             </div>
           </motion.div>
 
-          {role === "FREELANCER" ? (
+          {project.status === "COMPLETED" || project.status === "CANCELLED" ? (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.22, delay: 0.14 }}
+              className={`w-full h-[42px] px-5 border rounded-xl font-mono text-[11px] uppercase tracking-[1.5px] font-bold flex items-center justify-center text-center shadow-sm ${
+                project.status === "COMPLETED"
+                  ? "bg-[var(--color-dash-green)]/10 border-[var(--color-dash-green)]/30 text-[var(--color-dash-green)]"
+                  : "bg-[var(--color-dash-red)]/10 border-[var(--color-dash-red)]/30 text-[var(--color-dash-red)]"
+              }`}
+            >
+              Your project is - {project.status.toLowerCase()}
+            </motion.div>
+          ) : role === "FREELANCER" ? (
             <div className="flex flex-col gap-3">
               <motion.button
                 initial={{ opacity: 0, y: 10 }}
@@ -944,9 +979,9 @@ export function FreelancerMilestones({
               ))}
               <div className="flex gap-0">
                 <div className="flex flex-col items-center mr-5 shrink-0">
-                  <div className="w-[10px] h-[10px] rounded-full border-2 border-[var(--color-dash-border)] bg-[var(--color-dash-surface2)]" />
+                  <div className="w-3 mt-0.5 h-3.25 rounded-full border-2 border-[var(--color-dash-border)] bg-dash-ink2/80" />
                 </div>
-                <p className="font-mono text-[10px] tracking-[2px] uppercase text-[var(--color-dash-ink4)] pb-4 mt-[1px]">
+                <p className="font-mono text-[10px] lg:text-[13px] tracking-[2px] uppercase text-dash-ink2 font-bold pb-4 mt-[1px]">
                   End of thread
                 </p>
               </div>

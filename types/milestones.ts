@@ -22,6 +22,11 @@ export type ProjectWithMilestones = {
     createdAt: Date;
     deadline: Date;
     status: Projectstatus;
+    hasCancelRequest: boolean;
+    cancellRequests: {
+        clientApproved: boolean;
+        freelancerApproved: boolean;
+    }[];
     milestones: MilestoneItem[];
     payments: { paid_amount: number | null }[];
 };

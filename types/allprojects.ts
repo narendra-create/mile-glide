@@ -30,6 +30,7 @@ export type AllProject = {
   money: AllProjectMoney;
   status: AllProjectStatus;
   stats: AllProjectStats;
+  hasCancelRequest: boolean;
 };
 
 type GetAllProjectsSuccess = {

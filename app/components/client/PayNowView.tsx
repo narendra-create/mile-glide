@@ -20,6 +20,7 @@ import {
   fadeRight,
   staggerContainer,
 } from "@/app/lib/animations";
+import { formatMoneydash } from "@/app/lib/utilitys";
 
 type PaymentStatus = "DUE" | "PAID";
 
@@ -31,7 +32,11 @@ export interface PayNowViewProps {
   dueDate: string;
   status: PaymentStatus;
   backHref: string;
-  onVerify: (paid_amount: number, txn_number: string) => void | Promise<unknown>;
+  dueamount: number | string;
+  onVerify: (
+    paid_amount: number,
+    txn_number: string,
+  ) => void | Promise<unknown>;
 }
 
 const HOW_TO_PAY = [
@@ -82,29 +87,29 @@ export function PayNowView({
   status,
   backHref,
   onVerify,
+  dueamount,
 }: PayNowViewProps) {
   const isDue = status === "DUE";
 
   return (
     <div className="min-h-screen w-full bg-[var(--color-dash-bg)]">
       <div className="max-w-7xl mx-auto px-5 lg:px-10 py-8">
-
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          animate="show"
-        >
+        <motion.div variants={fadeUp} initial="hidden" animate="show">
           <Link
             href={backHref}
             className="inline-flex items-center gap-2 text-[var(--color-dash-ink3)] hover:text-[var(--color-dash-ink)] transition-colors mb-10 group"
           >
-            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform duration-150" />
-            <span className="font-sans text-[12px] uppercase">Back to Payments</span>
+            <ArrowLeft
+              size={14}
+              className="group-hover:-translate-x-1 transition-transform duration-150"
+            />
+            <span className="font-sans text-[12px] uppercase">
+              Back to Payments
+            </span>
           </Link>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px] gap-8 xl:gap-14 items-start">
-
           <motion.div
             className="space-y-6"
             variants={staggerContainer}
@@ -123,25 +128,46 @@ export function PayNowView({
               </p>
             </motion.div>
 
-            <motion.div variants={fadeRight} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <motion.div
+              variants={fadeRight}
+              className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+            >
               <div className="border border-[var(--color-dash-border)] border-l-2 border-l-[var(--color-dash-ink2)] bg-[var(--color-dash-surface1)] p-5">
                 <div className="flex items-center gap-2 mb-3">
-                  <Briefcase size={13} className="text-[var(--color-dash-ink2)]" strokeWidth={1.5} />
-                  <p className="font-sans text-[11px] uppercase text-[var(--color-dash-ink3)]">Freelancer</p>
+                  <Briefcase
+                    size={13}
+                    className="text-[var(--color-dash-ink2)]"
+                    strokeWidth={1.5}
+                  />
+                  <p className="font-sans text-[11px] uppercase text-[var(--color-dash-ink3)]">
+                    Freelancer
+                  </p>
                 </div>
-                <p className="font-serif text-[20px] text-[var(--color-dash-ink)]">{freelancerName}</p>
+                <p className="font-serif text-[20px] text-[var(--color-dash-ink)]">
+                  {freelancerName}
+                </p>
                 {upiId && (
-                  <p className="font-mono text-[10px] text-[var(--color-dash-ink3)] mt-1 tracking-wide">{upiId}</p>
+                  <p className="font-mono text-[10px] text-[var(--color-dash-ink3)] mt-1 tracking-wide">
+                    {upiId}
+                  </p>
                 )}
               </div>
 
               <div className="border border-[var(--color-dash-border)] border-l-2 border-l-[var(--color-dash-gold)] bg-[var(--color-dash-surface1)] p-5">
                 <div className="flex items-center gap-2 mb-3">
-                  <CircleDollarSign size={13} className="text-[var(--color-dash-gold)]" strokeWidth={1.5} />
-                  <p className="font-sans text-[11px] uppercase text-[var(--color-dash-ink3)]">Amount Due</p>
+                  <CircleDollarSign
+                    size={13}
+                    className="text-[var(--color-dash-gold)]"
+                    strokeWidth={1.5}
+                  />
+                  <p className="font-sans text-[11px] uppercase text-[var(--color-dash-ink3)]">
+                    Amount Due
+                  </p>
                 </div>
                 {amount === "custom" ? (
-                  <p className="font-serif text-[20px] text-[var(--color-dash-ink3)]">Enter amount below</p>
+                  <p className="font-serif font-bold text-[20px] text-accent">
+                    ₹{formatMoneydash(Number(dueamount))}
+                  </p>
                 ) : (
                   <p className="font-mono text-[28px] text-[var(--color-dash-gold)] tabular-nums leading-none">
                     ₹{amount.toLocaleString("en-IN")}
@@ -151,16 +177,30 @@ export function PayNowView({
 
               <div className="border border-[var(--color-dash-border)] border-l-2 border-l-[var(--color-dash-amber)] bg-[var(--color-dash-surface1)] p-5">
                 <div className="flex items-center gap-2 mb-3">
-                  <CalendarClock size={13} className="text-[var(--color-dash-amber)]" strokeWidth={1.5} />
-                  <p className="font-sans text-[11px] uppercase text-[var(--color-dash-ink3)]">Due Date</p>
+                  <CalendarClock
+                    size={13}
+                    className="text-[var(--color-dash-amber)]"
+                    strokeWidth={1.5}
+                  />
+                  <p className="font-sans text-[11px] uppercase text-[var(--color-dash-ink3)]">
+                    Due Date
+                  </p>
                 </div>
-                <p className="font-serif text-[20px] text-[var(--color-dash-ink)]">{dueDate}</p>
+                <p className="font-serif text-[20px] text-[var(--color-dash-ink)]">
+                  {dueDate}
+                </p>
               </div>
 
               <div className="border border-[var(--color-dash-border)] border-l-2 border-l-[var(--color-status-paid-text)] bg-[var(--color-dash-surface1)] p-5">
                 <div className="flex items-center gap-2 mb-3">
-                  <Clock3 size={13} className="text-[var(--color-dash-green)]" strokeWidth={1.5} />
-                  <p className="font-sans text-[11px] uppercase text-[var(--color-dash-ink3)]">Status</p>
+                  <Clock3
+                    size={13}
+                    className="text-[var(--color-dash-green)]"
+                    strokeWidth={1.5}
+                  />
+                  <p className="font-sans text-[11px] uppercase text-[var(--color-dash-ink3)]">
+                    Status
+                  </p>
                 </div>
                 <span
                   className={`inline-flex items-center gap-2 font-mono text-[11px] tracking-[1.5px] uppercase font-semibold px-3 py-1 border ${
@@ -180,23 +220,50 @@ export function PayNowView({
               className="border border-[var(--color-dash-border)] bg-[var(--color-dash-surface1)]"
             >
               <div className="px-5 py-4 border-b border-[var(--color-dash-border)]">
-                <p className="font-sans text-[13px] text-[var(--color-dash-ink3)]">How to Pay</p>
+                <p className="font-sans text-[13px] text-[var(--color-dash-ink3)]">
+                  How to Pay
+                </p>
               </div>
               <div className="divide-y divide-[var(--color-dash-border)]">
-                {HOW_TO_PAY.map(({ step, icon: Icon, title, desc, iconColor, stepColor, borderColor }) => (
-                  <div key={step} className={`flex items-start gap-4 px-5 py-4 border-l-2 ${borderColor}`}>
-                    <div className="shrink-0 w-8 h-8 border border-[var(--color-dash-border)] bg-[var(--color-dash-surface2)] flex items-center justify-center mt-0.5">
-                      <Icon size={14} strokeWidth={1.5} className={iconColor} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-1">
-                        <span className={`font-mono text-[9px] tracking-[2px] ${stepColor}`}>{step}</span>
-                        <p className="font-serif text-[15px] text-[var(--color-dash-ink)]">{title}</p>
+                {HOW_TO_PAY.map(
+                  ({
+                    step,
+                    icon: Icon,
+                    title,
+                    desc,
+                    iconColor,
+                    stepColor,
+                    borderColor,
+                  }) => (
+                    <div
+                      key={step}
+                      className={`flex items-start gap-4 px-5 py-4 border-l-2 ${borderColor}`}
+                    >
+                      <div className="shrink-0 w-8 h-8 border border-[var(--color-dash-border)] bg-[var(--color-dash-surface2)] flex items-center justify-center mt-0.5">
+                        <Icon
+                          size={14}
+                          strokeWidth={1.5}
+                          className={iconColor}
+                        />
                       </div>
-                      <p className="font-sans text-[12px] text-[var(--color-dash-ink3)] leading-relaxed">{desc}</p>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-1">
+                          <span
+                            className={`font-mono text-[9px] tracking-[2px] ${stepColor}`}
+                          >
+                            {step}
+                          </span>
+                          <p className="font-serif text-[15px] text-[var(--color-dash-ink)]">
+                            {title}
+                          </p>
+                        </div>
+                        <p className="font-sans text-[12px] text-[var(--color-dash-ink3)] leading-relaxed">
+                          {desc}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ),
+                )}
               </div>
             </motion.div>
 
@@ -204,9 +271,14 @@ export function PayNowView({
               variants={fadeRight}
               className="border border-[var(--color-status-stopped-border)] bg-[var(--color-status-stopped-bg)] px-5 py-4 flex items-start gap-3"
             >
-              <ShieldAlert size={14} strokeWidth={1.5} className="text-[var(--color-dash-amber)] mt-0.5 shrink-0" />
+              <ShieldAlert
+                size={14}
+                strokeWidth={1.5}
+                className="text-[var(--color-dash-amber)] mt-0.5 shrink-0"
+              />
               <p className="font-sans text-[12px] text-[var(--color-dash-ink3)] leading-relaxed">
-                Never share your UPI PIN with anyone. Freelancer OS only collects your transaction reference for verification purposes.
+                Never share your UPI PIN with anyone. Freelancer OS only
+                collects your transaction reference for verification purposes.
               </p>
             </motion.div>
           </motion.div>

@@ -8,18 +8,19 @@ datasource db {
 }
 
 model User {
-  id            String       @id
-  name          String
-  email         String
-  emailVerified Boolean      @default(false)
-  image         String?
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  role          userrole
-  Freelancer    Freelancer?
-  userprofiles  Userprofile?
+  id              String           @id
+  name            String
+  email           String
+  emailVerified   Boolean          @default(false)
+  image           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  sessions        Session[]
+  accounts        Account[]
+  role            userrole
+  Freelancer      Freelancer?
+  userprofiles    Userprofile?
+  cancellRequests CancellRequest[]
 
   @@unique([email])
   @@map("user")
@@ -122,6 +123,7 @@ model Freelancer {
   projects             Project[]
   budgetRaiseRequests  BudgetRaiseRequest[]
   paymentverifications Paymentverification[]
+  cancellRequests      CancellRequest[]
 }
 
 model Userprofile {
@@ -132,6 +134,7 @@ model Userprofile {
   user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   projects             Project[]
   paymentverifications Paymentverification[]
+  cancellRequests      CancellRequest[]
 }
 
 model Milestone {
@@ -188,6 +191,7 @@ model Project {
   updatedAt           DateTime             @updatedAt
   stoppedAt           DateTime?
   budgetRaiseRequests BudgetRaiseRequest[]
+  cancellRequests     CancellRequest[]
 
   @@index([freelancerId])
   @@index([clientId])
@@ -214,6 +218,25 @@ model BudgetRaiseRequest {
   reviewedAt DateTime?
 
   @@index([status, createdAt, reviewedAt, requestedById])
+}
+
+model CancellRequest {
+  id                 String      @id @default(cuid())
+  freelancerApproved Boolean     @default(false)
+  clientApproved     Boolean     @default(false)
+  clientId           String
+  client             Userprofile @relation(fields: [clientId], references: [id])
+  freelancerId       String
+  freelancer         Freelancer  @relation(fields: [freelancerId], references: [id])
+  raiesdByuserId     String
+  raisedBy           User        @relation(fields: [raiesdByuserId], references: [id])
+  acceptedById       String?
+  createdAt          DateTime    @default(now())
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+
+  @@index([freelancerId, freelancerApproved, clientId, clientApproved, projectId])
 }
 
 enum Categorys {

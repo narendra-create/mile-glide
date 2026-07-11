@@ -1,11 +1,20 @@
 "use client";
-import { useState } from "react";
-import { User, Bell, Shield, Camera, Check, ExternalLink, CreditCard } from "lucide-react";
-import Link from "next/link";
 import { Categorys } from "@/app/generated/prisma/enums";
-import { formatCategory } from "@/app/lib/utilitys";
-import { useToast } from "../ToastProvider";
 import { updateProfileAction } from "@/app/lib/actions/ProfileActions";
+import { authClient } from "@/app/lib/auth-client";
+import { formatCategory } from "@/app/lib/utilitys";
+import {
+  Bell,
+  Camera,
+  Check,
+  CreditCard,
+  ExternalLink,
+  Shield,
+  User,
+} from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { useToast } from "../ToastProvider";
 
 type SettingsSection = "profile" | "notifications" | "security" | "payment";
 
@@ -142,13 +151,21 @@ function ProfileSection({ initialData }: { initialData?: ProfileData }) {
       category: form.category as Categorys,
     });
     setLoading(false);
-    
+
     if (result.success) {
       setSaved(true);
-      addToast({ title: "Success", message: "Profile updated successfully!", type: "success" });
+      addToast({
+        title: "Success",
+        message: "Profile updated successfully!",
+        type: "success",
+      });
       setTimeout(() => setSaved(false), 3000);
     } else {
-      addToast({ title: "Error", message: result.error || "Failed to update profile", type: "error" });
+      addToast({
+        title: "Error",
+        message: result.error || "Failed to update profile",
+        type: "error",
+      });
     }
   };
 
@@ -223,17 +240,25 @@ function ProfileSection({ initialData }: { initialData?: ProfileData }) {
               onChange={handleChange}
               className="w-full bg-[var(--color-dash-surface2)] border border-[var(--color-dash-border)] rounded-md px-4 py-3 font-sans text-[13px] text-white focus:outline-none focus:border-[var(--color-dash-ink3)] transition-all duration-200 appearance-none cursor-pointer"
             >
-              <option value="" disabled className="bg-[#141414] text-dash-ink2/80 font-bold">
+              <option
+                value=""
+                disabled
+                className="bg-[#141414] text-dash-ink2/80 font-bold"
+              >
                 Select your main skill
               </option>
-              
+
               {Object.values(Categorys).map((cat) => (
-                <option key={cat} value={cat} className="bg-[#141414] text-white py-2">
+                <option
+                  key={cat}
+                  value={cat}
+                  className="bg-[#141414] text-white py-2"
+                >
                   {formatCategory(cat)}
                 </option>
               ))}
             </select>
-            
+
             <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--color-dash-ink4)]">
               ▼
             </div>
@@ -354,6 +379,7 @@ function SecuritySection() {
   const [form, setForm] = useState({ current: "", next: "", confirm: "" });
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const { addToast } = useToast();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -361,19 +387,70 @@ function SecuritySection() {
     setSaved(false);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleChangepassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
+    if (form.next !== form.confirm) {
+      addToast({
+        title: "Passwords don't match",
+        message: "Please enter the same password in both fields.",
+        type: "warning",
+      });
+      return;
+    }
+    if (form.current === form.next) {
+      addToast({
+        title: "Choose a new password",
+        message:
+          "Your new password must be different from your current password.",
+        type: "warning",
+      });
+      return;
+    }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 900));
-    setLoading(false);
-    setSaved(true);
-    setForm({ current: "", next: "", confirm: "" });
-    setTimeout(() => setSaved(false), 3000);
-  };
+    try {
+      const { error } = await authClient.changePassword({
+        currentPassword: form.current,
+        newPassword: form.next,
+        revokeOtherSessions: true,
+      });
 
+      if (error) {
+        addToast({
+          title: "Password change failed",
+          message: `${error.message}`,
+          type: "error",
+        });
+        return;
+      }
+      addToast({
+        title: "Password changed",
+        message: "Your password has been updated successfully.",
+        type: "success",
+      });
+      setSaved(true);
+      setForm({
+        current: "",
+        next: "",
+        confirm: "",
+      });
+
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err) {
+      console.error(err);
+
+      addToast({
+        title: "Something went wrong",
+        message: "Please try again.",
+        type: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="flex flex-col gap-8">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      <form onSubmit={handleChangepassword} className="flex flex-col gap-5">
         <div>
           <p className="font-serif text-[16px] text-white mb-1">
             Change Password
@@ -391,6 +468,7 @@ function SecuritySection() {
           <input
             name="current"
             type="password"
+            autoComplete="current-password"
             value={form.current}
             onChange={handleChange}
             placeholder="••••••••"
@@ -405,6 +483,7 @@ function SecuritySection() {
             <input
               name="next"
               type="password"
+              autoComplete="new-password"
               value={form.next}
               onChange={handleChange}
               placeholder="••••••••"
@@ -418,6 +497,7 @@ function SecuritySection() {
             <input
               name="confirm"
               type="password"
+              autoComplete="new-password"
               value={form.confirm}
               onChange={handleChange}
               placeholder="••••••••"
@@ -482,9 +562,21 @@ function SecuritySection() {
   );
 }
 
-function PaymentDetailsSection({ initialData, onUpdateUPI }: { initialData?: ProfileData, onUpdateUPI: (data: { upiId: string, AccountHolderName: string }) => Promise<{ success: boolean, error?: string }> }) {
+function PaymentDetailsSection({
+  initialData,
+  onUpdateUPI,
+}: {
+  initialData?: ProfileData;
+  onUpdateUPI: (data: {
+    upiId: string;
+    AccountHolderName: string;
+  }) => Promise<{ success: boolean; error?: string }>;
+}) {
   const { addToast } = useToast();
-  const [form, setForm] = useState({ upiId: initialData?.upiId || "", holderName: initialData?.AccountHolderName || "" });
+  const [form, setForm] = useState({
+    upiId: initialData?.upiId || "",
+    holderName: initialData?.AccountHolderName || "",
+  });
   const [checkSuccess, setCheckSuccess] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -499,35 +591,53 @@ function PaymentDetailsSection({ initialData, onUpdateUPI }: { initialData?: Pro
 
   const handleCheck = () => {
     if (!form.upiId || !form.holderName) {
-      addToast({ title: "Error", message: "Both UPI ID and Holder Name are required", type: "error" });
+      addToast({
+        title: "Error",
+        message: "Both UPI ID and Holder Name are required",
+        type: "error",
+      });
       return;
     }
-    const isValidSyntax = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/.test(form.upiId);
+    const isValidSyntax = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/.test(
+      form.upiId,
+    );
     if (isValidSyntax) {
       setCheckSuccess(true);
     } else {
       setCheckSuccess(false);
-      addToast({ title: "Error", message: "Invalid UPI ID format", type: "error" });
+      addToast({
+        title: "Error",
+        message: "Invalid UPI ID format",
+        type: "error",
+      });
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!checkSuccess || !isConfirmed) return;
-    
+
     setLoading(true);
     const result = await onUpdateUPI({
       upiId: form.upiId,
-      AccountHolderName: form.holderName
+      AccountHolderName: form.holderName,
     });
-    
+
     setLoading(false);
     if (result.success) {
       setSaved(true);
-      addToast({ title: "Success", message: "Payment details updated successfully!", type: "success" });
+      addToast({
+        title: "Success",
+        message: "Payment details updated successfully!",
+        type: "success",
+      });
       setTimeout(() => setSaved(false), 3000);
     } else {
-      addToast({ title: "Error", message: result.error || "Failed to update payment details", type: "error" });
+      addToast({
+        title: "Error",
+        message: result.error || "Failed to update payment details",
+        type: "error",
+      });
     }
   };
 
@@ -545,7 +655,7 @@ function PaymentDetailsSection({ initialData, onUpdateUPI }: { initialData?: Pro
         </p>
       </div>
       <div className="w-full h-px bg-[var(--color-dash-border)]" />
-      
+
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
           <label className="font-mono text-[10px] tracking-[1.5px] uppercase text-[var(--color-dash-ink3)]">
@@ -588,13 +698,17 @@ function PaymentDetailsSection({ initialData, onUpdateUPI }: { initialData?: Pro
             Confirm your UPI ID
           </p>
           <div className="bg-white p-3 rounded-lg mb-4">
-            <img src={qrDataUrl} alt="UPI QR Code" className="w-[120px] h-[120px]" />
+            <img
+              src={qrDataUrl}
+              alt="UPI QR Code"
+              className="w-[120px] h-[120px]"
+            />
           </div>
           <p className="text-center text-[var(--color-dash-ink3)] font-sans text-[12px] mb-6 max-w-[280px]">
-            Scan this QR code with your UPI app to verify that it shows your name correctly. 
-            (Do not pay, just verify the name).
+            Scan this QR code with your UPI app to verify that it shows your
+            name correctly. (Do not pay, just verify the name).
           </p>
-          
+
           {!isConfirmed ? (
             <button
               type="button"
@@ -605,7 +719,10 @@ function PaymentDetailsSection({ initialData, onUpdateUPI }: { initialData?: Pro
               Yes, it is correct
             </button>
           ) : (
-            <form onSubmit={handleSubmit} className="w-full pt-4 border-t border-[var(--color-dash-border)] flex justify-end">
+            <form
+              onSubmit={handleSubmit}
+              className="w-full pt-4 border-t border-[var(--color-dash-border)] flex justify-end"
+            >
               <SaveButton loading={loading} saved={saved} />
             </form>
           )}
@@ -615,14 +732,28 @@ function PaymentDetailsSection({ initialData, onUpdateUPI }: { initialData?: Pro
   );
 }
 
-export function FreelancerSettings({ initialData, onUpdateUPI }: { initialData?: ProfileData, onUpdateUPI: (data: { upiId: string, AccountHolderName: string }) => Promise<{ success: boolean, error?: string }> }) {
+export function FreelancerSettings({
+  initialData,
+  onUpdateUPI,
+}: {
+  initialData?: ProfileData;
+  onUpdateUPI: (data: {
+    upiId: string;
+    AccountHolderName: string;
+  }) => Promise<{ success: boolean; error?: string }>;
+}) {
   const [active, setActive] = useState<SettingsSection>("profile");
 
   const SECTION_CONTENT: Record<SettingsSection, React.ReactNode> = {
     profile: <ProfileSection initialData={initialData} />,
     notifications: <NotificationsSection />,
     security: <SecuritySection />,
-    payment: <PaymentDetailsSection initialData={initialData} onUpdateUPI={onUpdateUPI} />,
+    payment: (
+      <PaymentDetailsSection
+        initialData={initialData}
+        onUpdateUPI={onUpdateUPI}
+      />
+    ),
   };
 
   const activeLabel = SECTIONS.find((s) => s.id === active)?.label ?? "";

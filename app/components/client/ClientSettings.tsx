@@ -2,9 +2,10 @@
 import { useState } from "react";
 import { User, Bell, Shield, Camera, Check, ExternalLink } from "lucide-react";
 import Link from "next/link";
-import { useToast } from "./ToastProvider";
+import { useToast } from "@/app/components/ToastProvider";
 import { updateProfileAction } from "@/app/lib/actions/ProfileActions";
-import type { ProfileData } from "./freelancer/FreelancerSettings";
+import { ProfileData } from "@/app/components/freelancer/FreelancerSettings";
+import { authClient } from "@/app/lib/auth-client";
 
 type SettingsSection = "profile" | "notifications" | "security";
 
@@ -123,13 +124,21 @@ function ProfileSection({ initialData }: { initialData?: ProfileData }) {
       phone: form.phone,
     });
     setLoading(false);
-    
+
     if (result.success) {
       setSaved(true);
-      addToast({ title: "Success", message: "Profile updated successfully!", type: "success" });
+      addToast({
+        title: "Success",
+        message: "Profile updated successfully!",
+        type: "success",
+      });
       setTimeout(() => setSaved(false), 3000);
     } else {
-      addToast({ title: "Error", message: result.error || "Failed to update profile", type: "error" });
+      addToast({
+        title: "Error",
+        message: result.error || "Failed to update profile",
+        type: "error",
+      });
     }
   };
 
@@ -193,7 +202,6 @@ function ProfileSection({ initialData }: { initialData?: ProfileData }) {
           />
         </div>
       </div>
-
 
       <div className="flex justify-end pt-2">
         <SaveButton loading={loading} saved={saved} />
@@ -308,6 +316,7 @@ function SecuritySection() {
   const [form, setForm] = useState({ current: "", next: "", confirm: "" });
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const { addToast } = useToast();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -315,19 +324,71 @@ function SecuritySection() {
     setSaved(false);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleChangepassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
+    if (form.next !== form.confirm) {
+      addToast({
+        title: "Passwords don't match",
+        message: "Please enter the same password in both fields.",
+        type: "warning",
+      });
+      return;
+    }
+    if (form.current === form.next) {
+      addToast({
+        title: "Choose a new password",
+        message:
+          "Your new password must be different from your current password.",
+        type: "warning",
+      });
+      return;
+    }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 900));
-    setLoading(false);
-    setSaved(true);
-    setForm({ current: "", next: "", confirm: "" });
-    setTimeout(() => setSaved(false), 3000);
+    try {
+      const { error } = await authClient.changePassword({
+        currentPassword: form.current,
+        newPassword: form.next,
+        revokeOtherSessions: true,
+      });
+
+      if (error) {
+        addToast({
+          title: "Password change failed",
+          message: `${error.message}`,
+          type: "error",
+        });
+        return;
+      }
+      addToast({
+        title: "Password changed",
+        message: "Your password has been updated successfully.",
+        type: "success",
+      });
+      setSaved(true);
+      setForm({
+        current: "",
+        next: "",
+        confirm: "",
+      });
+
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err) {
+      console.error(err);
+
+      addToast({
+        title: "Something went wrong",
+        message: "Please try again.",
+        type: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="flex flex-col gap-8">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      <form onSubmit={handleChangepassword} className="flex flex-col gap-5">
         <div>
           <p className="font-serif text-[16px] text-white mb-1">
             Change Password
@@ -345,6 +406,7 @@ function SecuritySection() {
           <input
             name="current"
             type="password"
+            autoComplete="current-password"
             value={form.current}
             onChange={handleChange}
             placeholder="••••••••"
@@ -359,6 +421,7 @@ function SecuritySection() {
             <input
               name="next"
               type="password"
+              autoComplete="new-password"
               value={form.next}
               onChange={handleChange}
               placeholder="••••••••"
@@ -372,6 +435,7 @@ function SecuritySection() {
             <input
               name="confirm"
               type="password"
+              autoComplete="new-password"
               value={form.confirm}
               onChange={handleChange}
               placeholder="••••••••"

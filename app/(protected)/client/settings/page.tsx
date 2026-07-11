@@ -1,7 +1,7 @@
-import { ClientSettings } from "@/app/components/ClientSettings";
+import { ClientSettings } from "@/app/components/client/ClientSettings";
+import { getProfileAction } from "@/app/lib/actions/ProfileActions";
 import { getSession } from "@/app/lib/session";
 import { redirect } from "next/navigation";
-import { getProfileAction } from "@/app/lib/actions/ProfileActions";
 
 const SettingsPage = async () => {
   const session = await getSession();

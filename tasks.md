@@ -115,7 +115,7 @@
 - [ ] create model for activity feature
 - [ ] continue activity feature
 - [ ] make notification off system for settings page
-- [ ] replace earned with paid in client milestones page
+- [x] replace earned with paid in client milestones page
 - [ ] make sure only one request of cancellation generates for each project
 - [ ] fix a bug - when rejecting the cancel request and then generating new request - instently cancells the project
 

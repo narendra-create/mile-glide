@@ -195,10 +195,23 @@ model Project {
   stoppedAt           DateTime?
   budgetRaiseRequests BudgetRaiseRequest[]
   cancellRequests     CancellRequest[]
+  activities          Activity[]
 
   @@index([freelancerId])
   @@index([clientId])
   @@index([createdAt])
+}
+
+model Activity {
+  id                String       @id @default(cuid())
+  type              ActivityType
+  dateTimeofMessage DateTime
+  message           String
+  highlightmessage  String
+  projectId         String
+  project           Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 }
 
 model BudgetRaiseRequest {
@@ -287,4 +300,11 @@ enum VerificationStatus {
   VERIFIED
   PENDING_VERIFICATION
   REJECTED
+}
+
+enum ActivityType {
+  DELAY
+  PAYMENT
+  MILESTONEDONE
+  REMINDER
 }

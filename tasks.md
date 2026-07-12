@@ -110,7 +110,7 @@
 - [x] make a function to archive projects from freelancer or from client side
 - [x] make a archived projects page
 - [x] make function to unarchive projects
-- [ ] update project findings by is archived or not on all pages
+- [x] update project findings by is archived or not on all pages
 - [ ] API/REALDATA: Fetch paginated list of projects for Client dashboard
 - [ ] create model for activity feature
 - [ ] continue activity feature

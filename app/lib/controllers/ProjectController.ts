@@ -956,7 +956,7 @@ export const processarchiveProject = async (projectId: string, action: "ARCHIVE"
                 status: 409
             };
         }
-        if (!findProject.archivedByClient && action === "UNACHIVE") {
+        if (!findProject.archivedByClient && action === "UNARCHIVE") {
             return {
                 success: false,
                 error: "This Project is Not archived.",
@@ -1007,7 +1007,7 @@ export const processarchiveProject = async (projectId: string, action: "ARCHIVE"
                 status: 409
             };
         }
-        if (!findProject.archivedByClient && action === "UNACHIVE") {
+        if (!findProject.archivedByClient && action === "UNARCHIVE") {
             return {
                 success: false,
                 error: "This Project is Not archived.",

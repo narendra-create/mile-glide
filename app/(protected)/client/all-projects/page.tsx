@@ -1,10 +1,11 @@
 import React from "react";
 import { ClientAllProjects } from "@/app/components/client/ClientAllProjects";
-import { getAllProjects } from "@/app/lib/controllers/ProjectController";
+import { getAllProjects, processarchiveProject } from "@/app/lib/controllers/ProjectController";
 import { getSession } from "@/app/lib/session";
 import { redirect } from "next/navigation";
 import { getClientProfile } from "@/app/lib/controllers/profileController";
 import type { GetAllProjectsResponse } from "@/types/allprojects";
+import { revalidatePath } from "next/cache";
 
 const AllProjects = async () => {
   const session = await getSession();
@@ -41,12 +42,24 @@ const AllProjects = async () => {
       nextcursor,
     )) as GetAllProjectsResponse;
   };
+  const handleArchive = async (projectId: string) => {
+    "use server";
+    const result = await processarchiveProject(projectId, "ARCHIVE");
+    if (!result.success)
+      return {
+        success: false,
+        error: `${result.error} - ${result.status}`,
+      };
+    revalidatePath("/client/all-projects");
+    return { success: true };
+  };
   return (
     <main className="mx-4 lg:pl-7 lg:pt-10">
       <ClientAllProjects
         initialNextCursor={nextCursor ?? null}
         initialProjects={projects}
         loadMore={loadmore}
+        onArchive={handleArchive}
       />
     </main>
   );

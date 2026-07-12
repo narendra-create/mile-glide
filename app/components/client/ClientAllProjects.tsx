@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ChevronRight, Archive } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import type {
   AllProject,
@@ -18,6 +18,7 @@ interface ClientAllProjectsProps {
   initialProjects: AllProject[];
   initialNextCursor: string | null;
   loadMore: (cursor: string) => Promise<GetAllProjectsResponse>;
+  onArchive?: (id: string) => void;
 }
 
 // ─── STATUS CONFIG ────────────────────────────────────────────────────────────
@@ -103,9 +104,11 @@ type ClientProjectCardType = AllProject & {
 function ProjectCard({
   project,
   index,
+  onArchive,
 }: {
   project: ClientProjectCardType;
   index: number;
+  onArchive?: (id: string) => void;
 }) {
   const router = useRouter();
   const style = STATUS_STYLE[project.status] ?? STATUS_STYLE.ACTIVE;
@@ -169,6 +172,20 @@ function ProjectCard({
           >
             {project.status}
           </span>
+          {/* ARCHIVE BUTTON */}
+          {onArchive && (
+            <button
+              data-no-nav=""
+              onClick={(e) => {
+                e.stopPropagation();
+                onArchive(project.id);
+              }}
+              className="p-1.5 rounded-md border border-[#2a3441] bg-[#1c232d] text-[#8b9ebb] hover:text-[#d1dff5] hover:bg-[#252f3e] hover:border-[#3a4759] transition-all duration-150"
+              title="Archive Project"
+            >
+              <Archive size={13} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -247,9 +264,11 @@ function ProjectCard({
 function SectionBlock({
   status,
   projects,
+  onArchive,
 }: {
   status: AllProjectStatus;
   projects: AllProject[];
+  onArchive?: (id: string) => void;
 }) {
   if (projects.length === 0) return null;
   const label = status.charAt(0) + status.slice(1).toLowerCase();
@@ -268,7 +287,7 @@ function SectionBlock({
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         <AnimatePresence mode="popLayout">
           {projects.map((p, i) => (
-            <ProjectCard key={p.id} project={p} index={i} />
+            <ProjectCard key={p.id} project={p} index={i} onArchive={onArchive} />
           ))}
         </AnimatePresence>
       </div>
@@ -282,6 +301,7 @@ export function ClientAllProjects({
   initialProjects,
   initialNextCursor,
   loadMore,
+  onArchive,
 }: ClientAllProjectsProps) {
   const router = useRouter();
   const { addToast } = useToast();
@@ -353,6 +373,7 @@ export function ClientAllProjects({
               key={status}
               status={status}
               projects={grouped[status]}
+              onArchive={onArchive}
             />
           ))}
 

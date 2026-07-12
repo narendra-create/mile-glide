@@ -6,16 +6,19 @@ import type { AllProject, GetAllProjectsResponse } from "@/types/allprojects";
 import {
   deleteProject,
   getAllProjects,
+  processarchiveProject,
 } from "@/app/lib/controllers/ProjectController";
+import { revalidatePath } from "next/cache";
 
 const SeeProjectsPage = async () => {
   const session = await getSession();
   if (!session) redirect("/login");
-  if (session.user.role.toLowerCase() !== "freelancer") redirect("/unauthorized");
+  if (session.user.role.toLowerCase() !== "freelancer")
+    redirect("/unauthorized");
 
   const freelancer = await prisma.freelancer.findUnique({
     where: { userId: session.user.id },
-    select: { id: true }
+    select: { id: true },
   });
   if (!freelancer) redirect("/unauthorized");
 
@@ -30,10 +33,15 @@ const SeeProjectsPage = async () => {
       return { success: false as const, error: "Unauthorized", status: 401 };
     const freelancer = await prisma.freelancer.findUnique({
       where: { userId: session.user.id },
-      select: { id: true }
+      select: { id: true },
     });
-    if (!freelancer) return { success: false as const, error: "Unauthorized", status: 401 };
-    return await getAllProjects(freelancer.id, "FREELANCER", nextcursor) as GetAllProjectsResponse;
+    if (!freelancer)
+      return { success: false as const, error: "Unauthorized", status: 401 };
+    return (await getAllProjects(
+      freelancer.id,
+      "FREELANCER",
+      nextcursor,
+    )) as GetAllProjectsResponse;
   };
 
   const handleDelete = async (id: string) => {
@@ -42,7 +50,7 @@ const SeeProjectsPage = async () => {
     if (!session) return { success: false as const, error: "Unauthorized" };
     const freelancer = await prisma.freelancer.findUnique({
       where: { userId: session.user.id },
-      select: { id: true }
+      select: { id: true },
     });
     if (!freelancer) return { success: false as const, error: "Unauthorized" };
     const result = await deleteProject(freelancer.id, id);
@@ -50,6 +58,17 @@ const SeeProjectsPage = async () => {
       return { success: false as const, error: result.error };
     }
     return { success: true as const };
+  };
+  const handleArchive = async (projectId: string) => {
+    "use server";
+    const result = await processarchiveProject(projectId, "ARCHIVE");
+    if (!result.success)
+      return {
+        success: false,
+        error: `${result.error} - ${result.status}`,
+      };
+    revalidatePath("/client/past-projects");
+    return { success: true };
   };
 
   return (
@@ -59,6 +78,7 @@ const SeeProjectsPage = async () => {
         initialProjects={projects.projects as AllProject[]}
         initialNextCursor={projects.nextCursor ?? null}
         loadMore={loadmore}
+        onArchive={handleArchive}
       />
     </div>
   );

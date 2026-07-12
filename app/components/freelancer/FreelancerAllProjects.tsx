@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2, AlertTriangle, X, ChevronRight } from "lucide-react";
+import { Trash2, AlertTriangle, X, ChevronRight, Archive } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import type {
   AllProject,
@@ -20,6 +20,7 @@ interface FreelancerAllProjectsProps {
   handleDelete: (
     id: string,
   ) => Promise<{ success: boolean; error?: string } | void>;
+  onArchive?: (id: string) => void;
 }
 
 // ─── STATUS CONFIG ────────────────────────────────────────────────────────────
@@ -157,6 +158,7 @@ function ProjectCard({
   project: AllProject;
   index: number;
   onDelete?: (id: string) => void;
+  onArchive?: (id: string) => void;
 }) {
   const router = useRouter();
   const style = STATUS_STYLE[project.status] ?? STATUS_STYLE.ACTIVE;
@@ -232,6 +234,20 @@ function ProjectCard({
               className="p-1.5 rounded-md border border-transparent text-[var(--color-dash-ink4)] hover:text-[var(--color-dash-red)] hover:border-[var(--color-status-danger-border)] hover:bg-[var(--color-status-danger-bg)] transition-all duration-150"
             >
               <Trash2 size={13} />
+            </button>
+          )}
+          {/* ARCHIVE BUTTON */}
+          {onArchive && (
+            <button
+              data-no-nav=""
+              onClick={(e) => {
+                e.stopPropagation();
+                onArchive(project.id);
+              }}
+              className="p-1.5 rounded-md border border-[#2a3441] bg-[#1c232d] text-[#8b9ebb] hover:text-[#d1dff5] hover:bg-[#252f3e] hover:border-[#3a4759] transition-all duration-150"
+              title="Archive Project"
+            >
+              <Archive size={13} />
             </button>
           )}
         </div>
@@ -322,6 +338,7 @@ function SectionBlock({
   status: AllProjectStatus;
   projects: AllProject[];
   onDelete?: (id: string) => void;
+  onArchive?: (id: string) => void;
 }) {
   if (projects.length === 0) return null;
   const label = status.charAt(0) + status.slice(1).toLowerCase();
@@ -340,7 +357,7 @@ function SectionBlock({
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         <AnimatePresence mode="popLayout">
           {projects.map((p, i) => (
-            <ProjectCard key={p.id} project={p} index={i} onDelete={onDelete} />
+            <ProjectCard key={p.id} project={p} index={i} onDelete={onDelete} onArchive={onArchive} />
           ))}
         </AnimatePresence>
       </div>
@@ -355,6 +372,7 @@ export function FreelancerAllProjects({
   initialNextCursor,
   loadMore,
   handleDelete,
+  onArchive,
 }: FreelancerAllProjectsProps) {
   const { addToast } = useToast();
   const [projects, setProjects] = useState<AllProject[]>(initialProjects);
@@ -460,6 +478,7 @@ export function FreelancerAllProjects({
                   ? (id) => setDeleteTargetId(id)
                   : undefined
               }
+              onArchive={onArchive}
             />
           ))}
 

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Archive } from "lucide-react";
 import type { userrole } from "@/app/generated/prisma/enums";
+import { useToast } from "@/app/components/ToastProvider";
 
 // PROPS
 export interface PastProjectCardProps {
@@ -14,7 +15,8 @@ export interface PastProjectCardProps {
   paymentStatus: "PAID" | "DUE" | "UNPAID";
   completionDate: string | Date;
   paidAmount: number | string;
-  onArchive?: (id: string) => void;
+  onArchive?: (id: string) => Promise<any> | void;
+  onArchiveSuccess?: (id: string) => void;
 }
 
 // UI COMPONENT
@@ -30,7 +32,10 @@ export function PastProjectCard({
   clientEmail,
   freelancerEmail,
   onArchive,
+  onArchiveSuccess,
 }: PastProjectCardProps) {
+  const { addToast } = useToast();
+  const [isArchiving, setIsArchiving] = useState(false);
   // DATE FORMATTING
   const formattedDate =
     typeof completionDate === "string"
@@ -50,6 +55,24 @@ export function PastProjectCard({
 
   // CONDITIONAL ROLE INFO
   const nameToShow = role === "FREELANCER" ? clientName : freelancerName;
+
+  const handleArchiveClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!onArchive) return;
+    setIsArchiving(true);
+    try {
+      const result = await onArchive(id);
+      if (result && !result.success) {
+        addToast({ title: "Error", message: result.error || "Failed to archive project", type: "error" });
+      } else if (onArchiveSuccess) {
+        onArchiveSuccess(id);
+      }
+    } catch (err: any) {
+      addToast({ title: "Error", message: err.message || "An unexpected error occurred", type: "error" });
+    } finally {
+      setIsArchiving(false);
+    }
+  };
 
   return (
     // CARD CONTAINER
@@ -104,15 +127,19 @@ export function PastProjectCard({
           {/* ARCHIVE BUTTON */}
           {onArchive && (
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onArchive(id);
-              }}
-              className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#2a3441] bg-[#1c232d] text-[#8b9ebb] hover:text-[#d1dff5] hover:bg-[#252f3e] hover:border-[#3a4759] transition-all duration-150"
+              onClick={handleArchiveClick}
+              disabled={isArchiving}
+              className="flex items-center justify-center gap-1.5 px-2 py-1 rounded-md border border-[#2a3441] bg-[#1c232d] text-[#8b9ebb] hover:text-[#d1dff5] hover:bg-[#252f3e] hover:border-[#3a4759] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed min-w-[70px] min-h-[26px]"
               title="Archive Project"
             >
-              <Archive size={12} />
-              <span className="font-mono text-[9px] tracking-wide uppercase">Archive</span>
+              {isArchiving ? (
+                <span className="w-3 h-3 border-[1.5px] border-[#8b9ebb] border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  <Archive size={12} />
+                  <span className="font-mono text-[9px] tracking-wide uppercase">Archive</span>
+                </>
+              )}
             </button>
           )}
           <span className="text-[var(--color-dash-gold)] font-mono text-[16px] tracking-wide">

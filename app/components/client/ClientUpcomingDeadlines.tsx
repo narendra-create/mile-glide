@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { AlertTriangle, Clock } from "lucide-react";
+import { useState } from "react";
 
 export type ClientDeadlineItem = {
   id: string;
@@ -49,10 +50,33 @@ const STATUS_CONFIG: Record<
 };
 
 export default function ClientUpcomingDeadlines({
-  items,
+  items: initialItems,
+  nextCursor: initialNextCursor,
+  loadMore,
 }: {
   items: ClientDeadlineItem[];
+  nextCursor?: string | null;
+  loadMore?: (cursor: string) => Promise<{ deadlines: ClientDeadlineItem[], nextCursor: string | null }>;
 }) {
+  const [items, setItems] = useState<ClientDeadlineItem[]>(initialItems);
+  const [nextCursor, setNextCursor] = useState<string | null>(initialNextCursor || null);
+  const [loading, setLoading] = useState(false);
+
+  const handleLoadMore = async () => {
+    if (!nextCursor || !loadMore) return;
+    setLoading(true);
+    try {
+      const result = await loadMore(nextCursor);
+      if (result) {
+        setItems((prev) => [...prev, ...result.deadlines]);
+        setNextCursor(result.nextCursor);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
   const sorted = [...items].sort(
     (a, b) => a.deadline.getTime() - b.deadline.getTime(),
   );
@@ -134,6 +158,17 @@ export default function ClientUpcomingDeadlines({
             </motion.div>
           );
         })}
+        {nextCursor && loadMore && (
+          <div className="flex justify-center p-3">
+            <button
+              onClick={handleLoadMore}
+              disabled={loading}
+              className="text-[10px] lg:text-[11px] font-mono uppercase tracking-[1px] text-dash-ink3 hover:text-white transition-colors flex items-center gap-1.5 disabled:opacity-50"
+            >
+              {loading ? "Loading..." : "Load more ↓"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

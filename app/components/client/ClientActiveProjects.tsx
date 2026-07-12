@@ -273,10 +273,33 @@ function ProjectCard({
 }
 
 export default function ClientActiveProjects({
-  projects,
+  projects: initialProjects,
+  nextCursor: initialNextCursor,
+  loadMore,
 }: {
   projects: ClientDashboardProject[];
+  nextCursor?: string | null;
+  loadMore?: (cursor: string) => Promise<{ projects: ClientDashboardProject[], nextCursor: string | null }>;
 }) {
+  const [projects, setProjects] = useState<ClientDashboardProject[]>(initialProjects);
+  const [nextCursor, setNextCursor] = useState<string | null>(initialNextCursor || null);
+  const [loading, setLoading] = useState(false);
+
+  const handleLoadMore = async () => {
+    if (!nextCursor || !loadMore) return;
+    setLoading(true);
+    try {
+      const result = await loadMore(nextCursor);
+      if (result) {
+        setProjects((prev) => [...prev, ...result.projects]);
+        setNextCursor(result.nextCursor);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="w-full">
       <div className="flex justify-between pr-4 pl-2 mb-3 items-center">
@@ -295,6 +318,24 @@ export default function ClientActiveProjects({
           <ProjectCard key={project.id} project={project} index={i} />
         ))}
       </div>
+      {nextCursor && loadMore && (
+        <div className="flex justify-center mt-4 mb-2">
+          <button
+            onClick={handleLoadMore}
+            disabled={loading}
+            className="group flex items-center gap-2 px-6 py-2.5 border border-[var(--color-dash-border)] bg-[var(--color-dash-surface1)] text-[var(--color-dash-ink3)] font-sans text-[13px] rounded-full transition-all duration-200 hover:border-[var(--color-dash-border-hover)] hover:text-[var(--color-dash-ink)] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span
+              className={`transition-transform duration-200 ${
+                loading ? "animate-spin" : "group-hover:translate-y-0.5"
+              }`}
+            >
+              {loading ? "◌" : "↓"}
+            </span>
+            {loading ? "Loading..." : "Load more"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

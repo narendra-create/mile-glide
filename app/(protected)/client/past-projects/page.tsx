@@ -46,7 +46,9 @@ const PastProjectsPage = async () => {
         success: false,
         error: `${result.error} - ${result.status}`,
       };
-      revalidatePath("/client/past-projects")
+      revalidatePath("/client/all-projects");
+      revalidatePath("/client/past-projects");
+      revalidatePath("/client/archived-projects");
     return { success: true };
   };
 

@@ -9,7 +9,7 @@ import type {
   AllProjectStatus,
 } from "@/types/allprojects";
 import { SECTION_ORDER } from "@/types/allprojects";
-import { useToast } from "../ToastProvider";
+import { useToast } from "@/app/components/ToastProvider";
 
 // ─── PROPS ────────────────────────────────────────────────────────────────────
 
@@ -20,7 +20,7 @@ interface FreelancerAllProjectsProps {
   handleDelete: (
     id: string,
   ) => Promise<{ success: boolean; error?: string } | void>;
-  onArchive?: (id: string) => void;
+  onArchive?: (id: string) => Promise<any> | void;
   isArchivedPage?: boolean;
 }
 
@@ -155,15 +155,20 @@ function ProjectCard({
   project,
   index,
   onDelete,
+  onArchive,
+  onArchiveSuccess,
+  isArchivedPage,
 }: {
   project: AllProject;
   index: number;
   onDelete?: (id: string) => void;
-  onArchive?: (id: string) => void;
+  onArchive?: (id: string) => Promise<any> | void;
+  onArchiveSuccess?: (id: string) => void;
   isArchivedPage?: boolean;
 }) {
   const router = useRouter();
   const { addToast } = useToast();
+  const [isArchiving, setIsArchiving] = useState(false);
   const style = STATUS_STYLE[project.status] ?? STATUS_STYLE.ACTIVE;
   const { totalMilestones, completedMilestones, progress, projectDeadline } =
     project.stats;
@@ -183,6 +188,24 @@ function ProjectCard({
       return;
     }
     router.push(`/freelancer/milestones/${project.id}`);
+  };
+
+  const handleArchiveClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!onArchive) return;
+    setIsArchiving(true);
+    try {
+      const result = await onArchive(project.id);
+      if (result && !result.success) {
+        addToast({ title: "Error", message: result.error || "Failed to update project", type: "error" });
+      } else if (onArchiveSuccess) {
+        onArchiveSuccess(project.id);
+      }
+    } catch (err: any) {
+      addToast({ title: "Error", message: err.message || "An unexpected error occurred", type: "error" });
+    } finally {
+      setIsArchiving(false);
+    }
   };
 
   return (
@@ -247,14 +270,18 @@ function ProjectCard({
           {onArchive && (
             <button
               data-no-nav=""
-              onClick={(e) => {
-                e.stopPropagation();
-                onArchive(project.id);
-              }}
-              className="p-1.5 rounded-md border border-[#2a3441] bg-[#1c232d] text-[#8b9ebb] hover:text-[#d1dff5] hover:bg-[#252f3e] hover:border-[#3a4759] transition-all duration-150"
+              onClick={handleArchiveClick}
+              disabled={isArchiving}
+              className="p-1.5 rounded-md border border-[#2a3441] bg-[#1c232d] text-[#8b9ebb] hover:text-[#d1dff5] hover:bg-[#252f3e] hover:border-[#3a4759] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[28px] min-h-[28px]"
               title={isArchivedPage ? "Unarchive Project" : "Archive Project"}
             >
-              {isArchivedPage ? <ArchiveRestore size={13} /> : <Archive size={13} />}
+              {isArchiving ? (
+                <span className="w-3.5 h-3.5 border-2 border-[#8b9ebb] border-t-transparent rounded-full animate-spin" />
+              ) : isArchivedPage ? (
+                <ArchiveRestore size={13} />
+              ) : (
+                <Archive size={13} />
+              )}
             </button>
           )}
         </div>
@@ -341,11 +368,15 @@ function SectionBlock({
   status,
   projects,
   onDelete,
+  onArchive,
+  onArchiveSuccess,
+  isArchivedPage,
 }: {
   status: AllProjectStatus;
   projects: AllProject[];
   onDelete?: (id: string) => void;
-  onArchive?: (id: string) => void;
+  onArchive?: (id: string) => Promise<any> | void;
+  onArchiveSuccess?: (id: string) => void;
   isArchivedPage?: boolean;
 }) {
   if (projects.length === 0) return null;
@@ -365,7 +396,7 @@ function SectionBlock({
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         <AnimatePresence mode="popLayout">
           {projects.map((p, i) => (
-            <ProjectCard key={p.id} project={p} index={i} onDelete={onDelete} onArchive={onArchive} isArchivedPage={isArchivedPage} />
+            <ProjectCard key={p.id} project={p} index={i} onDelete={onDelete} onArchive={onArchive} onArchiveSuccess={onArchiveSuccess} isArchivedPage={isArchivedPage} />
           ))}
         </AnimatePresence>
       </div>
@@ -391,6 +422,10 @@ export function FreelancerAllProjects({
   const [loadingMore, setLoadingMore] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  const handleArchiveSuccess = (id: string) => {
+    setProjects((prev) => prev.filter((p) => p.id !== id));
+  };
 
   const grouped = SECTION_ORDER.reduce<Record<string, AllProject[]>>(
     (acc, status) => {
@@ -488,6 +523,7 @@ export function FreelancerAllProjects({
                   : undefined
               }
               onArchive={onArchive}
+              onArchiveSuccess={handleArchiveSuccess}
               isArchivedPage={isArchivedPage}
             />
           ))}

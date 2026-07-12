@@ -956,7 +956,7 @@ export const processarchiveProject = async (projectId: string, action: "ARCHIVE"
                 status: 409
             };
         }
-        if (!findProject.archivedByClient && action === "UNARCHIVE") {
+        if (!findProject.archivedByFreelancer && action === "UNARCHIVE") {
             return {
                 success: false,
                 error: "This Project is Not archived.",

@@ -1,6 +1,9 @@
 import React from "react";
 import { ClientAllProjects } from "@/app/components/client/ClientAllProjects";
-import { getAllProjects, processarchiveProject } from "@/app/lib/controllers/ProjectController";
+import {
+  getAllProjects,
+  processarchiveProject,
+} from "@/app/lib/controllers/ProjectController";
 import { getSession } from "@/app/lib/session";
 import { redirect } from "next/navigation";
 import { getClientProfile } from "@/app/lib/controllers/profileController";
@@ -51,6 +54,8 @@ const AllProjects = async () => {
         error: `${result.error} - ${result.status}`,
       };
     revalidatePath("/client/all-projects");
+    revalidatePath("/client/past-projects");
+    revalidatePath("/client/archived-projects");
     return { success: true };
   };
   return (
@@ -60,6 +65,7 @@ const AllProjects = async () => {
         initialProjects={projects}
         loadMore={loadmore}
         onArchive={handleArchive}
+        isArchivedPage={false}
       />
     </main>
   );

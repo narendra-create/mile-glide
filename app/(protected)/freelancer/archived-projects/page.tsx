@@ -31,12 +31,18 @@ export default async function ArchivedProjectsPage() {
     return { success: false, error: "Cannot delete from archived projects" };
   };
 
-  const handleUnarchive = async (id: string) => {
+  const handleUnarchive = async (projectId: string) => {
     "use server";
-    const res = await processarchiveProject(id, "UNARCHIVE");
-    if (res.success) {
-      revalidatePath("/freelancer/archived-projects");
-    }
+    const result = await processarchiveProject(projectId, "UNARCHIVE");
+    if (!result.success)
+      return {
+        success: false,
+        error: `${result.error} - ${result.status}`,
+      };
+    revalidatePath("/freelancer/see-projects");
+    revalidatePath("/freelancer/past-projects");
+    revalidatePath("/freelancer/archived-projects");
+    return { success: true };
   };
 
   return (

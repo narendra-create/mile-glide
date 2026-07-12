@@ -28,6 +28,14 @@ export type ClientDashboardData = {
     pendingDueCount: number;
     completedCount: number;
   };
+  nextProjectCursor?: string | null;
+  nextDeadlineCursor?: string | null;
+};
+
+export type ClientDashboardProps = {
+  data: ClientDashboardData;
+  loadMoreProjects?: (cursor: string) => Promise<{ projects: ClientDashboardProject[], nextCursor: string | null }>;
+  loadMoreDeadlines?: (cursor: string) => Promise<{ deadlines: ClientDeadlineItem[], nextCursor: string | null }>;
 };
 
 type BudgetProject = {
@@ -141,7 +149,7 @@ const getGreeting = () => {
   return "Good evening,";
 };
 
-const ClientDashboard = ({ data }: { data: ClientDashboardData }) => {
+const ClientDashboard = ({ data, loadMoreProjects, loadMoreDeadlines }: ClientDashboardProps) => {
   const viewPort = { once: true, amount: 0.2 };
 
   const today = new Date().toLocaleDateString("en-US", {
@@ -252,7 +260,7 @@ const ClientDashboard = ({ data }: { data: ClientDashboardData }) => {
           viewport={viewPort}
           className="lg:w-[75%]"
         >
-          <ClientActiveProjects projects={data.activeProjects} />
+          <ClientActiveProjects projects={data.activeProjects} nextCursor={data.nextProjectCursor} loadMore={loadMoreProjects} />
         </motion.div>
 
         <motion.div
@@ -262,7 +270,7 @@ const ClientDashboard = ({ data }: { data: ClientDashboardData }) => {
           viewport={viewPort}
           className="lg:w-[25%] flex flex-col gap-4"
         >
-          <ClientUpcomingDeadlines items={data.deadlines} />
+          <ClientUpcomingDeadlines items={data.deadlines} nextCursor={data.nextDeadlineCursor} loadMore={loadMoreDeadlines} />
           <ClientActivity items={data.activity} />
         </motion.div>
       </motion.section>

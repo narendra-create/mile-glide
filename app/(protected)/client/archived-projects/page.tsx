@@ -26,12 +26,18 @@ export default async function ClientArchivedProjectsPage() {
     return await getArchivedProjects(cursor) as GetAllProjectsResponse;
   };
 
-  const handleUnarchive = async (id: string) => {
+  const handleUnarchive = async (projectId: string) => {
     "use server";
-    const res = await processarchiveProject(id, "UNARCHIVE");
-    if (res.success) {
-      revalidatePath("/client/archived-projects");
-    }
+    const result = await processarchiveProject(projectId, "UNARCHIVE");
+    if (!result.success)
+      return {
+        success: false,
+        error: `${result.error} - ${result.status}`,
+      };
+    revalidatePath("/client/all-projects");
+    revalidatePath("/client/past-projects");
+    revalidatePath("/client/archived-projects");
+    return { success: true };
   };
 
   return (

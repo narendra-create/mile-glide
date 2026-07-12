@@ -67,7 +67,9 @@ const SeeProjectsPage = async () => {
         success: false,
         error: `${result.error} - ${result.status}`,
       };
-    revalidatePath("/client/past-projects");
+    revalidatePath("/freelancer/see-projects");
+    revalidatePath("/freelancer/past-projects");
+    revalidatePath("/freelancer/archived-projects");
     return { success: true };
   };
 

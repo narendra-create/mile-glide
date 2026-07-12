@@ -54,7 +54,9 @@ export const getClientStats = async () => {
                 milestones: p.milestones || []
             })) : [],
             deadlines: deadlinesResult.success ? (deadlinesResult as any).milestones : [],
-            activity: []
+            activity: [],
+            nextProjectCursor: currentProjectsRestult.success ? (currentProjectsRestult as any).nextCursor : null,
+            nextDeadlineCursor: deadlinesResult.success ? (deadlinesResult as any).nextCursor : null
         };
 
         return { success: true, data: returnObject, status: 200 };

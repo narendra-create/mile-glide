@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2, AlertTriangle, X, ChevronRight, Archive } from "lucide-react";
+import { Trash2, AlertTriangle, X, ChevronRight, Archive, ArchiveRestore } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import type {
   AllProject,
@@ -21,6 +21,7 @@ interface FreelancerAllProjectsProps {
     id: string,
   ) => Promise<{ success: boolean; error?: string } | void>;
   onArchive?: (id: string) => void;
+  isArchivedPage?: boolean;
 }
 
 // ─── STATUS CONFIG ────────────────────────────────────────────────────────────
@@ -159,8 +160,10 @@ function ProjectCard({
   index: number;
   onDelete?: (id: string) => void;
   onArchive?: (id: string) => void;
+  isArchivedPage?: boolean;
 }) {
   const router = useRouter();
+  const { addToast } = useToast();
   const style = STATUS_STYLE[project.status] ?? STATUS_STYLE.ACTIVE;
   const { totalMilestones, completedMilestones, progress, projectDeadline } =
     project.stats;
@@ -175,6 +178,10 @@ function ProjectCard({
 
   const handleClick = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest("[data-no-nav]")) return;
+    if (isArchivedPage) {
+      addToast({ title: "Warning", message: "You need to unarchive in order to view milestones", type: "warning" });
+      return;
+    }
     router.push(`/freelancer/milestones/${project.id}`);
   };
 
@@ -245,9 +252,9 @@ function ProjectCard({
                 onArchive(project.id);
               }}
               className="p-1.5 rounded-md border border-[#2a3441] bg-[#1c232d] text-[#8b9ebb] hover:text-[#d1dff5] hover:bg-[#252f3e] hover:border-[#3a4759] transition-all duration-150"
-              title="Archive Project"
+              title={isArchivedPage ? "Unarchive Project" : "Archive Project"}
             >
-              <Archive size={13} />
+              {isArchivedPage ? <ArchiveRestore size={13} /> : <Archive size={13} />}
             </button>
           )}
         </div>
@@ -339,6 +346,7 @@ function SectionBlock({
   projects: AllProject[];
   onDelete?: (id: string) => void;
   onArchive?: (id: string) => void;
+  isArchivedPage?: boolean;
 }) {
   if (projects.length === 0) return null;
   const label = status.charAt(0) + status.slice(1).toLowerCase();
@@ -357,7 +365,7 @@ function SectionBlock({
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         <AnimatePresence mode="popLayout">
           {projects.map((p, i) => (
-            <ProjectCard key={p.id} project={p} index={i} onDelete={onDelete} onArchive={onArchive} />
+            <ProjectCard key={p.id} project={p} index={i} onDelete={onDelete} onArchive={onArchive} isArchivedPage={isArchivedPage} />
           ))}
         </AnimatePresence>
       </div>
@@ -373,6 +381,7 @@ export function FreelancerAllProjects({
   loadMore,
   handleDelete,
   onArchive,
+  isArchivedPage,
 }: FreelancerAllProjectsProps) {
   const { addToast } = useToast();
   const [projects, setProjects] = useState<AllProject[]>(initialProjects);
@@ -479,6 +488,7 @@ export function FreelancerAllProjects({
                   : undefined
               }
               onArchive={onArchive}
+              isArchivedPage={isArchivedPage}
             />
           ))}
 

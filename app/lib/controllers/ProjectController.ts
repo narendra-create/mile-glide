@@ -617,26 +617,45 @@ export const raiseCancellRequest = async (projectId: string) => {
         });
         if (findcancellRequest?.clientApproved) {
             return { success: false, error: "I think you clicked Cancel Button two times", status: 409 }
-        }
+        };
 
         try {
             if (findcancellRequest && findcancellRequest.freelancerApproved) {
                 const updated = await prisma.$transaction(async (tx) => {
-                    const updatedProject = await tx.project.update({
-                        where: { id: findproject.id },
-                        data: {
-                            status: "CANCELLED",
-                            hasCancelRequest: false
-                        }
-                    });
-                    const updatedRequest = await tx.cancellRequest.update({
-                        where: { id: findcancellRequest.id },
-                        data: {
-                            acceptedById: session.user.id,
-                            clientApproved: true,
-                            approvedAt: new Date()
-                        }
-                    });
+                    let updatedRequest;
+                    let updatedProject;
+                    if (findcancellRequest.isRejected) {
+                        updatedProject = await tx.project.update({
+                            where: { id: findproject.id },
+                            data: {
+                                hasCancelRequest: false
+                            }
+                        });
+                        updatedRequest = await tx.cancellRequest.update({
+                            where: { id: findcancellRequest.id },
+                            data: {
+                                clientApproved: true,
+                                freelancerApproved: false,
+                                isRejected: false
+                            }
+                        });
+                    }
+                    if (!findcancellRequest.isRejected) {
+                        updatedProject = await tx.project.update({
+                            where: { id: findproject.id },
+                            data: {
+                                hasCancelRequest: false
+                            }
+                        });
+                        updatedRequest = await tx.cancellRequest.update({
+                            where: { id: findcancellRequest.id },
+                            data: {
+                                clientApproved: true,
+                                freelancerApproved: false,
+                                isRejected: false
+                            }
+                        });
+                    }
 
                     return { updatedProject, updatedRequest }
                 })
@@ -1263,4 +1282,4 @@ export const getArchivedProjects = async (cursor?: string) => {
         return { success: true, projects: projects, nextCursor }
     }
     return { success: false, error: "Invalid role", status: 403 }
-}
+};

@@ -112,7 +112,7 @@
 - [x] make function to unarchive projects
 - [x] update project findings by is archived or not on all pages
 - [x] API/REALDATA: Fetch paginated list of projects for Client dashboard
-- [ ] create model for activity feature
+- [x] create model for activity feature
 - [x] replace earned with paid in client milestones page
 - [x] make sure only one request of cancellation generates for each project
 - [ ] fix a bug - when rejecting the cancel request and then generating new request - instently cancells the project

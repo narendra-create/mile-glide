@@ -108,7 +108,7 @@
 - [x] make cancel request approval and reject
 # for 12/07/2026
 - [x] make a function to archive projects from freelancer or from client side
-- [ ] make a archived projects page
+- [x] make a archived projects page
 - [x] make function to unarchive projects
 - [ ] update project findings by is archived or not on all pages
 - [ ] API/REALDATA: Fetch paginated list of projects for Client dashboard

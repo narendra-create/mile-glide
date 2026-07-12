@@ -113,11 +113,16 @@
 - [x] update project findings by is archived or not on all pages
 - [x] API/REALDATA: Fetch paginated list of projects for Client dashboard
 - [ ] create model for activity feature
-- [ ] continue activity feature
-- [ ] make notification off system for settings page
 - [x] replace earned with paid in client milestones page
-- [ ] make sure only one request of cancellation generates for each project
+- [x] make sure only one request of cancellation generates for each project
 - [ ] fix a bug - when rejecting the cancel request and then generating new request - instently cancells the project
+
+# for 13/07/2026
+- [ ] continue activity feature
+- [ ] implement sms making in controllers
+- [ ] integrate websocket for real time notifications
+- [ ] cron job for deleting messages more then 7 days
+- [ ] make notification off system for settings page
 
 ## additionals
 - [ ] ADDITIONAL: Set up email notifications or in-app alerts for milestone status changes

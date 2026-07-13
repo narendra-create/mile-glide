@@ -185,6 +185,7 @@ export const getClientCurrentProjects = async (clientId: string, cursor?: string
                     payment_status: true
                 }
             },
+            deadline: true,
             status: true,
             milestones: {
                 select: {
@@ -217,9 +218,6 @@ export const getClientCurrentProjects = async (clientId: string, cursor?: string
                     (completedMilestones / totalMilestones) * 100
                 );
 
-        const lastMilestone = project.milestones[0];
-        const projectDeadline = lastMilestone?.deadline;
-
         //Payments
         const totalAmount = project.payments.reduce((sum, p) => sum + p.total_cost, 0);
         const received = project.payments.reduce((sum, p) => sum + p.paid_amount, 0);
@@ -241,7 +239,7 @@ export const getClientCurrentProjects = async (clientId: string, cursor?: string
                 progress
             },
             milestones: project.milestones,
-            deadline: projectDeadline
+            deadline: project.deadline
         }
     })
     const nextCursor = projects.length === 4 ? projects[projects.length - 1].id : null;

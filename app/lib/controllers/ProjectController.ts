@@ -142,7 +142,7 @@ export const acceptProject = async (projectCode: string) => {
         select: {
             id: true,
             user: {
-                select: { email: true }
+                select: { email: true, id: true }
             }
         }
     });
@@ -151,7 +151,14 @@ export const acceptProject = async (projectCode: string) => {
     };
 
     const findProject = await prisma.project.findUnique({
-        where: { projectcode: projectCode }
+        where: { projectcode: projectCode },
+        include: {
+            freelancer: {
+                select: {
+                    userId: true
+                }
+            }
+        }
     });
     if (!findProject) {
         return { success: false, error: "Invalid Project Code", status: 400 }
@@ -173,6 +180,29 @@ export const acceptProject = async (projectCode: string) => {
                 id: true
             }
         });
+        try {
+            await prisma.activity.createMany({
+                data: [{
+                    type: "REMINDER",
+                    projectId: findProject.id,
+                    userId: findProject.freelancer?.userId!,
+                    highlightmessage: "Client Accepted Project",
+                    dateTimeofMessage: new Date(),
+                    message: `Client Accepted Project - ${findProject.title}`,
+                },
+                {
+                    type: "REMINDER",
+                    projectId: findProject.id,
+                    userId: clientProfile.user.id!,
+                    highlightmessage: "New Project",
+                    dateTimeofMessage: new Date(),
+                    message: `New Project Added - See it in all projects page or in dashboard`,
+                }]
+            })
+        }
+        catch (err) {
+            console.log("Failed to create activity for AcceptProject", err);
+        }
 
         return { success: true, Project: acceptedProject, status: 200 };
     }
@@ -557,7 +587,14 @@ export const markProjectCompleted = async (projectId: string) => {
     };
 
     const findProject = await prisma.project.findUnique({
-        where: { id: projectId }
+        where: { id: projectId },
+        include: {
+            client: {
+                select: {
+                    userId: true
+                }
+            }
+        }
     });
     if (!findProject) {
         return { success: false, error: "Project Not found", status: 404 }
@@ -576,6 +613,22 @@ export const markProjectCompleted = async (projectId: string) => {
                 id: true
             }
         });
+
+        try {
+            await prisma.activity.create({
+                data: {
+                    type: "REMINDER",
+                    projectId: findProject.id,
+                    userId: findProject.client?.userId!,
+                    highlightmessage: "Project Completed",
+                    dateTimeofMessage: new Date(),
+                    message: `Project - ${findProject.title} is completed, Settlement any dues via payment page`,
+                }
+            })
+        }
+        catch (err) {
+            console.log("Failed to create activity for Mark project completed", err);
+        }
 
         return { success: true, Project: completedProject, status: 200 };
     }
@@ -603,7 +656,14 @@ export const raiseCancellRequest = async (projectId: string) => {
         };
 
         const findproject = await prisma.project.findFirst({
-            where: { id: projectId, clientId: findclient.id, status: { in: ["ACTIVE", "STOPPED"] } }
+            where: { id: projectId, clientId: findclient.id, status: { in: ["ACTIVE", "STOPPED"] } },
+            include: {
+                freelancer: {
+                    select: {
+                        userId: true
+                    }
+                }
+            }
         });
 
         if (!findproject) {
@@ -665,7 +725,6 @@ export const raiseCancellRequest = async (projectId: string) => {
                         return { updatedProject, updatedRequest }
                     }
                 })
-
                 return { success: true, updatedProject: updated.updatedProject, updatedRequest: updated.updatedRequest, status: 200 }
             }
             else {
@@ -703,7 +762,23 @@ export const raiseCancellRequest = async (projectId: string) => {
                             }
                         });
                     }
-                })
+                });
+
+                try {
+                    await prisma.activity.create({
+                        data: {
+                            type: "WARNING",
+                            projectId: findproject.id,
+                            userId: findproject.freelancer?.userId!,
+                            highlightmessage: "Client Raised cancel request",
+                            dateTimeofMessage: new Date(),
+                            message: `Your client wants to cancel the project - ${findproject.title}, see project milestone page to approve request`,
+                        }
+                    })
+                }
+                catch (err) {
+                    console.log("Failed to create activity for Raise Cancel request", err);
+                }
 
                 return { success: true, request: raisedRequest, status: 200 }
             }
@@ -725,7 +800,14 @@ export const raiseCancellRequest = async (projectId: string) => {
         };
 
         const findproject = await prisma.project.findFirst({
-            where: { id: projectId, freelancerId: findfreelancer.id, status: { in: ["ACTIVE", "STOPPED"] } }
+            where: { id: projectId, freelancerId: findfreelancer.id, status: { in: ["ACTIVE", "STOPPED"] } },
+            include: {
+                client: {
+                    select: {
+                        userId: true
+                    }
+                }
+            }
         });
 
         if (!findproject) {
@@ -814,7 +896,7 @@ export const raiseCancellRequest = async (projectId: string) => {
                             }
                         });
                     } else {
-                        return await tx.cancellRequest.create({
+                        await tx.cancellRequest.create({
                             data: {
                                 projectId: findproject.id,
                                 raiesdByuserId: session.user.id,
@@ -824,6 +906,22 @@ export const raiseCancellRequest = async (projectId: string) => {
                                 freelancerApproved: true
                             }
                         });
+                        try {
+                            await prisma.activity.create({
+                                data: {
+                                    type: "WARNING",
+                                    projectId: findproject.id,
+                                    userId: findproject.client?.userId!,
+                                    highlightmessage: "Freelancer Raised cancel request",
+                                    dateTimeofMessage: new Date(),
+                                    message: `Freelancer wants to cancel this project - ${findproject.title}, see project milestone page to approve request`,
+                                }
+                            })
+                        }
+                        catch (err) {
+                            console.log("Failed to create activity for Raise Cancel request", err);
+                        };
+                        return;
                     }
                 })
 
@@ -871,7 +969,14 @@ export const processCancellRequest = async (projectId: string, type: "APPROVE" |
         };
 
         const findproject = await prisma.project.findFirst({
-            where: { id: findcancellRequest.projectId, clientId: findclient.id, hasCancelRequest: true, status: { in: ["ACTIVE", "STOPPED"] } }
+            where: { id: findcancellRequest.projectId, clientId: findclient.id, hasCancelRequest: true, status: { in: ["ACTIVE", "STOPPED"] } },
+            include: {
+                freelancer: {
+                    select: {
+                        userId: true
+                    }
+                }
+            }
         });
 
         if (!findproject) {
@@ -906,6 +1011,21 @@ export const processCancellRequest = async (projectId: string, type: "APPROVE" |
                             approvedAt: new Date()
                         }
                     });
+                    try {
+                        await prisma.activity.create({
+                            data: {
+                                type: "WARNING",
+                                projectId: findproject.id,
+                                userId: findproject.freelancer?.userId!,
+                                highlightmessage: "Project Cancelled",
+                                dateTimeofMessage: new Date(),
+                                message: `Client approved cancel request for project - ${findproject.title}`,
+                            }
+                        })
+                    }
+                    catch (err) {
+                        console.log("Failed to create activity for process Cancel request", err);
+                    }
                 } else {
                     updatedRequest = await tx.cancellRequest.update({
                         where: { id: findcancellRequest.id },
@@ -916,6 +1036,22 @@ export const processCancellRequest = async (projectId: string, type: "APPROVE" |
                             rejectedById: session.user.id
                         }
                     });
+
+                    try {
+                        await prisma.activity.create({
+                            data: {
+                                type: "REMINDER",
+                                projectId: findproject.id,
+                                userId: findproject.freelancer?.userId!,
+                                highlightmessage: "Cancel Request Rejected",
+                                dateTimeofMessage: new Date(),
+                                message: `Client rejected cancel request for project - ${findproject.title}`,
+                            }
+                        })
+                    }
+                    catch (err) {
+                        console.log("Failed to create activity for process Cancel request", err);
+                    }
                 }
 
                 return { updatedProject, updatedRequest }
@@ -946,7 +1082,14 @@ export const processCancellRequest = async (projectId: string, type: "APPROVE" |
         };
 
         const findproject = await prisma.project.findFirst({
-            where: { id: findcancellRequest.projectId, freelancerId: findfreelancer.id, hasCancelRequest: true, status: { in: ["ACTIVE", "STOPPED"] } }
+            where: { id: findcancellRequest.projectId, freelancerId: findfreelancer.id, hasCancelRequest: true, status: { in: ["ACTIVE", "STOPPED"] } },
+            include: {
+                client: {
+                    select: {
+                        userId: true
+                    }
+                }
+            }
         });
 
         if (!findproject) {
@@ -982,6 +1125,22 @@ export const processCancellRequest = async (projectId: string, type: "APPROVE" |
                             approvedAt: new Date()
                         }
                     });
+
+                    try {
+                        await prisma.activity.create({
+                            data: {
+                                type: "WARNING",
+                                projectId: findproject.id,
+                                userId: findproject.client?.userId!,
+                                highlightmessage: "Project Cancelled",
+                                dateTimeofMessage: new Date(),
+                                message: `Freelancer approved cancel request for project - ${findproject.title}`,
+                            }
+                        })
+                    }
+                    catch (err) {
+                        console.log("Failed to create activity for process Cancel request", err);
+                    }
                 }
                 else {
                     updatedRequest = await tx.cancellRequest.update({
@@ -993,6 +1152,22 @@ export const processCancellRequest = async (projectId: string, type: "APPROVE" |
                             rejectedById: session.user.id
                         }
                     });
+
+                    try {
+                        await prisma.activity.create({
+                            data: {
+                                type: "REMINDER",
+                                projectId: findproject.id,
+                                userId: findproject.client?.userId!,
+                                highlightmessage: "Cancel Request Rejected",
+                                dateTimeofMessage: new Date(),
+                                message: `Freelancer rejected cancel request for project - ${findproject.title}`,
+                            }
+                        })
+                    }
+                    catch (err) {
+                        console.log("Failed to create activity for process Cancel request", err);
+                    }
                 }
 
                 return { updatedProject, updatedRequest }
@@ -1363,7 +1538,12 @@ export const resumeProject = async (projectId: string) => {
     if (!client) return { success: false, error: "Profile Not found", status: 404 };
 
     const findproject = await prisma.project.findFirst({
-        where: { id: projectId, clientId: client.id }
+        where: { id: projectId, clientId: client.id },
+        include: {
+            freelancer: {
+                select: { userId: true }
+            }
+        }
     });
     if (!findproject) {
         return { success: false, error: "You can only edit your projects", status: 403 }
@@ -1415,6 +1595,22 @@ export const resumeProject = async (projectId: string) => {
 
             return;
         });
+
+        try {
+            await prisma.activity.create({
+                data: {
+                    type: "REMINDER",
+                    projectId: findproject.id,
+                    userId: findproject.freelancer?.userId!,
+                    highlightmessage: "Project Resumes",
+                    dateTimeofMessage: new Date(),
+                    message: `You can start working on ${findproject.title} again, Client Resumed it`,
+                }
+            })
+        }
+        catch (err) {
+            console.log("Failed to create activity for resume project", err);
+        }
 
         return { success: true, status: 200 };
     }

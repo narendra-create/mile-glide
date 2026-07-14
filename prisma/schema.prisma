@@ -315,4 +315,5 @@ enum ActivityType {
   PAYMENT
   MILESTONEDONE
   REMINDER
+  WARNING
 }

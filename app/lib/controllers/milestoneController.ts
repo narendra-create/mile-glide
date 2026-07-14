@@ -2,6 +2,7 @@ import { prisma } from "@/app/lib/prisma";
 import { getSession } from "../session";
 import type { createMilestoneInput, delayMilestoneInput } from "../validations/MilestoneValidation";
 import { userrole } from "@/app/generated/prisma/enums";
+import { formatDate } from "../utilitys";
 
 export const createMilestone = async (input: createMilestoneInput) => {
     const session = await getSession();
@@ -165,7 +166,14 @@ export const stopProject = async (projectId: string) => {
     if (!client) return { success: false, error: "Profile Not found", status: 404 };
 
     const findproject = await prisma.project.findFirst({
-        where: { id: projectId, clientId: client.id }
+        where: { id: projectId, clientId: client.id },
+        include: {
+            freelancer: {
+                select: {
+                    userId: true
+                }
+            }
+        }
     });
     if (!findproject) {
         return { success: false, error: "You can only edit your projects", status: 403 }
@@ -190,6 +198,21 @@ export const stopProject = async (projectId: string) => {
                 }
             })
         });
+        try {
+            await prisma.activity.create({
+                data: {
+                    type: "WARNING",
+                    dateTimeofMessage: `Stopped At ${formatDate(new Date())}`,
+                    highlightmessage: "Project Stopped",
+                    message: `${findproject.title} is Stopped By Client`,
+                    projectId: projectId,
+                    userId: findproject.freelancer?.userId!
+                }
+            });
+        }
+        catch (err) {
+            console.log("Error while creating activity in stopMilestone Controller - ", err)
+        }
 
         return { success: true, status: 200 };
     }
@@ -217,7 +240,11 @@ export const delayMilestone = async (input: delayMilestoneInput) => {
 
     const findMilestone = await prisma.milestone.findFirst({
         where: { id: input.milestoneId, project: { freelancerId: findFreelancer.id, archivedByFreelancer: false } },
-        include: { project: true }
+        include: {
+            project: {
+                include: { client: true }
+            }
+        }
     });
 
     if (findMilestone && findMilestone.project?.status !== "ACTIVE") {
@@ -314,6 +341,21 @@ export const delayMilestone = async (input: delayMilestoneInput) => {
                 }
             });
         });
+        try {
+            await prisma.activity.create({
+                data: {
+                    type: "DELAY",
+                    dateTimeofMessage: `From ${formatDate(findMilestone.deadline)} to ${formatDate(input.newDeadline)}`,
+                    highlightmessage: "Milestone Dalayed",
+                    message: `Milestone Delayed of ${findMilestone.project?.title}`,
+                    projectId: findMilestone.projectId!,
+                    userId: findMilestone.project?.client?.userId!
+                }
+            });
+        }
+        catch (err) {
+            console.log("Error while creating activity in delayMilestone Controller - ", err)
+        }
 
         return { success: true, updatedMilestone: updated, status: 200 };
     }
@@ -444,13 +486,31 @@ export const markMilestoneCompleted = async (milestoneId: string, projectId: str
             id: projectId,
             freelancerId: findFreelancer.id,
             archivedByFreelancer: false
+        },
+        include: {
+            client: {
+                select: {
+                    userId: true
+                }
+            }
         }
     });
     if (!findproject) {
         return { success: false, error: "Project Doesn't exist", status: 404 }
     };
     const foundmilestone = await prisma.milestone.findFirst({
-        where: { id: milestoneId, projectId }
+        where: { id: milestoneId, projectId },
+        include: {
+            project: {
+                select: {
+                    client: {
+                        select: {
+                            userId: true
+                        }
+                    }
+                }
+            }
+        }
     });
     if (!foundmilestone) {
         return { success: false, error: "Milestone doesn't exist", status: 404 }
@@ -474,7 +534,8 @@ export const markMilestoneCompleted = async (milestoneId: string, projectId: str
                 },
                 select: {
                     id: true,
-                    status: true
+                    status: true,
+                    updatedAt: true
                 }
             });
 
@@ -515,9 +576,25 @@ export const markMilestoneCompleted = async (milestoneId: string, projectId: str
 
             return {
                 status: current.status,
-                id: current.id
+                id: current.id,
+                date: current.updatedAt
             }
         });
+        try {
+            await prisma.activity.create({
+                data: {
+                    type: "MILESTONEDONE",
+                    dateTimeofMessage: `On ${formatDate(completed.date)}`,
+                    highlightmessage: "Milestone Completed",
+                    message: `${foundmilestone.title} - Completed`,
+                    projectId: foundmilestone.projectId!,
+                    userId: foundmilestone.project?.client?.userId!
+                }
+            });
+        }
+        catch (err) {
+            console.log("Error while creating activity in MarkMilestoneCompleted Controller - ", err)
+        }
 
         return { success: true, milestone: completed, status: 200 }
     }

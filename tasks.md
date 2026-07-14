@@ -146,6 +146,10 @@
 - [ ] cancelled projects on past project page
 - [ ] continue activity feature
 - [ ] implement sms making in controllers
+  - milestone Delay controller function
+  - whole Milestone controller
+  - Payment controller
+  - reminder
 - [ ] integrate polling for real time notifications
 - [ ] cron job for deleting messages more then 7 days
 - [ ] make notification off system for settings page

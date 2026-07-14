@@ -257,14 +257,6 @@ export const delayMilestone = async (input: delayMilestoneInput) => {
         };
     };
 
-    if (input.newDeadline.getTime() === findMilestone.deadline.getTime()) {
-        return {
-            success: false,
-            error: "Deadline is already set to this date.",
-            status: 400
-        };
-    };
-
     try {
         const updated = await prisma.$transaction(async (tx) => {
             await tx.milestonedelay.create({
@@ -274,7 +266,46 @@ export const delayMilestone = async (input: delayMilestoneInput) => {
                     milestoneId: findMilestone.id
                 }
             });
-            return await tx.milestone.update({
+            const futureMilestones = await tx.milestone.findMany({
+                where: {
+                    projectId: findMilestone.projectId,
+                    position: {
+                        gt: findMilestone.position,
+                    },
+                },
+                orderBy: {
+                    position: "asc",
+                },
+                select: {
+                    id: true,
+                    deadline: true
+                }
+            });
+            if (futureMilestones.length > 0 && futureMilestones[0].deadline <= input.newDeadline) {
+                let previousDeadline = input.newDeadline;
+                const updates: ReturnType<typeof tx.milestone.update>[] = [];
+                for (const milestone of futureMilestones) {
+                    if (milestone.deadline <= previousDeadline) {
+                        const newDeadline = new Date(previousDeadline);
+                        newDeadline.setDate(newDeadline.getDate() + 1);
+
+                        updates.push(
+                            tx.milestone.update({
+                                where: { id: milestone.id },
+                                data: {
+                                    deadline: newDeadline,
+                                },
+                            })
+                        );
+
+                        previousDeadline = newDeadline;
+                    } else {
+                        previousDeadline = milestone.deadline;
+                    }
+                }
+                await Promise.all(updates);
+            }
+            await tx.milestone.update({
                 where: { id: input.milestoneId },
                 data: {
                     delay: true,

@@ -152,7 +152,7 @@
 - [x] see all date selectors to only select future dates and within the project deadline limit
 - [ ] make enter key submit all things
 - [x] bug - freelancer revenue showing 0
-- [ ] make delay controller update project deadline and next milestone deadline too
+- [x] make delay controller update project deadline and next milestone deadline too
 ## additionals
 
 - [ ] ADDITIONAL: Set up email notifications or in-app alerts for milestone status changes

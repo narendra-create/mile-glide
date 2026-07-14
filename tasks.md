@@ -143,7 +143,7 @@
 
 # for 14/07/2026
 - [x] show payment for cancelled projects too - give freelancer the money back
-- [ ] cancelled projects on past project page
+- [x] cancelled projects on past project page
 - [x] continue activity feature
 - [x] implement sms making in controllers
   - milestone Delay controller function

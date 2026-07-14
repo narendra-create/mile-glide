@@ -15,7 +15,7 @@ export const getPastProjects = async (role: userrole, profileid: string, cursor?
             const result = await prisma.project.findMany({
                 take: 10,
                 ...(cursor && { cursor: { id: cursor }, skip: 1 }),
-                where: { freelancerId: profileid, status: "COMPLETED", archivedByFreelancer: false },
+                where: { freelancerId: profileid, status: { in: ["COMPLETED", "CANCELLED"] }, archivedByFreelancer: false },
                 select: {
                     id: true,
                     client: {

@@ -145,7 +145,7 @@
 - [x] show payment for cancelled projects too - give freelancer the money back
 - [ ] cancelled projects on past project page
 - [ ] continue activity feature
-- [ ] implement sms making in controllers
+- [x] implement sms making in controllers
   - milestone Delay controller function
   - whole Milestone controller
   - Payment controller

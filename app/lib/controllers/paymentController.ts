@@ -4,6 +4,7 @@ import type { intiiatePaymentInput } from "../validations/PaymentValidation";
 import { ActionResponse } from "@/types/api";
 import { PaymentHistory } from "@/types/payment";
 import { VerifyPaymentType } from "@/types/verifypayments";
+import { formatDate } from "../utilitys";
 
 export const getPaymentHistory = async (cursor?: string): Promise<ActionResponse<{ payments: PaymentHistory[], nextCursor: string | null }>> => {
     const session = await getSession();
@@ -150,7 +151,9 @@ export const initiatePayment = async (input: intiiatePaymentInput) => {
             id: true,
             project: {
                 select: {
-                    freelancerId: true
+                    freelancerId: true,
+                    id: true,
+                    title: true
                 }
             },
             paid_amount: true,
@@ -203,6 +206,22 @@ export const initiatePayment = async (input: intiiatePaymentInput) => {
             }
         });
 
+        try {
+            await prisma.activity.create({
+                data: {
+                    type: "PAYMENT",
+                    dateTimeofMessage: `On ${formatDate(created.createdAt)}`,
+                    highlightmessage: "Payment Verification Request",
+                    message: `New payment verification Request generated for - ${findpayment.project?.title}, Please Review it.`,
+                    projectId: findpayment.project?.id!,
+                    userId: findpayment.project?.freelancerId!
+                }
+            });
+        }
+        catch (err) {
+            console.log("Error while creating activity in initiatePayment Controller - ", err)
+        }
+
         return { success: true, createdVerification: created, status: 201 }
     }
     catch (err) {
@@ -232,7 +251,19 @@ export const markVerifiedPayment = async (verificationPaymentId: string) => {
             id: verificationPaymentId
         },
         include: {
-            Payment: true
+            Payment: {
+                include: {
+                    project: {
+                        select: {
+                            client: {
+                                select: {
+                                    userId: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     });
     if (!findverification) {
@@ -298,6 +329,22 @@ export const markVerifiedPayment = async (verificationPaymentId: string) => {
                 });
             }
 
+            try {
+                await prisma.activity.create({
+                    data: {
+                        type: "PAYMENT",
+                        dateTimeofMessage: `On ${formatDate(findverification.updatedAt)}`,
+                        highlightmessage: "Payment Verified",
+                        message: `Payment of ${findverification.paid_amount} is verified by Freelancer`,
+                        projectId: findverification.Payment.projectId!,
+                        userId: findverification.Payment.project?.client?.userId!
+                    }
+                });
+            }
+            catch (err) {
+                console.log("Error while creating activity in markVerified Controller - ", err)
+            }
+
             return { status: verificationUpdated.status, id: verificationUpdated.id }
         });
 
@@ -330,7 +377,12 @@ export const markRejectPayment = async (verificationPaymentId: string) => {
             id: verificationPaymentId
         },
         include: {
-            Payment: true
+            Payment: true,
+            client: {
+                select: {
+                    userId: true
+                }
+            }
         }
     });
     if (!findverification) {
@@ -358,6 +410,22 @@ export const markRejectPayment = async (verificationPaymentId: string) => {
 
             return { status: verificationUpdated.status, id: verificationUpdated.id }
         });
+
+        try {
+            await prisma.activity.create({
+                data: {
+                    type: "WARNING",
+                    dateTimeofMessage: `On ${formatDate(findverification.updatedAt)}`,
+                    highlightmessage: "Payment Unverified",
+                    message: `Your Payment Request ${findverification.txn_number} is marked as Unverified by freelancer`,
+                    projectId: findverification.Payment.projectId!,
+                    userId: findverification.client.userId!
+                }
+            });
+        }
+        catch (err) {
+            console.log("Error while creating activity in markPaymentRejected Controller - ", err)
+        }
 
         return { success: true, updated: rejected, status: 200 }
     }

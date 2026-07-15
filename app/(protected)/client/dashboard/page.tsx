@@ -1,5 +1,4 @@
 import ClientDashboard from "@/app/Features/Client/Client-dashboard";
-import { DUMMY_CLIENT_DASHBOARD } from "@/app/components/seeds/ClientDashboardSeed";
 import type { ClientDashboardData } from "@/app/Features/Client/Client-dashboard";
 import { getClientStats } from "@/app/lib/Batch-Fetch/ClientDashboardStats";
 import {
@@ -8,8 +7,8 @@ import {
 } from "@/app/lib/controllers/clientStatsController";
 import { getSession } from "@/app/lib/session";
 import { prisma } from "@/app/lib/prisma";
-import { redirect } from "next/navigation";
-import { resumeProject } from "@/app/lib/controllers/ProjectController";
+import { ActivityItem } from "@/types/activitys";
+import { getActivitys } from "@/app/lib/controllers/activityController";
 
 const Dashboard = async () => {
   const result = await getClientStats();
@@ -93,9 +92,21 @@ const Dashboard = async () => {
     };
   };
 
+  let notifications: ActivityItem[];
+  const activityresult = await getActivitys();
+  if (!activityresult.success && activityresult.notifications?.length === 0) {
+    console.error(
+      "Error in activity getting",
+      activityresult.error,
+      activityresult.status,
+    );
+  };
+  notifications = activityresult.notifications ?? [];
+
   return (
     <main>
       <ClientDashboard
+        notifications={notifications}
         data={data}
         loadMoreProjects={loadMoreProjects}
         loadMoreDeadlines={loadMoreDeadlines}

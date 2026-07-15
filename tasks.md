@@ -170,6 +170,8 @@
 - [ ] bug - cancel request generated when no milestone and project cancelled autometically
 - [ ] bug - freelancer can mark project completed without creating a single milestone
 - [ ] add actiivity in verification request controller
+- [ ] add notification blocking in settings page
+- [ ] add logged in sessions in settings page
 
 ## additionals
 

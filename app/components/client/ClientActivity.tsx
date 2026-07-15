@@ -1,7 +1,14 @@
 "use client";
 import { motion, AnimatePresence } from "motion/react";
 import React from "react";
-import { Activity, Clock, CreditCard, CheckCircle, Bell, AlertTriangle } from "lucide-react";
+import {
+  Activity,
+  Clock,
+  CreditCard,
+  CheckCircle,
+  Bell,
+  AlertTriangle,
+} from "lucide-react";
 import useSWR from "swr";
 import { useRef, useState, useEffect } from "react";
 import type { ActivityItem } from "@/types/activitys";
@@ -76,7 +83,7 @@ export default function ClientActivity({
   const notifications = data?.data || initialItems;
 
   return (
-    <div className="overflow-hidden rounded-md border lg:max-h-120 custom-scrollbar border-[#2c2c2c] bg-[#141414] flex flex-col">
+    <div className="overflow-hidden rounded-md border max-h-120 custom-scrollbar border-[#2c2c2c] bg-[#141414] flex flex-col">
       <div className="border-b border-[#2c2c2c] px-5 py-4 flex items-center justify-between">
         <h2 className="font-serif text-[16px] lg:text-[20px] text-[#e8e3d8]">
           Activity
@@ -91,7 +98,7 @@ export default function ClientActivity({
       <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
         <AnimatePresence mode="popLayout">
           {notifications.length === 0 ? (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -105,7 +112,8 @@ export default function ClientActivity({
                 No Activity Yet
               </h3>
               <p className="max-w-[220px] font-sans text-[12px] leading-relaxed text-[#888]">
-                When your projects make progress or updates occur, they will beautifully appear here.
+                When your projects make progress or updates occur, they will
+                beautifully appear here.
               </p>
             </motion.div>
           ) : (
@@ -118,33 +126,41 @@ export default function ClientActivity({
                     key={message.id}
                     initial={{ opacity: 0, y: 10, scale: 0.98 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.3, delay: i * 0.04, type: "spring", stiffness: 200, damping: 20 }}
-                    className="group relative flex gap-3.5 rounded-xl border border-transparent bg-transparent p-3 transition-all duration-300 hover:bg-[#1a1a1a] hover:border-[#2c2c2c] hover:shadow-sm"
+                    transition={{
+                      duration: 0.3,
+                      delay: i * 0.04,
+                      type: "spring",
+                      stiffness: 200,
+                      damping: 20,
+                    }}
+                    className="group relative flex gap-3.5 rounded-xl border border-transparent bg-transparent py-1.5 transition-all duration-300 hover:bg-[#1a1a1a] hover:border-[#2c2c2c] hover:shadow-sm"
                   >
                     <div className="absolute left-0 top-1/2 h-0 w-[2px] -translate-y-1/2 rounded-r-md bg-white/10 transition-all duration-300 group-hover:h-3/4" />
-                    
+
                     <div
                       className={`mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full border transition-all duration-300 group-hover:scale-110 ${styles.bg} ${styles.text} ${styles.border} ${styles.shadow}`}
                     >
                       {styles.icon}
                     </div>
-                    
+
                     <div className="min-w-0 flex-1 py-0.5">
                       <div className="text-[13px] leading-relaxed text-[#d4d4d4]">
-                        <span className={`font-semibold font-serif tracking-wide mr-1.5 transition-colors ${styles.text}`}>
+                        <span
+                          className={`font-semibold font-serif tracking-wide mr-1.5 transition-colors ${styles.text}`}
+                        >
                           {message.highlightmessage}:
                         </span>
                         <span className="text-[#a39f9a] font-normal transition-colors group-hover:text-[#c4c4c4]">
                           {message.message}
                         </span>
                       </div>
-                      
+
                       <div className="mt-2 font-medium flex items-center gap-2.5 font-mono text-[9px] uppercase tracking-wider text-[#9d9d9d]">
                         <span className="flex items-center gap-1 opacity-80 transition-opacity group-hover:opacity-100">
                           <Clock size={11} />
                           {formatRelativeTime(message.dateTimeofMessage)}
                         </span>
-                        
+
                         {message.project?.title && (
                           <>
                             <span className="h-1 w-1 rounded-full bg-[#333]" />

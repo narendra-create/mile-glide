@@ -83,7 +83,7 @@ export default function FreelancerActivity({
   const notifications = data?.data || initialItems;
 
   return (
-    <div className="overflow-hidden custom-scrollbar rounded-md border lg:max-h-120 border-[#2c2c2c] bg-[#141414] flex flex-col">
+    <div className="overflow-hidden custom-scrollbar rounded-md border max-h-120 border-[#2c2c2c] bg-[#141414] flex flex-col">
       <div className="border-b border-[#2c2c2c] px-5 py-4 flex items-center justify-between">
         <h2 className="font-serif text-[16px] lg:text-[20px] text-[#e8e3d8]">
           Activity
@@ -95,7 +95,7 @@ export default function FreelancerActivity({
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
+      <div className="flex-1 overflow-y-auto custom-scrollbar py-1.5 lg:px-2">
         <AnimatePresence mode="popLayout">
           {notifications.length === 0 ? (
             <motion.div

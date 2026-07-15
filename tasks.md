@@ -161,7 +161,7 @@
 - [x] Make controller for getting activitys
 - [x] api route for activities
 - [x] add activitys in frontend of both client and freelancer
-- [ ] integrate polling for real time notifications
+- [x] integrate polling for real time notifications
 - [ ] cron job for deleting messages more then 7 days
 - [ ] make notification off system for settings page
 

@@ -1,6 +1,6 @@
 "use client";
-import { Categorys } from "@/app/generated/prisma/enums";
-import { updateProfileAction } from "@/app/lib/actions/ProfileActions";
+import { ActivityType, Categorys } from "@/app/generated/prisma/enums";
+import { updateBlockNotificationAction, updateProfileAction } from "@/app/lib/actions/ProfileActions";
 import { authClient } from "@/app/lib/auth-client";
 import { formatCategory } from "@/app/lib/utilitys";
 import {
@@ -25,6 +25,7 @@ export type ProfileData = {
   category?: string;
   upiId?: string;
   AccountHolderName?: string;
+  blockedNotificationTypes?: ActivityType[];
 };
 
 const SECTIONS = [
@@ -280,100 +281,122 @@ function ProfileSection({ initialData }: { initialData?: ProfileData }) {
   );
 }
 
-function NotificationsSection() {
-  const [prefs, setPrefs] = useState({
-    milestoneReceived: true,
-    projectFlagged: true,
-    clientMessage: false,
-    weeklyDigest: true,
-    deadlineReminder: true,
-    marketingEmails: false,
-  });
+function NotificationsSection({
+  initialData,
+}: {
+  initialData?: ProfileData;
+}) {
+  const { addToast } = useToast();
+  const [blockedNotificationTypes, setblockedNotificationTypes] = useState<ActivityType[]>(
+    initialData?.blockedNotificationTypes ?? [],
+  );
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const toggle = (key: keyof typeof prefs) => {
-    setPrefs((prev) => ({ ...prev, [key]: !prev[key] }));
+  const notificationTypes = [
+    "DELAY",
+    "PAYMENT",
+    "MILESTONEDONE",
+    "REMINDER",
+    "WARNING",
+  ] as const;
+
+  const rows: {
+    type: (typeof notificationTypes)[number];
+    label: string;
+    sub: string;
+  }[] = [
+    {
+      type: "MILESTONEDONE",
+      label: "Milestone Payment",
+      sub: "When a client pays a milestone",
+    },
+    {
+      type: "PAYMENT",
+      label: "Payment Activity",
+      sub: "Payment verifications and confirmations",
+    },
+    {
+      type: "DELAY",
+      label: "Project Flagged",
+      sub: "When a delay is flagged on your project",
+    },
+    {
+      type: "REMINDER",
+      label: "Reminders",
+      sub: "Budget request approved, project resumes, Project accepted etc.",
+    },
+    {
+      type: "WARNING",
+      label: "Warnings",
+      sub: "Critical alerts requiring your attention",
+    },
+  ];
+
+  const isEnabled = (type: (typeof notificationTypes)[number]) =>
+    !blockedNotificationTypes.includes(type as ActivityType);
+
+  const toggle = (type: (typeof notificationTypes)[number]) => {
+    setblockedNotificationTypes((prev) =>
+      prev.includes(type as ActivityType)
+        ? prev.filter((t) => t !== (type as ActivityType))
+        : [...prev, type as ActivityType],
+    );
     setSaved(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 700));
+    const result = await updateBlockNotificationAction(blockedNotificationTypes);
     setLoading(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    if (result && result.success) {
+      setSaved(true);
+      addToast({ title: "Saved", message: "Notification preferences updated.", type: "success" });
+      setTimeout(() => setSaved(false), 3000);
+    } else {
+      addToast({ title: "Error", message: result?.error || "Failed to save preferences.", type: "error" });
+    }
   };
-
-  const rows: { key: keyof typeof prefs; label: string; sub: string }[] = [
-    {
-      key: "milestoneReceived",
-      label: "Milestone Payment",
-      sub: "When a client pays a milestone",
-    },
-    {
-      key: "projectFlagged",
-      label: "Project Flagged",
-      sub: "When a delay is flagged on your project",
-    },
-    {
-      key: "clientMessage",
-      label: "Client Messages",
-      sub: "New messages from clients",
-    },
-    {
-      key: "weeklyDigest",
-      label: "Weekly Digest",
-      sub: "Summary of your week every Monday",
-    },
-    {
-      key: "deadlineReminder",
-      label: "Deadline Reminders",
-      sub: "48 hours before a milestone due date",
-    },
-    {
-      key: "marketingEmails",
-      label: "Product Updates",
-      sub: "New features and announcements",
-    },
-  ];
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       <div className="flex flex-col divide-y divide-[var(--color-dash-border)]">
-        {rows.map(({ key, label, sub }) => (
-          <div
-            key={key}
-            className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
-          >
-            <div>
-              <p className="font-sans text-[13px] text-[var(--color-dash-ink)] mb-0.5">
-                {label}
-              </p>
-              <p className="font-mono text-[10px] tracking-[0.5px] text-[var(--color-dash-ink3)]">
-                {sub}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => toggle(key)}
-              className={`relative shrink-0 w-[36px] h-[20px] rounded-sm transition-colors duration-200 flex items-center ${
-                prefs[key]
-                  ? "bg-[var(--color-dash-green-bg)] border border-[var(--color-status-paid-border)]"
-                  : "bg-[var(--color-dash-surface3)] border border-[var(--color-dash-border-hover)]"
-              }`}
+        {rows.map(({ type, label, sub }) => {
+          const enabled = isEnabled(type);
+          return (
+            <div
+              key={type}
+              className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
             >
-              <span
-                className={`w-[14px] h-[14px] rounded-sm transition-all duration-200 mx-[2px] ${
-                  prefs[key]
-                    ? "translate-x-[16px] bg-[var(--color-dash-green)]"
-                    : "translate-x-0 bg-[var(--color-dash-border-hover)]"
+              <div>
+                <p className="font-sans text-[13px] text-[var(--color-dash-ink)] mb-0.5">
+                  {label}
+                </p>
+                <p className="font-mono text-[10px] tracking-[0.5px] text-[var(--color-dash-ink3)]">
+                  {sub}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => toggle(type)}
+                className={`relative shrink-0 w-[36px] h-[20px] rounded-sm transition-colors duration-200 flex items-center ${
+                  enabled
+                    ? "bg-[var(--color-dash-green-bg)] border border-[var(--color-status-paid-border)]"
+                    : "bg-[var(--color-dash-surface3)] border border-[var(--color-dash-border-hover)]"
                 }`}
-              />
-            </button>
-          </div>
-        ))}
+              >
+                <span
+                  className={`w-[14px] h-[14px] rounded-sm transition-all duration-200 mx-[2px] ${
+                    enabled
+                      ? "translate-x-[16px] bg-[var(--color-dash-green)]"
+                      : "translate-x-0 bg-[var(--color-dash-border-hover)]"
+                  }`}
+                />
+              </button>
+            </div>
+          );
+        })}
       </div>
       <div className="flex justify-end pt-2 border-t border-[var(--color-dash-border)]">
         <SaveButton loading={loading} saved={saved} />
@@ -753,7 +776,7 @@ export function FreelancerSettings({
 
   const SECTION_CONTENT: Record<SettingsSection, React.ReactNode> = {
     profile: <ProfileSection initialData={initialData} />,
-    notifications: <NotificationsSection />,
+    notifications: <NotificationsSection initialData={initialData} />,
     security: <SecuritySection />,
     payment: (
       <PaymentDetailsSection

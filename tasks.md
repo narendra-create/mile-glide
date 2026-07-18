@@ -164,13 +164,16 @@
 - [x] integrate polling for real time notifications
 - [x] make notification off controller for settings page
 
-# for 17/07/2026
+# for 18/07/2026
 
 - [x] bug - freelancer can mark project completed without creating a single milestone
 - [x] add actiivity in verification request controller
-- [ ] add notification blocking in settings page
-- [ ] add logged in sessions in settings page
+- [x] add notification blocking in settings page
 - [x] make activity page feature
+
+# for 19/07/2026
+
+- [ ] add logged in sessions in settings page
 
 ## additionals
 

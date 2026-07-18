@@ -593,6 +593,12 @@ export const markProjectCompleted = async (projectId: string) => {
                 select: {
                     userId: true
                 }
+            },
+            milestones: {
+                select: {
+                    id: true,
+                    status: true
+                }
             }
         }
     });
@@ -601,6 +607,25 @@ export const markProjectCompleted = async (projectId: string) => {
     };
     if (!findProject.clientId) {
         return { success: false, error: "Project is Not started", status: 403 }
+    };
+    if (findProject.milestones.length <= 0) {
+        return { success: false, error: "You can't mark a project as completed without creating any milestone" }
+    };
+    const incompleteMilestones = await prisma.milestone.count({
+        where: {
+            projectId,
+            status: {
+                not: "COMPLETED",
+            },
+        },
+    });
+
+    if (incompleteMilestones > 0) {
+        return {
+            success: false,
+            error: "Complete all milestones before marking the project as completed.",
+            status: 400,
+        };
     }
 
     try {

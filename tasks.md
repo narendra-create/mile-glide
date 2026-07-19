@@ -173,9 +173,8 @@
 
 # for 19/07/2026
 
-- [ ] add logged in sessions in settings page
+- [x] add logged in sessions in settings page
 - [ ] make a api route for cron jobs
-- [ ] make controller file for cron jobs
 
 # for 20/07/2026 -- The Launch Date
 - [ ] documentation

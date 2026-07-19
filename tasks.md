@@ -186,6 +186,12 @@
 - [ ] see additional features and mark all completed tasks
 - [ ] cron job for deleting messages more then 7 days
 
+# after launch
+
+- [ ] Make CSP headers config
+- [ ] add rate limiting
+- [ ] remove next config file from gitignore
+
 ## additionals
 
 - [ ] ADDITIONAL: Set up email notifications or in-app alerts for milestone status changes

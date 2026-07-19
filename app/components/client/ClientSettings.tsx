@@ -3,10 +3,14 @@ import { useState } from "react";
 import { User, Bell, Shield, Camera, Check, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/app/components/ToastProvider";
-import { updateBlockNotificationAction, updateProfileAction } from "@/app/lib/actions/ProfileActions";
+import {
+  updateBlockNotificationAction,
+  updateProfileAction,
+} from "@/app/lib/actions/ProfileActions";
 import { ProfileData } from "@/app/components/freelancer/FreelancerSettings";
 import { authClient } from "@/app/lib/auth-client";
 import { ActivityType } from "@/app/generated/prisma/enums";
+import type { SessionResultArray } from "@/types/activeSessions";
 
 type SettingsSection = "profile" | "notifications" | "security";
 
@@ -218,15 +222,11 @@ function ProfileSection({ initialData }: { initialData?: ProfileData }) {
   );
 }
 
-function NotificationsSection({
-  initialData,
-}: {
-  initialData?: ProfileData;
-}) {
+function NotificationsSection({ initialData }: { initialData?: ProfileData }) {
   const { addToast } = useToast();
-  const [blockedNotificationTypes, setblockedNotificationTypes] = useState<ActivityType[]>(
-    initialData?.blockedNotificationTypes ?? [],
-  );
+  const [blockedNotificationTypes, setblockedNotificationTypes] = useState<
+    ActivityType[]
+  >(initialData?.blockedNotificationTypes ?? []);
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -285,14 +285,24 @@ function NotificationsSection({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const result = await updateBlockNotificationAction(blockedNotificationTypes);
+    const result = await updateBlockNotificationAction(
+      blockedNotificationTypes,
+    );
     setLoading(false);
     if (result && result.success) {
       setSaved(true);
-      addToast({ title: "Saved", message: "Notification preferences updated.", type: "success" });
+      addToast({
+        title: "Saved",
+        message: "Notification preferences updated.",
+        type: "success",
+      });
       setTimeout(() => setSaved(false), 3000);
     } else {
-      addToast({ title: "Error", message: result?.error || "Failed to save preferences.", type: "error" });
+      addToast({
+        title: "Error",
+        message: result?.error || "Failed to save preferences.",
+        type: "error",
+      });
     }
   };
 
@@ -342,7 +352,7 @@ function NotificationsSection({
   );
 }
 
-function SecuritySection() {
+function SecuritySection({ sessions, onRevoke }: { sessions: SessionResultArray; onRevoke: (id: string) => void }) {
   const [form, setForm] = useState({ current: "", next: "", confirm: "" });
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -478,65 +488,62 @@ function SecuritySection() {
         </div>
       </form>
 
-      {/* <div className="border-t border-[var(--color-dash-border)] pt-8">
+      <div className="border-t border-[var(--color-dash-border)] pt-8">
         <p className="font-serif text-[16px] text-white mb-1">
           Active Sessions
         </p>
         <p className="font-mono text-[10px] tracking-[1.5px] uppercase text-[var(--color-dash-ink3)] mb-5">
           Devices logged in to your account
         </p>
-        {[
-          {
-            device: "Chrome · Windows 11",
-            location: "Mumbai, India",
-            current: true,
-            time: "Active now",
-          },
-          {
-            device: "Safari · iPhone 15",
-            location: "Mumbai, India",
-            current: false,
-            time: "2 days ago",
-          },
-        ].map((session, i) => (
-          <div
-            key={i}
-            className="flex items-center justify-between py-3.5 border-b border-[var(--color-dash-border)] last:border-b-0"
-          >
-            <div>
-              <p className="font-sans text-[13px] text-[var(--color-dash-ink)] mb-0.5">
-                {session.device}
-              </p>
-              <p className="font-mono text-[10px] tracking-[0.5px] text-[var(--color-dash-ink3)]">
-                {session.location} · {session.time}
-              </p>
+        {sessions &&
+          sessions.map((session, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-between py-3.5 border-b border-[var(--color-dash-border)] last:border-b-0"
+            >
+              <div>
+                <p className="font-sans text-[13px] text-[var(--color-dash-ink)] mb-0.5">
+                  {session.device}
+                </p>
+                <p className="font-mono text-[10px] tracking-[0.5px] text-[var(--color-dash-ink3)]">
+                  {session.location} · {session.time}
+                </p>
+              </div>
+              {session.current ? (
+                <span className="font-mono text-[9px] tracking-[1.5px] uppercase px-2.5 py-1 rounded-sm bg-[var(--color-status-paid-bg)] border border-[var(--color-status-paid-border)] text-[var(--color-status-paid-text)]">
+                  This Device
+                </span>
+              ) : (
+                <button
+                  onClick={() => onRevoke(session.id)}
+                  type="button"
+                  className="font-mono text-[9px] tracking-[1.5px] uppercase px-2.5 py-1 rounded-sm bg-[var(--color-status-danger-bg)] border border-[var(--color-status-danger-border)] text-[var(--color-status-danger-text)] hover:bg-[rgba(192,96,96,0.15)] transition-colors"
+                >
+                  Revoke
+                </button>
+              )}
             </div>
-            {session.current ? (
-              <span className="font-mono text-[9px] tracking-[1.5px] uppercase px-2.5 py-1 rounded-sm bg-[var(--color-status-paid-bg)] border border-[var(--color-status-paid-border)] text-[var(--color-status-paid-text)]">
-                This Device
-              </span>
-            ) : (
-              <button
-                type="button"
-                className="font-mono text-[9px] tracking-[1.5px] uppercase px-2.5 py-1 rounded-sm bg-[var(--color-status-danger-bg)] border border-[var(--color-status-danger-border)] text-[var(--color-status-danger-text)] hover:bg-[rgba(192,96,96,0.15)] transition-colors"
-              >
-                Revoke
-              </button>
-            )}
-          </div>
-        ))}
-      </div> */}
+          ))}
+      </div>
     </div>
   );
 }
 
-export function ClientSettings({ initialData }: { initialData?: ProfileData }) {
+export function ClientSettings({
+  initialData,
+  sessionsData,
+  onRevoke,
+}: {
+  initialData?: ProfileData;
+  sessionsData: SessionResultArray;
+  onRevoke: (id: string) => void;
+}) {
   const [active, setActive] = useState<SettingsSection>("profile");
 
   const SECTION_CONTENT: Record<SettingsSection, React.ReactNode> = {
     profile: <ProfileSection initialData={initialData} />,
     notifications: <NotificationsSection initialData={initialData} />,
-    security: <SecuritySection />,
+    security: <SecuritySection sessions={sessionsData} onRevoke={onRevoke} />,
   };
 
   const activeLabel = SECTIONS.find((s) => s.id === active)?.label ?? "";

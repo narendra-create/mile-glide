@@ -178,7 +178,7 @@
 
 # for 20/07/2026 -- The Launch Date
 
-- [ ] documentation
+- [ ] generate Readme
 - [ ] check environment variables
 - add environment variables on github actions and vercel
 - [ ] check any hardcoded value

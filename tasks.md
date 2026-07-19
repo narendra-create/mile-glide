@@ -174,7 +174,7 @@
 # for 19/07/2026
 
 - [x] add logged in sessions in settings page
-- [ ] make a api route for cron jobs
+- [x] make a api route for cron jobs
 
 # for 20/07/2026 -- The Launch Date
 

@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { ToastProvider } from "./components/ToastProvider";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "TrackLancer — Milestone & Payment Tracker for Freelancers",
@@ -28,6 +29,7 @@ export default function RootLayout({
           {children}
           <Footer />
         </ToastProvider>
+        <Analytics />
       </body>
     </html>
   );

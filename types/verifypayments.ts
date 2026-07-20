@@ -3,6 +3,7 @@ export interface VerifyPaymentType {
   txn_number: string;
   paid_amount: number;
   status: "PENDING_VERIFICATION" | "VERIFIED" | "REJECTED";
+  imageurl?: string | null;
   
   // Relations
   Payment?: {

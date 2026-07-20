@@ -1,6 +1,6 @@
 import type { VerifyPaymentType } from "@/types/verifypayments";
 
-export const DUMMY_VERIFICATIONS: VerifyPaymentType[] = [
+export const DUMMY_VERIFICATIONS = [
   {
     id: "verif_001",
     txn_number: "TXN-98765432101",
@@ -76,4 +76,4 @@ export const DUMMY_VERIFICATIONS: VerifyPaymentType[] = [
       }
     }
   }
-];
+] as any as VerifyPaymentType[];

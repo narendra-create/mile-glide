@@ -1,7 +1,7 @@
 import { Paymentstatus } from "@/app/generated/prisma/enums";
 import type { ProjectWithPayments } from "@/types/payment"; // adjust the path as needed
 
-export const DUMMY_PROJECTS: ProjectWithPayments[] = [
+export const DUMMY_PROJECTS = [
   {
     id: "proj_001",
     title: "E-Commerce Platform Redesign",
@@ -280,4 +280,4 @@ export const DUMMY_PROJECTS: ProjectWithPayments[] = [
       }
     ]
   }
-];
+] as any as ProjectWithPayments[];

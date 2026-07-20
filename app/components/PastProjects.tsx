@@ -32,7 +32,7 @@ export function PastProjects({
   const [sortBy, setSortBy] = useState<string>("createdAt-desc");
 
   const handleArchiveSuccess = (id: string) => {
-    setProjects((prev) => prev.filter((p) => p.id !== id));
+    setProjects((prev) => (prev as any[]).filter((p) => p.id !== id) as typeof projects);
   };
 
   const sortedProjects = useMemo(() => {

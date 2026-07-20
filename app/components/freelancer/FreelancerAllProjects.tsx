@@ -43,12 +43,18 @@ const STATUS_STYLE: Record<string, { dot: string; text: string; bg: string }> =
       text: "text-[var(--color-dash-red)]",
       bg: "bg-[var(--color-dash-red-bg)]",
     },
+    COMPLETED: {
+      dot: "bg-[var(--color-dash-green)]",
+      text: "text-[var(--color-dash-green)]",
+      bg: "bg-[var(--color-dash-green-bg)]",
+    },
   };
 
 const SECTION_ACCENT: Record<AllProjectStatus, string> = {
   ACTIVE: "bg-[var(--color-dash-green)]",
   STOPPED: "bg-[var(--color-dash-amber)]",
   CANCELLED: "bg-[var(--color-dash-red)]",
+  COMPLETED: "bg-[var(--color-dash-green)]",
 };
 
 // ─── SKELETON CARD ────────────────────────────────────────────────────────────

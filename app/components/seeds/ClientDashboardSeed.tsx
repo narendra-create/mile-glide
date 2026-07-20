@@ -1,6 +1,7 @@
+import React from "react";
 import type { ClientDashboardProject } from "@/app/components/client/ClientActiveProjects";
 import type { ClientDeadlineItem } from "@/app/components/client/ClientUpcomingDeadlines";
-import type { ClientActivityItem } from "@/app/components/client/ClientActivity";
+import type { ActivityItem } from "@/types/activitys";
 import type { ClientDashboardData } from "@/app/Features/Client/Client-dashboard";
 
 export const DUMMY_CLIENT_PROJECTS: ClientDashboardProject[] = [
@@ -99,7 +100,7 @@ export const DUMMY_CLIENT_DEADLINES: ClientDeadlineItem[] = [
   },
 ];
 
-export const DUMMY_CLIENT_ACTIVITY: ClientActivityItem[] = [
+export const DUMMY_CLIENT_ACTIVITY = [
   {
     id: 1,
     icon: "💳",
@@ -203,7 +204,7 @@ export const DUMMY_CLIENT_DASHBOARD: ClientDashboardData = {
   name: "Narendra",
   activeProjects: DUMMY_CLIENT_PROJECTS,
   deadlines: DUMMY_CLIENT_DEADLINES,
-  activity: DUMMY_CLIENT_ACTIVITY,
+  activity: DUMMY_CLIENT_ACTIVITY as any as ActivityItem[],
   stats: {
     activeCount: 2,
     totalPaid: 75000,

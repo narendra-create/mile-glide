@@ -24,7 +24,13 @@ const AllProjects = async () => {
     "CLIENT",
   );
   if (!result.success) {
-    return { error: `${result.error} - ${result.status}` };
+    return (
+      <main className="mx-4 lg:pl-7 lg:pt-10">
+        <div className="text-red-500">
+          Error loading projects: {result.error} - {result.status}
+        </div>
+      </main>
+    );
   }
   const projects = result.projects;
   const nextCursor = result.nextCursor;

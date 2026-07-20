@@ -611,6 +611,9 @@ export const markProjectCompleted = async (projectId: string) => {
     if (findProject.milestones.length <= 0) {
         return { success: false, error: "You can't mark a project as completed without creating any milestone" }
     };
+    if (findProject.freelancerId !== freelancerProfile.id) {
+        return { success: false, error: "You Can only mark your projects as completed", status: 403 }
+    }
     const incompleteMilestones = await prisma.milestone.count({
         where: {
             projectId,

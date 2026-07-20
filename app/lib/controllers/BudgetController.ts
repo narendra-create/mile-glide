@@ -327,8 +327,9 @@ export const getProjectBudgetRequests = async (projectId: string) => {
     const role = session.user.role.toLowerCase();
     if (role !== "freelancer" && role !== "client") return { success: false, error: "Forbidden", status: 403 };
 
+    const filteruser = role === "client" ? { client: { userId: session.user.id } } : { freelancer: { userId: session.user.id } };
     const requests = await prisma.budgetRaiseRequest.findMany({
-        where: { projectId: projectId },
+        where: { projectId: projectId, project: filteruser },
         include: {
             project: {
                 select: {

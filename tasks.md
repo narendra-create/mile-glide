@@ -202,7 +202,7 @@
 
 - [ ] remove report only CSP after verifying errors
 - [x] Make CSP headers config
-- [ ] add rate limiting
+- [x] add rate limiting
 - [x] remove next config file from gitignore
 
 ## additionals

@@ -108,8 +108,8 @@ async function main() {
   // ── Freelancer ──────────────────────────────────────────────────────────────
   console.log("👤  Creating freelancer...");
   const freelancerUser = await createUser(
-    "websitet547@gmail.com",
-    "Websitetester07",
+    "freelancer.test@gmail.com",
+    "Freelancer123!",
     "Naman",
     "FREELANCER"
   );
@@ -126,7 +126,7 @@ async function main() {
     { email: "rohan.das.client@gmail.com", name: "Rohan Das", password: "Client123!" },
     { email: "sneha.nair.client@gmail.com", name: "Sneha Nair", password: "Client123!" },
     { email: "vikram.iyer.client@gmail.com", name: "Vikram Iyer", password: "Client123!" },
-    { email: "c89927187@gmail.com", name: "client tester", password: "Capaccount07" },
+    { email: "client.tester@gmail.com", name: "Client Tester", password: "Client123!" },
   ];
 
   const clientProfiles: { name: string; profileId: string }[] = [];
@@ -559,8 +559,8 @@ async function main() {
   console.log("\n✅  Seed completed successfully!\n");
   console.log("─────────────────────────────────────────────────────");
   console.log("  Freelancer login");
-  console.log("  Email   : websitet547@gmail.com");
-  console.log("  Password: Websitetester07");
+  console.log("  Email   : freelancer.test@gmail.com");
+  console.log("  Password: Freelancer123!");
   console.log("─────────────────────────────────────────────────────");
   console.log("  Client logins:");
   for (const s of clientSeeds) {

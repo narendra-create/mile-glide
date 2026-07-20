@@ -200,6 +200,7 @@
 
 - [ ] add environment variables on github actions and vercel
 - [ ] cron job for deleting messages more then 7 days
+- [ ] add seo things like opengraph or description in layout file
 - [ ] remove report only CSP after verifying errors
 - [x] Make CSP headers config
 - [x] add rate limiting

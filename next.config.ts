@@ -52,12 +52,14 @@ const nextConfig: NextConfig = {
       headers: securityHeaders
     }]
   },
-  serverActions: {
-    allowedOrigins: [
-      ...(process.env.NEXT_CONFIG_ALLOWEDORIGINS
-        ?.split(",")
-        .map(origin => origin.trim()) ?? [])
-    ]
+  experimental: {
+    serverActions: {
+      allowedOrigins: [
+        ...(process.env.NEXT_CONFIG_ALLOWEDORIGINS
+          ?.split(",")
+          .map(origin => origin.trim()) ?? [])
+      ]
+    }
   },
 };
 

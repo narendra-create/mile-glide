@@ -2,7 +2,7 @@ import { prisma } from "@/app/lib/prisma";
 import { getSession } from "@/app/lib/session";
 import { revalidatePath } from 'next/cache';
 import { UAParser } from 'ua-parser-js';
-import { formatRelativeTime } from "../utilitys";
+import { formatRelativeTime } from "@/app/lib/utilitys";
 
 export const getDevices = async () => {
     const session = await getSession();

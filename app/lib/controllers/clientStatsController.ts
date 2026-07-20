@@ -1,5 +1,5 @@
 import { prisma } from "@/app/lib/prisma";
-import { getInitials } from "../utilitys";
+import { getInitials } from "@/app/lib/utilitys";
 
 export type ClientDeadlineItem = {
     id: string;             // Milestone ID

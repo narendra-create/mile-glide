@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "motion/react";
-import { fadeRight, staggerContainer } from "../lib/animations";
+import { fadeRight, staggerContainer } from "@/app/lib/animations";
 export type comparecard = {
   Yellowtitle: string;
   Maintitle1: string;

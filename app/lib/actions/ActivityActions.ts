@@ -4,7 +4,7 @@ import { prisma } from "@/app/lib/prisma";
 import { getSession } from "@/app/lib/session";
 import type { ActivityItem } from "@/types/activitys";
 import { headers } from "next/headers";
-import { actionRateLimit } from "../rate-limit";
+import { actionRateLimit } from "@/app/lib/rate-limit";
 
 const ACTIVITY_LIMIT = 10; // Load 10 more at a time as requested
 

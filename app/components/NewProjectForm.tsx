@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Copy, Check, X } from "lucide-react";
-import type { NewProjectType } from "../(protected)/freelancer/new-project/page";
+import type { NewProjectType } from "@/app/(protected)/freelancer/new-project/page";
 import { useToast } from "./ToastProvider";
 
 interface NewProjectFormProps {

@@ -5,7 +5,7 @@ import { updateBlockNotificationAction, updateProfileAction } from "@/app/lib/ac
 import { authClient } from "@/app/lib/auth-client";
 import { formatCategory } from "@/app/lib/utilitys";
 import { motion } from "motion/react";
-import { fadeUp, staggerContainer } from "../../lib/animations";
+import { fadeUp, staggerContainer } from "@/app/lib/animations";
 import {
   Bell,
   Camera,
@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { useToast } from "../ToastProvider";
+import { useToast } from "@/app/components/ToastProvider";
 
 type SettingsSection = "profile" | "notifications" | "security" | "payment";
 

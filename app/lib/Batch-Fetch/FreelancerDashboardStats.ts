@@ -1,10 +1,10 @@
 "use server";
 import { prisma } from "@/app/lib/prisma";
-import { getCurrentProjects, getClientStat, getMoneyStats, getRavnuechartStats } from "../controllers/clientController";
-import { getSession } from "../session";
+import { getCurrentProjects, getClientStat, getMoneyStats, getRavnuechartStats } from "@/app/lib/controllers/clientController";
+import { getSession } from "@/app/lib/session";
 import type { DashboardStatsResponse } from "@/types/dashboard";
 import { headers } from "next/headers";
-import { statsRateLimit } from "../rate-limit";
+import { statsRateLimit } from "@/app/lib/rate-limit";
 export const getDashboardStats = async (): Promise<DashboardStatsResponse> => {
     const headerStore = await headers();
     const ip = headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() || 

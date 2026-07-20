@@ -2,9 +2,9 @@
 import { prisma } from "@/app/lib/prisma";
 import { getSession } from "@/app/lib/session";
 import type { ClientDashboardData } from "@/app/Features/Client/Client-dashboard";
-import { getClientCurrentProjects, getClientMoneyStats, getDeadlines } from "../controllers/clientStatsController";
+import { getClientCurrentProjects, getClientMoneyStats, getDeadlines } from "@/app/lib/controllers/clientStatsController";
 import { headers } from "next/headers";
-import { statsRateLimit } from "../rate-limit";
+import { statsRateLimit } from "@/app/lib/rate-limit";
 export const getClientStats = async () => {
     const headerStore = await headers();
     const ip = headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() || 

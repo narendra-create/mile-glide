@@ -1,11 +1,11 @@
 import { prisma } from "@/app/lib/prisma";
 import type { userrole } from "@/app/generated/prisma/enums";
-import { formatDate, generateCode } from "../utilitys";
+import { formatDate, generateCode } from "@/app/lib/utilitys";
 import type { FreelancerPastProjectsResponse, ClientPastProjectsResponse, PastProjectPaymentStatus } from "@/types/pastprojects";
-import type { newProjectInput } from "../validations/ProjectValidation";
+import type { newProjectInput } from "@/app/lib/validations/ProjectValidation";
 import type { GetAllProjectsResponse, AllProjectStatus } from "@/types/allprojects";
-import { getSession } from "../session";
-import { actionRateLimit } from "../rate-limit";
+import { getSession } from "@/app/lib/session";
+import { actionRateLimit } from "@/app/lib/rate-limit";
 import { headers } from "next/headers";
 
 export const getPastProjects = async (role: userrole, profileid: string, cursor?: string): Promise<FreelancerPastProjectsResponse | ClientPastProjectsResponse> => {

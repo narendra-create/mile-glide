@@ -2,7 +2,7 @@
 import { useState, useRef, KeyboardEvent, ClipboardEvent } from "react";
 import { authClient } from "@/app/lib/auth-client";
 import { motion } from "motion/react";
-import { fadeUp, staggerContainer } from "../lib/animations";
+import { fadeUp, staggerContainer } from "@/app/lib/animations";
 
 const STRENGTH_LABELS = ["Very Weak", "Weak", "Fair", "Good", "Strong"];
 const STRENGTH_COLORS = ["#c06060", "#c87840", "#c8a96e", "#9acd87", "#4a9e75"];

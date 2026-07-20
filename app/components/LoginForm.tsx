@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import { authClient } from "../lib/auth-client";
+import { authClient } from "@/app/lib/auth-client";
 import { motion } from "motion/react";
-import { fadeUp, staggerContainer } from "../lib/animations";
+import { fadeUp, staggerContainer } from "@/app/lib/animations";
 
 const fields = [
   {

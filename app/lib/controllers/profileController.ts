@@ -1,9 +1,9 @@
 import { prisma } from "@/app/lib/prisma";
 import type { Categorys } from "@/app/generated/prisma/enums";
 import { getSession } from "@/app/lib/session";
-import { updateProfileInput } from "../validations/ProfileValidation";
+import { updateProfileInput } from "@/app/lib/validations/ProfileValidation";
 import { headers } from "next/headers";
-import { actionRateLimit } from "../rate-limit";
+import { actionRateLimit } from "@/app/lib/rate-limit";
 
 export const addprofile = async (
   userId: string,

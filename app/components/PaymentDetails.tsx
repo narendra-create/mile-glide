@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { formatDate } from "@/app/lib/utilitys";
 import { Paymentstatus } from "@/app/generated/prisma/enums";
-import { PaymentDetailUiType } from "../lib/controllers/PaymentDetailUiController";
+import { PaymentDetailUiType } from "@/app/lib/controllers/PaymentDetailUiController";
 import Link from "next/link";
 
 // Dummy data for demonstration

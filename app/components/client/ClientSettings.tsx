@@ -12,7 +12,7 @@ import { authClient } from "@/app/lib/auth-client";
 import { ActivityType } from "@/app/generated/prisma/enums";
 import type { SessionResultArray } from "@/types/activeSessions";
 import { motion } from "motion/react";
-import { fadeUp, staggerContainer } from "../../lib/animations";
+import { fadeUp, staggerContainer } from "@/app/lib/animations";
 
 type SettingsSection = "profile" | "notifications" | "security";
 

@@ -1,9 +1,9 @@
 import { prisma } from "@/app/lib/prisma";
-import { getSession } from "../session";
-import type { createMilestoneInput, delayMilestoneInput } from "../validations/MilestoneValidation";
+import { getSession } from "@/app/lib/session";
+import type { createMilestoneInput, delayMilestoneInput } from "@/app/lib/validations/MilestoneValidation";
 import { userrole } from "@/app/generated/prisma/enums";
 import { headers } from "next/headers";
-import { actionRateLimit } from "../rate-limit";
+import { actionRateLimit } from "@/app/lib/rate-limit";
 
 export const createMilestone = async (input: createMilestoneInput) => {
     const headerStore = await headers();

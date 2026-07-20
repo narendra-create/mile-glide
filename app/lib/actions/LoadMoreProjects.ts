@@ -1,7 +1,7 @@
 "use server";
 import { prisma } from "@/app/lib/prisma";
-import { getCurrentProjects } from "../controllers/clientController";
-import { getSession } from "../session";
+import { getCurrentProjects } from "@/app/lib/controllers/clientController";
+import { getSession } from "@/app/lib/session";
 
 export const loadMoreProjects = async (nextcursor: string) => {
     const session = await getSession();

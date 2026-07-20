@@ -32,7 +32,7 @@ import { formatDate } from "@/app/lib/utilitys";
 import { AddMilestoneModal } from "@/app/components/freelancer/AddMilestoneModal";
 import { useToast } from "@/app/components/ToastProvider";
 import { RaiseBudgetForm } from "./RaiseBudgetForm";
-import { createBudgetInput } from "../../lib/validations/Budgetrequest";
+import { createBudgetInput } from "@/app/lib/validations/Budgetrequest";
 
 const STATUS_CONFIG: Record<
   Milestonestatus,

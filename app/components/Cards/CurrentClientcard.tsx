@@ -1,6 +1,6 @@
 import React from "react";
-import { ClientProgressBar } from "../Currentclientprogressbar";
-import { AvatarInitials } from "../Initials";
+import { ClientProgressBar } from "@/app/components/Currentclientprogressbar";
+import { AvatarInitials } from "@/app/components/Initials";
 import type { DashboardProject } from "@/types/dashboard";
 import { formatMoney, getInitials } from "@/app/lib/utilitys";
 import { redirect } from "next/navigation";

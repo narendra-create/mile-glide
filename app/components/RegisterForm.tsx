@@ -3,7 +3,7 @@ import { useState } from "react";
 import { OtpInput } from "./OtpInput";
 import { authClient } from "@/app/lib/auth-client";
 import { motion } from "motion/react";
-import { fadeUp, staggerContainer } from "../lib/animations";
+import { fadeUp, staggerContainer } from "@/app/lib/animations";
 
 const CATEGORY_OPTIONS = [
   { value: "WEB_DEV", label: "Web Developer" },

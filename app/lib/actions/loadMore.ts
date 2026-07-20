@@ -1,8 +1,8 @@
 "use server";
 import { prisma } from "@/app/lib/prisma";
-import { getSession } from "../session";
-import { getCurrentProjects } from "../controllers/clientController";
-import { getPastProjects } from "../controllers/ProjectController";
+import { getSession } from "@/app/lib/session";
+import { getCurrentProjects } from "@/app/lib/controllers/clientController";
+import { getPastProjects } from "@/app/lib/controllers/ProjectController";
 
 export type LoadMoreType = "currentProjects" | "pastProjects";
 

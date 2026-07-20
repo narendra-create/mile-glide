@@ -1,9 +1,9 @@
 "use server";
 
-import { updateProfile, getSettingsProfile, updateUPIDetails } from "../controllers/profileController";
-import { updateblockNotification } from "../controllers/activityController";
+import { updateProfile, getSettingsProfile, updateUPIDetails } from "@/app/lib/controllers/profileController";
+import { updateblockNotification } from "@/app/lib/controllers/activityController";
 import type { ActivityType } from "@/app/generated/prisma/enums";
-import type { updateProfileInput } from "../validations/ProfileValidation";
+import type { updateProfileInput } from "@/app/lib/validations/ProfileValidation";
 import { revalidatePath } from "next/cache";
 
 export async function getProfileAction() {

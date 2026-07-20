@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Check, AlertCircle, Loader2, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useToast } from "../ToastProvider";
+import { useToast } from "@/app/components/ToastProvider";
 import type { AcceptProjectDetails } from "@/types/allprojects";
 
 interface AcceptProjectProps {

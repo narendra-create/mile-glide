@@ -1,11 +1,11 @@
 import { prisma } from "@/app/lib/prisma";
 import { getSession } from "@/app/lib/session";
-import type { intiiatePaymentInput } from "../validations/PaymentValidation";
+import type { intiiatePaymentInput } from "@/app/lib/validations/PaymentValidation";
 import { ActionResponse } from "@/types/api";
 import { PaymentHistory } from "@/types/payment";
 import { VerifyPaymentType } from "@/types/verifypayments";
 import { headers } from "next/headers";
-import { paymentRateLimit } from "../rate-limit";
+import { paymentRateLimit } from "@/app/lib/rate-limit";
 
 export const getPaymentHistory = async (cursor?: string): Promise<ActionResponse<{ payments: PaymentHistory[], nextCursor: string | null }>> => {
     const session = await getSession();

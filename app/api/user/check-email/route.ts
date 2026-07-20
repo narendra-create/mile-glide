@@ -6,20 +6,12 @@ export async function POST(req: NextRequest) {
     const { email } = (await req.json()) as { email?: string };
 
     if (!email || typeof email !== "string") {
-      return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+      return NextResponse.json({ success: false }, { status: 400 });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
-      select: { emailVerified: true },
-    });
-
-    if (!user) {
-      return NextResponse.json({ exists: false });
-    }
-
-    return NextResponse.json({ exists: true, verified: user.emailVerified });
+    // Return a generic success to prevent email enumeration
+    return NextResponse.json({ success: true });
   } catch {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return NextResponse.json({ success: true });
   }
 }

@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { ToastProvider } from "./components/ToastProvider";
+import NextTopLoader from "nextjs-toploader";
 import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col">
+        <NextTopLoader color="#c8a96e" showSpinner={false} speed={300} zIndex={1600} />
         <ToastProvider>
           <Navbar />
           {children}

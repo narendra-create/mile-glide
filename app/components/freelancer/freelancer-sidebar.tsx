@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -140,9 +141,19 @@ function NavLink({
   isActive: boolean;
   hideOnMobile?: boolean;
 }) {
+  const [isPending, setIsPending] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setIsPending(false);
+  }, [pathname]);
+
   return (
     <Link
       href={href}
+      onClick={() => {
+        if (pathname !== href) setIsPending(true);
+      }}
       className={`relative cursor-pointer transition-colors duration-150
         h-[75px] flex-col items-center justify-center gap-1 font-medium
         md:mb-0.5 md:h-auto md:flex-none md:flex-row md:justify-start md:gap-2.5 md:rounded md:p-[9px_10px] md:text-[0.82rem]
@@ -162,7 +173,11 @@ function NavLink({
 
       <div className="relative flex items-center justify-center md:block md:w-auto">
         <span className="shrink-0 flex justify-center items-center h-[2rem] md:w-4 md:h-auto">
-          <Icon className="w-[24px] h-[24px] md:w-[16px] md:h-[16px] stroke-[1.5]" />
+          {isPending ? (
+            <div className="w-[22px] h-[22px] md:w-[14px] md:h-[14px] border-[2px] border-[var(--color-dash-gold-dim)] border-t-[var(--color-dash-gold)] rounded-full animate-spin" />
+          ) : (
+            <Icon className="w-[24px] h-[24px] md:w-[16px] md:h-[16px] stroke-[1.5]" />
+          )}
         </span>
         {/* Mobile Badge */}
         {badge !== undefined && (

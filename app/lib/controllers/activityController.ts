@@ -63,7 +63,6 @@ export const getActivitys = async (since?: string) => {
 };
 
 export const updateblockNotification = async (input: ActivityType[]) => {
-    if (input.length === 0) return;
     const session = await getSession();
     if (!session) {
         return { success: false, error: "Logged Out", status: 401 }
